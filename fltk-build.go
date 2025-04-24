@@ -2,6 +2,8 @@
 
 package main
 
+//NOTE: I have added "-lfmt" to the LDFLAGS, so this is an additional dependency.
+
 import (
 	"errors"
 	"fmt"
@@ -243,7 +245,7 @@ func main() {
 		if runtime.GOOS == "openbsd" {
 			fltkConfigLdFlags = "-L/usr/X11R6/lib " + fltkConfigLdFlags
 		}
-		fmt.Fprintf(cgoFile, "// #cgo %s,%s LDFLAGS: %s", runtime.GOOS, runtime.GOARCH, fltkConfigLdFlags)
+		fmt.Fprintf(cgoFile, "// #cgo %s,%s LDFLAGS: -lfmt %s", runtime.GOOS, runtime.GOARCH, fltkConfigLdFlags)
 		if fltkConfigLdFlags[len(fltkConfigLdFlags)-1] != '\n' {
 			fmt.Fprintln(cgoFile, "")
 		}
@@ -255,7 +257,7 @@ func main() {
 		// Hardcoding contents of cgo directive for windows,
 		// as we cannot extract it from fltk-config if we're not using a UNIX shell.
 		fmt.Fprintf(cgoFile, "// #cgo %s,%s CPPFLAGS: -I${SRCDIR}/%s -I${SRCDIR}/%s/FL/images -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64\n", runtime.GOOS, runtime.GOARCH, includeDirWithSlashes, includeDirWithSlashes)
-		fmt.Fprintf(cgoFile, "// #cgo %s,%s LDFLAGS: -mwindows ${SRCDIR}/%s/libfltk_images.a ${SRCDIR}/%s/libfltk_jpeg.a ${SRCDIR}/%s/libfltk_png.a ${SRCDIR}/%s/libfltk_z.a ${SRCDIR}/%s/libfltk_gl.a -lglu32 -lopengl32 ${SRCDIR}/%s/libfltk.a -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lwinspool\n", runtime.GOOS, runtime.GOARCH, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes)
+		fmt.Fprintf(cgoFile, "// #cgo %s,%s LDFLAGS: -mwindows ${SRCDIR}/%s/libfltk_images.a ${SRCDIR}/%s/libfltk_jpeg.a ${SRCDIR}/%s/libfltk_png.a ${SRCDIR}/%s/libfltk_z.a ${SRCDIR}/%s/libfltk_gl.a -lglu32 -lopengl32 ${SRCDIR}/%s/libfltk.a -lfmt -lgdiplus -lole32 -luuid -lcomctl32 -lws2_32 -lwinspool\n", runtime.GOOS, runtime.GOARCH, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes, libDirWithSlashes)
 	}
 	fmt.Fprintln(cgoFile, "import \"C\"")
 
