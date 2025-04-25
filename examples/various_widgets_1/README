@@ -1,0 +1,14 @@
+A go.mod is needed, which might look something like:
+
+```
+module various_widgets_1
+
+go 1.24.1
+
+require github.com/gradgrind/minion_gui v0.0.0
+
+replace github.com/gradgrind/minion_gui v0.0.0 => ../..
+```
+
+The last line is to substitute a local repository. Depending on where this example is run,
+the path would need changing.
