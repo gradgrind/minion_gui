@@ -1,6 +1,8 @@
 #include "widget_methods.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Flex.H>
+#include <FL/fl_draw.H>
+#include <iostream>
 #define MAGIC_ENUM_RANGE_MIN 0
 #define MAGIC_ENUM_RANGE_MAX 255
 #include "_lib/magic_enum/magic_enum.hpp"
@@ -45,7 +47,7 @@ void left_label(
     if (pw && pw->horizontal()) {
         auto padbox = new Fl_Box(0, 0, 0, 0);
         pw->insert(*padbox, w);
-        int wl, hl;
+        int wl{0}, hl{0};
         w->measure_label(wl, hl);
         pw->fixed(padbox, wl + int_param(m, 2));
     }
