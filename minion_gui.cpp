@@ -1,12 +1,10 @@
 #include "connector.h"
-#include "iofile.h"
 #include "layout.h" //TODO: less ...
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
-#include <chrono>
 #include <fmt/format.h>
 #include <iostream>
 using namespace std;
@@ -24,23 +22,59 @@ std::string backend(const std::string data) {
 }
 
 void init(char* data0) {
-  std::cout << "C says: init '" << data0 << "'" << std::endl;
-  //printf("C says: init '%s'\n", data0);
-  
-  // Call actual start-up function
-  //start(data0);
-  
-  std::string result2 = backend("C++ callback");
-  std::cout << "C++ callback returned '" << result2 << "'" << std::endl;
-  //printf("C callback returned '%s'\n", result);
+    //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
-	//TODO++ The real start!
-	//initialize(data0);
+    string initgui{data0};
+    minion::MinionMap guidata;
+    try {
+        try {
+            guidata = minion::read_minion(initgui);
+        } catch (minion::MinionException &e) {
+            cerr << e.what() << endl;
+            return;
+        }
+
+        tmp_run(guidata);
+        return;
+
+    } catch (const std::exception &ex) {
+        cerr << "EXCEPTION: " << ex.what() << endl;
+    } catch (const std::string &ex) {
+        cerr << "ERROR: " << ex << endl;
+    }
+
+    /* *** This would handle a file path instead of the actual data ***
+    #include "iofile.h"
+
+    string initgui;
+
+    if (readfile(initgui, guipath)) {
+        cout << "Reading " << fpath << endl;
+        minion::MinionMap guidata;
+
+        try {
+            try {
+                guidata = minion::read_minion(gui);
+            } catch (minion::MinionException &e) {
+                cerr << e.what() << endl;
+                return;
+            }
+
+            tmp_run(guidata);
+            return;
+
+        } catch (const std::exception &ex) {
+            cerr << "EXCEPTION: " << ex.what() << endl;
+        } catch (const std::string &ex) {
+            cerr << "ERROR: " << ex << endl;
+        }
+    } else {
+        cerr << "Error opening file: " << guipath << endl;
+    }
+    */
 }
 
-// *** Initialization of the GUI ***
-
-//TODO: Window might get a special callback ...
+//TODO: Window might get a special callback ... what to do with this?
 void main_callback(
     Fl_Widget *, void *)
 {
@@ -50,45 +84,4 @@ void main_callback(
     //TODO: If changed data, ask about closing
     if (fl_choice("Are you sure you want to quit?", "continue", "quit", NULL))
         exit(0);
-}
-
-bool read_file(
-    string &gui, string &fpath)
-{
-    //string fpath{"data/gui.minion"};
-    //string fpath{"data/course_editor.minion"};
-    if (readfile(gui, fpath)) {
-        cout << "Reading " << fpath << endl;
-    } else {
-        cerr << "Error opening file: " << fpath << endl;
-        return false;
-    }
-    return true;
-}
-
-int initialize(
-    string guipath)
-{
-    string gui;
-    if (read_file(gui, guipath)) {
-        minion::MinionMap guidata;
-
-        try {
-            try {
-                guidata = minion::read_minion(gui);
-            } catch (minion::MinionException &e) {
-                cerr << e.what() << endl;
-                return 1;
-            }
-
-            tmp_run(guidata);
-            return 0;
-
-        } catch (const std::exception &ex) {
-            cerr << "EXCEPTION: " << ex.what() << endl;
-        } catch (const std::string &ex) {
-            cerr << "ERROR: " << ex << endl;
-        }
-    }
-    return 1;
 }
