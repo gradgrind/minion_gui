@@ -1,4 +1,5 @@
 #include "connector.h"
+#include "backend.h"
 #include "layout.h" //TODO: less ...
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>

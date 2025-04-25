@@ -34,6 +34,8 @@ For running programs built using minion_gui you will need some system libs which
 
 *Tip*: The [rust-fltk project](https://github.com/fltk-rs/fltk-rs) may be helpful in determining dependencies, both for building and for running. Note, however, that the configuration in `fltk-build.go` will affect the libraries needed.
 
+At present, also the "fmt" library is used, so this may also need to be installed.
+
 ## Usage
 
 TODO

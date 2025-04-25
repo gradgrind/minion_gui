@@ -1,4 +1,5 @@
 #include "editform.h"
+#include "backend.h"
 #include "layout.h"
 #include "widget_methods.h"
 #include "widgets.h"
@@ -53,8 +54,10 @@ void editform_method(
         //TODO
         e1->callback(
             [](Fl_Widget* w, void* ud) {
-                cout << "Activated: " << static_cast<EditFormEntryData*>(ud)->w_name << ": "
-                     << Fl::callback_reason() << endl;
+                auto dw = static_cast<EditFormEntryData*>(ud)->w_name;
+                cout << "Activated: " << dw << endl;
+                auto res = backend("EditForm: " + dw);
+                cout << "CALLBACK RETURNED: " << res << endl;
             },
             new EditFormEntryData(name),
             true);
