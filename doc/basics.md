@@ -21,3 +21,8 @@ To perform more extensive back-end processing, a separate thread should be used.
 
 ## Details
 
+### minion_gui.go
+
+`MinionGui` saves the `callback` function in the variable `do_callback`, where it can be used in actual callbacks by the function `goCallback`, which is exported via cgo to the C++ front-end. The string argument `initdata` is MINION data describing the initial GUI configuration. This is passed to the C++ function `init` in `minion_gui.cpp` after creating a new C-string from it. The same static variable, `resultptr`, is used for this C-string as for the C-string returned in callbacks by `goCallback`. That means the C-string from `initdata` is freed by the first callback. On return from `init` the C-string is also freed. At this point the front-end has been closed, so the program is exiting. Nevertheless, for the sake of tidiness, the C-string is freed here, whether it be the last callback result or that from `initdata` (if there was no callback).
+
+`goCallback` receives and returns C-strings. To connect to the Go callback function passed to `MinionGui` these must be converted to or from Go strings. The received C-string is managed by the C++ side (function `backend` in `minion_gui.cpp`) and is valid for the duration of the `goCallback` call. The returned C-string is created by `goCallback` and must remain valid until the front-end has dealt with it. The C++ function `backend` copies it into an `std::string` immediately on return from `goCallback`, but to be safe, no immediate attempt is made to free the C-string on the Go side. It is freed only when `goCallback` is called again – which should be good enough, given that only one callback is permitted at any time.
