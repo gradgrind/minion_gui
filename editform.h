@@ -29,10 +29,12 @@ public:
     std::map<std::string, Fl_Widget *> entry_map;
 
     EditForm();
+    /* Currently unused
     void add_value(const char *name, const char *label);
     void add_separator();
     void add_list(const char *name, const char *label);
     void do_layout();
+    */
 };
 
 #endif // EDITFORM_H

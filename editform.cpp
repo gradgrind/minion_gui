@@ -176,6 +176,8 @@ std::string name;
 bool spanning;
 bool growable;
 
+/* Currently unused ...
+
 void EditForm::add_separator()
 {
     auto e1 = new Fl_Box(FL_BORDER_FRAME, 0, 0, 0, 1, "");
@@ -243,6 +245,7 @@ void EditForm::do_layout()
     col_weight(0, 0);
     col_gap(0, labwidth + 15);
 }
+*/
 
 Fl_Widget* NEW_EditForm(
     MinionMap param)
