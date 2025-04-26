@@ -32,8 +32,10 @@ Fl_Widget *WidgetData::get_widget(
 void WidgetData::add_widget(
     string_view name, Fl_Widget *w, method_handler h)
 {
-    if (widget_map.contains(name)) {
-        throw fmt::format("Widget name already exists: {}", name);
+    if (name.empty()) {
+        throw "Unnamed widget ...";
+    } else if (widget_map.contains(name)) {
+        throw string{"Widget name already exists: "} + string{name};
     }
     auto wd = new WidgetData(name, h);
     widget_map.emplace(wd->w_name, w);

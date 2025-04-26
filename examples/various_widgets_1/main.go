@@ -150,20 +150,31 @@ GUI: [
     NEW: EditForm
     NAME: EditorForm
     PARENT: Content
+    ITEMS: [
+      [EDITOR EF1 "EDITOR 1"]
+      # [TEXT EF2 "TEXT 1"]
+      # [CHOICE EF3 "CHOICE 1"]
+      [SEPARATOR]
+      [CHOICE EF4 "CHOICE 2"]
+      # [CHECKBOX EF5 "CHECKBOX 1"]
+      [LIST EF6 "List entry"]
+    ]
     DO: [
       [FIXED 300]
-      [ENTRY EF1 First]
-      [SEPARATOR]
-      [ENTRY EF2 Second]
-      [LIST EF3 "List entry"]
     ]
   }
   
   {
-    WIDGET: EditorForm
+    WIDGET: EF1
     DO: [
-      [SET EF1 "Changed First"]
-      [SET EF3 "New list 1" "New list 2"]
+      # [SET "Changed First"]
+      # [SET EF3 "New list 1" "New list 2"]
+    ]
+  }
+  {
+    WIDGET: EF6
+    DO: [
+      # [SET "New list 1" "New list 2"]
     ]
   }
   
