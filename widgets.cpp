@@ -1,4 +1,5 @@
 #include "layout.h"
+#include "widgets.h"
 #include "minion.h"
 #include "widget_methods.h"
 #include <FL/Fl_Box.H>
@@ -6,6 +7,7 @@
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Select_Browser.H>
+#include <iostream>
 using namespace std;
 using mmap = minion::MinionMap;
 using mlist = minion::MinionList;
@@ -58,6 +60,29 @@ void list_method(
 
 // *** Non-layout widgets ***
 
+TextLine::TextLine(int height) : Fl_Input(0, 0, 0, height)
+{
+    bg_normal = ENTRY_BG;
+    bg_pending = PENDING_BG;
+}
+
+int TextLine::handle(int event)
+{
+    //TODO ... ???
+    // if focus in: change colour, if focus out: revert colour
+    if (event == FL_FOCUS) {
+        cout << "FOCUS" << endl;
+        color(bg_pending);
+        redraw();
+    } else if (event == FL_UNFOCUS) {
+        cout << "UNFOCUS" << endl;
+        color(bg_normal);
+        redraw();
+    }
+    return Fl_Input::handle(event);
+}
+
+
 Fl_Widget *NEW_Box(
     mmap param)
 {
@@ -74,4 +99,12 @@ Fl_Widget *NEW_Output(
     mmap param)
 {
     return new Fl_Output(0, 0, 0, 0);
+}
+
+Fl_Widget *NEW_TextLine(
+    mmap param)
+{
+    int h = 0;
+    param.get_int("HEIGHT", h);
+    return new TextLine(h);
 }

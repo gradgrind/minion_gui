@@ -6,6 +6,9 @@
 #include <functional>
 #include <string_view>
 
+const Fl_Color ENTRY_BG = 0xffffc800;
+const Fl_Color PENDING_BG = 0xffe0e000;
+
 //TODO ...
 void tmp_run(minion::MinionMap data);
 

@@ -268,9 +268,10 @@ Fl_Widget* NEW_EditForm(
         int n_entries = do_list.size();
         if (n_entries != 0) {
             auto efw = new EditForm();
-            string clr{"ffffc8"};
-            param.get_string("ENTRY_BG", clr);
-            auto entry_bg = get_colour(clr);
+            auto entry_bg{ENTRY_BG};
+            string clr{};
+            if (param.get_string("ENTRY_BG", clr))
+                entry_bg = get_colour(clr);
             efw->layout(n_entries, 2);
             efw->col_weight(0, 0);
         
@@ -294,6 +295,47 @@ Fl_Widget* NEW_EditForm(
                     efw->add(e1);
                     efw->widget(e1, n_entry, 0, 1, 2);
                     efw->row_weight(n_entry, 0);
+                } else if (c == "TEXT") {
+                    measure_label = true;
+                    e1 = new TextLine(efw->entry_height);
+                    h = input_method;
+                    efw->add(e1);
+                    efw->widget(e1, n_entry, 1);
+                    efw->row_weight(n_entry, 0);
+                    e1->copy_label(label.c_str());
+                    e1->align(FL_ALIGN_LEFT);
+                    e1->color(entry_bg);
+
+                    //TODO
+                    // when(FL_WHEN_RELEASE) is too unpredictable?
+                    // With FL_WHEN_ENTER_KEY it may not be clear whether
+                    // ENTER has been pressed or not (the cursor is still
+                    // there.)
+                    // A refocus after RETURN can perhaps help? But if 
+                    // when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY) is used, a
+                    // return causes two callbacks ...
+                    // Can I change colour on focus?
+                    e1->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
+                    //e1->when(FL_WHEN_ENTER_KEY);
+                    //e1->when(FL_WHEN_ENTER_KEY_CHANGED );
+                    // ... then change the when() on first call?
+                    e1->callback(
+                        [](Fl_Widget* w, void* ud) {
+
+                            //w->color(0xffe0e0);
+                            
+                            auto dw = WidgetData::get_widget_name(w);
+                            // or: auto dw = static_cast<WidgetData*>(ud)->get_widget_name(w);
+                            
+                            // set a flag in widget-data?
+
+                            cout << "Activated: " << dw << ": " << Fl_Callback_Reason() << endl;
+                            cout << "  ::: " << static_cast<Fl_Input*>(w)->value() << endl; 
+                            //auto res = backend(string{"EditForm: "} + string{dw});
+                            //cout << "CALLBACK RETURNED: " << res << endl;
+                            Fl::focus(w->parent());
+                        });
+
                 } else if (c == "EDITOR") {
                     measure_label = true;
                     e1 = new Fl_Output(0, 0, 0, efw->entry_height);

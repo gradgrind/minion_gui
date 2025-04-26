@@ -19,7 +19,6 @@ class EditForm : public Fl_Grid
 {
 public:
     std::vector<EditFormEntry> entries;
-    //Fl_Color entry_bg;
     int entry_height{30};
     int list_title_space{30};
     //int label_width{0};

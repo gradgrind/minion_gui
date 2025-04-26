@@ -152,7 +152,8 @@ GUI: [
     PARENT: Content
     ITEMS: [
       [EDITOR EF1 "EDITOR 1"]
-      # [TEXT EF2 "TEXT 1"]
+      [TEXT EF2 "TEXT 1"]
+      [TEXT EF2X "TEXT2"]
       [CHOICE EF3 "CHOICE 1"]
       [SEPARATOR]
       [EDITOR EF4 "ANOTHER EDITOR"]
