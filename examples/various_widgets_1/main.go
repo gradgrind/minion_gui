@@ -153,10 +153,10 @@ GUI: [
     ITEMS: [
       [EDITOR EF1 "EDITOR 1"]
       # [TEXT EF2 "TEXT 1"]
-      # [CHOICE EF3 "CHOICE 1"]
+      [CHOICE EF3 "CHOICE 1"]
       [SEPARATOR]
-      [CHOICE EF4 "CHOICE 2"]
-      # [CHECKBOX EF5 "CHECKBOX 1"]
+      [EDITOR EF4 "ANOTHER EDITOR"]
+      [CHECKBOX EF5 "CHECKBOX with a long label"]
       [LIST EF6 "List entry"]
     ]
     DO: [
@@ -167,14 +167,13 @@ GUI: [
   {
     WIDGET: EF1
     DO: [
-      # [SET "Changed First"]
-      # [SET EF3 "New list 1" "New list 2"]
+      [VALUE "Changed First"]
     ]
   }
   {
     WIDGET: EF6
     DO: [
-      # [SET "New list 1" "New list 2"]
+      [SET "New list 1" "New list 2"]
     ]
   }
   

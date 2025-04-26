@@ -4,7 +4,14 @@
 #include "minion.h"
 #include "widget_methods.h"
 #include "widgets.h"
-#include <FL/Fl_Flex.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Choice.H>
+#include <FL/Fl_Grid.H>
+#include <FL/Fl_Output.H>
+#include <FL/Fl_Round_Button.H>
+#include <FL/Fl_Select_Browser.H>
+#include <string>
+#include <vector>
 #include <FL/fl_draw.H>
 #include <iostream>
 #include <ostream>
@@ -297,18 +304,52 @@ Fl_Widget* NEW_EditForm(
                     e1->copy_label(label.c_str());
                     e1->align(FL_ALIGN_LEFT);
                     e1->color(entry_bg);
+                    e1->clear_visible_focus();
+
+                    //TODO
+                    e1->callback(
+                        [](Fl_Widget* w, void* ud) {
+                            auto dw = WidgetData::get_widget_name(w);
+                            // or: auto dw = static_cast<WidgetData*>(ud)->get_widget_name(w);
+                            cout << "Activated: " << dw << endl;
+                            auto res = backend(string{"EditForm: "} + string{dw});
+                            cout << "CALLBACK RETURNED: " << res << endl;
+                        });
+
+                } else if (c == "CHOICE") {
+                    measure_label = true;
+                    e1 = new Fl_Choice(0, 0, 0, efw->entry_height);
+                    h = input_method;
+                    efw->add(e1);
+                    efw->widget(e1, n_entry, 1);
+                    efw->row_weight(n_entry, 0);
+                    e1->copy_label(label.c_str());
+                    e1->align(FL_ALIGN_LEFT);
+                    e1->color(entry_bg);
+                    e1->clear_visible_focus();
+                } else if (c == "CHECKBOX") {
+                    e1 = new Fl_Round_Button(0, 0, 0, efw->entry_height);
+                    h = widget_method; //???
+                    efw->add(e1);
+                    efw->widget(e1, n_entry, 0, 1, 2);
+                    efw->row_weight(n_entry, 0);
+                    e1->copy_label(label.c_str());
+                    e1->color(entry_bg);
+                    e1->clear_visible_focus();
                 } else if (c == "LIST") {
                     auto e0 = new Fl_Select_Browser(0, 0, 0, 0);
                     Fl_Group::current(0); // disable "auto-grouping"
                     e1 = e0;
-                    h = widget_method; //???
+                    h = list_method;
                     efw->add(e1);
                     e1->copy_label(label.c_str());
                     e1->align(FL_ALIGN_TOP_LEFT);
                     e1->color(entry_bg);
+                    e1->clear_visible_focus();
             
                     //TODO
-                    e1->callback([](Fl_Widget* w, void* a) {
+                    // Clicking somewhere withour an entry seems to select -1!
+                    e1->callback([](Fl_Widget* w, void* ud) {
                         cout << "Chosen: " << static_cast<Fl_Select_Browser*>(w)->value() - 1 << endl;
                     });
             

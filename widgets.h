@@ -6,6 +6,7 @@
 
 void choice_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
 void input_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
+void list_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
 void rowtable_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
 void editform_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
 

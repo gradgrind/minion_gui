@@ -1,10 +1,7 @@
 #ifndef EDITFORM_H
 #define EDITFORM_H
 
-#include <FL/Fl_Box.H>
 #include <FL/Fl_Grid.H>
-#include <FL/Fl_Output.H>
-#include <FL/Fl_Select_Browser.H>
 #include <map>
 #include <string>
 #include <vector>

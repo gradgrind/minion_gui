@@ -5,6 +5,7 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Output.H>
+#include <FL/Fl_Select_Browser.H>
 using namespace std;
 using mmap = minion::MinionMap;
 using mlist = minion::MinionList;
@@ -34,6 +35,22 @@ void input_method(
         static_cast<Fl_Input *>(w)->value(get<string>(m.at(1)).c_str());
     } else if (c == "LABEL") {
         left_label(w, m);
+    } else {
+        widget_method(w, c, m);
+    }
+}
+
+void list_method(
+    Fl_Widget *w, string_view c, mlist m)
+{
+    if (c == "SET") {
+        auto e1 = static_cast<Fl_Select_Browser*>(w);
+        e1->clear();
+        for (int i = 1; i < m.size(); ++i) {
+            //TODO? add can have a second argument (void *), which can
+            // refer to data ...
+            e1->add(get<string>(m.at(i)).c_str());
+        }
     } else {
         widget_method(w, c, m);
     }
