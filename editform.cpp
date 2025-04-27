@@ -122,29 +122,13 @@ Fl_Widget* NEW_EditForm(
                     e1->clear_visible_focus();
 
                 } else if (c == "LIST") {
-                    auto e0 = new Fl_Select_Browser(0, 0, 0, 0);
-                    Fl_Group::current(0); // disable "auto-grouping"
-                    e1 = e0;
+                    e1 = NEW_List({});
                     h = list_method;
                     efw->add(e1);
                     e1->copy_label(label.c_str());
                     e1->align(FL_ALIGN_TOP_LEFT);
                     e1->color(WidgetData::entry_bg);
                     e1->clear_visible_focus();
-            
-                    //TODO
-                    // Clicking somewhere withour an entry seems to select -1!
-                    e1->callback([](Fl_Widget* w, void* ud) {
-                        cout << "Chosen: " << static_cast<Fl_Select_Browser*>(w)->value() - 1 << endl;
-                    });
-            
-                    //TODO--
-                    e0->add("First item");
-                    e0->add("Second item");
-                    e0->add("Third item");
-            
-                    //e1->vertical_label_margin(5);
-
                     efw->widget(e1, n_entry, 0, 1, 2);
                     auto padabove = efw->list_title_space;           
                     if (padabove != 0) {

@@ -1,4 +1,5 @@
 #include "rowtable.h"
+#include "callback.h"
 #include "widgetdata.h"
 #include "widget_methods.h"
 #include "widgets.h"
@@ -249,9 +250,27 @@ void RowTable::size_columns()
     }
 }
 
+// This is the callback mechanism for row-selection change
 void RowTable::_row_cb(
     void *table)
 {
-    //TODO
-    cout << "§§§ " << static_cast<RowTable *>(table)->_current_row << endl;
+    auto ww = static_cast<RowTable *>(table);
+    string dw{WidgetData::get_widget_name(ww)};
+    int i = ww->_current_row;
+    //auto res = Callback1(dw, to_string(i));
+    //cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+
+    //TODO: Do I want the row data?
+    auto rowheader = ww->row_headers.at(i);
+    auto row = ww->data.at(i);
+    MinionList ml{};
+    ml.emplace_back(rowheader);
+    for (const auto & s : row) {
+        ml.emplace_back(s);
+    }
+    auto res = Callback2(
+        dw, 
+        to_string(i),
+        ml);
+    cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
 }

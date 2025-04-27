@@ -7,13 +7,12 @@
 #include <fmt/format.h>
 #include <iostream>
 using namespace std;
-using mlist = minion::MinionList;
-using mmap = minion::MinionMap;
+using namespace minion;
 
 // *** "Group" widgets ***
 
 void group_method(
-    Fl_Widget *w, string_view c, mlist m)
+    Fl_Widget *w, string_view c, MinionList m)
 {
     if (c == "RESIZABLE") {
         auto rsw = WidgetData::get_widget(get<string>(m.at(1)));
@@ -32,7 +31,7 @@ void group_method(
 }
 
 void flex_method(
-    Fl_Widget *w, string_view c, mlist m)
+    Fl_Widget *w, string_view c, MinionList m)
 {
     if (c == "MARGIN") {
         int sz = int_param(m, 1);
@@ -46,7 +45,7 @@ void flex_method(
 }
 
 void grid_method(
-    Fl_Widget *w, string_view c, mlist m)
+    Fl_Widget *w, string_view c, MinionList m)
 {
     if (c == "GAP") {
         int szr = int_param(m, 1);
@@ -75,7 +74,7 @@ void callback_no_esc_closes(
 }
 
 Fl_Widget *NEW_Window(
-    mmap param)
+    MinionMap param)
 {
     int w = 800;
     int h = 600;
@@ -91,7 +90,7 @@ Fl_Widget *NEW_Window(
 }
 
 Fl_Widget *NEW_Vlayout(
-    mmap param)
+    MinionMap param)
 {
     auto widg = new Fl_Flex(Fl_Flex::COLUMN);
     Fl_Group::current(0); // disable "auto-grouping"
@@ -99,7 +98,7 @@ Fl_Widget *NEW_Vlayout(
 }
 
 Fl_Widget *NEW_Hlayout(
-    mmap param)
+    MinionMap param)
 {
     auto widg = new Fl_Flex(Fl_Flex::ROW);
     Fl_Group::current(0); // disable "auto-grouping"
@@ -107,7 +106,7 @@ Fl_Widget *NEW_Hlayout(
 }
 
 Fl_Widget *NEW_Grid(
-    mmap param)
+    MinionMap param)
 {
     auto widg = new Fl_Grid(0, 0, 0, 0);
     Fl_Group::current(0); // disable "auto-grouping"

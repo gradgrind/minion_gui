@@ -713,20 +713,4 @@ void testminion()
     } else {
         cerr << "Error opening file: " << fp << endl;
     }
-
-    /*
-    // Now look for leakages ...
-    string xdata;
-    string fpx{"_data/test2.minion"};
-    minion::MinionMap mmap;
-    minion::MinionValue mval;
-    if (readfile(xdata, fpx)) {
-        for (int i = 0; i < 40000; ++i) {
-            mmap = minion::read_minion(xdata);
-            mval = mmap.get("EXTRA_FIELD_WIDTHS");
-        }
-    } else {
-        cerr << "Error opening file: " << fpx << endl;
-    }
-    */
 }

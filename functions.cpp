@@ -1,11 +1,11 @@
 #include "functions.h"
 #include <FL/Fl.H>
 #include <iostream>
-using mmap = minion::MinionMap;
+using namespace minion;
 
 //TODO: This is just temporary – I still need to receive input somehow!
 void f_RUN(
-    mmap m)
+    MinionMap m)
 {
     auto cc = Fl::run();
     std::cout << "Main Loop ended: " << cc << std::endl;

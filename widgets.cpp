@@ -10,11 +10,10 @@
 #include <FL/Fl_Select_Browser.H>
 #include <iostream>
 using namespace std;
-using mmap = minion::MinionMap;
-using mlist = minion::MinionList;
+using namespace minion;
 
 void choice_method(
-    Fl_Widget *w, string_view c, mlist m)
+    Fl_Widget *w, string_view c, MinionList m)
 {
     if (c == "ADD") {
         for (int i = 1; i < m.size(); ++i) {
@@ -30,7 +29,7 @@ void choice_method(
 }
 
 void input_method(
-    Fl_Widget *w, string_view c, mlist m)
+    Fl_Widget *w, string_view c, MinionList m)
 {
     if (c == "VALUE") {
         //TODO: Do I need to store the string somewhere, or is that
@@ -44,7 +43,7 @@ void input_method(
 }
 
 void list_method(
-    Fl_Widget *w, string_view c, mlist m)
+    Fl_Widget *w, string_view c, MinionList m)
 {
     if (c == "SET") {
         auto e1 = static_cast<Fl_Select_Browser*>(w);
@@ -62,13 +61,13 @@ void list_method(
 // *** Non-layout widgets ***
 
 Fl_Widget *NEW_Box(
-    mmap param)
+    MinionMap param)
 {
     return new Fl_Box(0, 0, 0, 0);
 }
 
 Fl_Widget *NEW_Choice(
-    mmap param)
+    MinionMap param)
 {
     auto w = new Fl_Choice(0, 0, 0, WidgetData::line_height);
     w->callback(
@@ -83,7 +82,7 @@ Fl_Widget *NEW_Choice(
 }
 
 Fl_Widget *NEW_Output(
-    mmap param)
+    MinionMap param)
 {
     auto w = new Fl_Output(0, 0, 0, WidgetData::line_height);
     w->color(WidgetData::entry_bg);
@@ -91,7 +90,7 @@ Fl_Widget *NEW_Output(
 }
 
 Fl_Widget *NEW_Checkbox(
-    mmap param)
+    MinionMap param)
 {
     auto w = new Fl_Round_Button(0, 0, 0, WidgetData::line_height);
     w->callback(
@@ -108,7 +107,7 @@ Fl_Widget *NEW_Checkbox(
 }
 
 Fl_Widget *NEW_List(
-    mmap param)
+    MinionMap param)
 {
     auto w = new Fl_Select_Browser(0, 0, 0, 0);
     Fl_Group::current(0); // disable "auto-grouping"
@@ -117,9 +116,17 @@ Fl_Widget *NEW_List(
         [](Fl_Widget* w, void* ud) {
             string dw{WidgetData::get_widget_name(w)};
             // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
-            auto ww = static_cast<Fl_Choice*>(w);
-            auto res = Callback2(dw, to_string(ww->value()), ww->text());
-            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+            auto ww = static_cast<Fl_Select_Browser*>(w);
+            auto i = ww->value();
+            // Callback only for actual items (1-based indexing)
+            if (i > 0) {
+                string itemtext{ww->text(i)};
+                auto res = Callback2(
+                    dw, 
+                    to_string(i - 1), 
+                    itemtext);
+                cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+            }
         });
     return w;
 }
