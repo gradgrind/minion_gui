@@ -1,7 +1,7 @@
 #include "editform.h"
 #include "backend.h"
-#include "layout.h"
-#include "minion.h"
+#include "textline.h"
+#include "widgetdata.h"
 #include "widget_methods.h"
 #include "widgets.h"
 #include <FL/Fl_Box.H>
@@ -14,7 +14,6 @@
 #include <vector>
 #include <FL/fl_draw.H>
 #include <iostream>
-#include <ostream>
 using namespace std;
 using namespace minion;
 

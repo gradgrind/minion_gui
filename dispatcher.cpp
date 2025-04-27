@@ -1,6 +1,7 @@
 #include "functions.h"
 #include "layout.h"
 #include "minion.h"
+#include "widgetdata.h"
 #include "widgets.h"
 #include <FL/Fl_Group.H>
 #include <fmt/format.h>
@@ -129,14 +130,6 @@ void tmp_run(
 // For the moment I would like to implement just normal callbacks, i.e.
 // asynchronous calls. Where event handlers are necessary, I would first
 // consider extending the C++ widgets.
-
-//TODO: ???
-void do_callback(
-    Fl_Widget* w, void* x)
-{
-    auto wd{static_cast<WidgetData*>(w->user_data())};
-    cout << "Callback: " << wd->widget_name() << endl;
-}
 
 //TODO
 mmap message(

@@ -1,5 +1,5 @@
 #include "rowtable.h"
-#include "layout.h"
+#include "widgetdata.h"
 #include "widget_methods.h"
 #include "widgets.h"
 #include <FL/fl_draw.H>

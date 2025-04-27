@@ -1,8 +1,65 @@
-#include "layout.h"
+//#include "layout.h"
+#include "widgetdata.h"
+#include "widget_methods.h"
+#include <FL/Fl_Flex.H>
 #include <fmt/format.h>
 #include <iostream>
+
 using namespace std;
 using mlist = minion::MinionList;
+
+
+//TODO: ???
+void do_callback(
+    Fl_Widget* w, void* x)
+{
+    auto wd{static_cast<WidgetData*>(w->user_data())};
+    cout << "Callback: " << wd->widget_name() << endl;
+}
+
+void widget_method(
+    Fl_Widget *w, string_view c, mlist m)
+{
+    int ww, wh;
+    if (c == "SIZE") {
+        ww = int_param(m, 1); // width
+        wh = int_param(m, 2); // height
+        w->size(ww, wh);
+    } else if (c == "COLOUR") {
+        auto clr = get_colour(get<string>(m.at(1)));
+        w->color(clr);
+    } else if (c == "BOXTYPE") {
+        auto bxt = get_boxtype(get<string>(m.at(1)));
+        w->box(bxt);
+    } else if (c == "LABEL") {
+        auto lbl = get<string>(m.at(1));
+        w->copy_label(lbl.c_str());
+    } else if (c == "CALLBACK") {
+        auto cb = get<string>(m.at(1));
+        w->callback(do_callback);
+    } else if (c == "SHOW") {
+        w->show();
+    } else if (c == "FIXED") {
+        auto parent = dynamic_cast<Fl_Flex *>(w->parent());
+        if (parent) {
+            int sz = int_param(m, 1);
+            parent->fixed(w, sz);
+        } else {
+            throw fmt::format("Widget ({}) method FIXED: parent not VLayout/Hlayout",
+                              WidgetData::get_widget_name(w));
+        }
+    } else if (c == "clear_visible_focus") {
+        w->clear_visible_focus();
+    } else if (c == "measure_label") {
+        int wl, hl;
+        w->measure_label(wl, hl);
+        //TODO ...
+        cout << "Measure " << WidgetData::get_widget_name(w) << " label: " << wl << ", " << hl
+             << endl;
+    } else {
+        throw fmt::format("Unknown widget method: {}", c);
+    }
+}
 
 //static member variable
 std::unordered_map<std::string_view, Fl_Widget *> WidgetData::widget_map;
