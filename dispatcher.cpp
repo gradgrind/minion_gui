@@ -1,6 +1,7 @@
 #include "dispatcher.h"
 #include "functions.h"
 #include "layout.h"
+#include "textline.h"
 #include "widgetdata.h"
 #include "widgets.h"
 #include <FL/Fl_Group.H>
@@ -55,6 +56,12 @@ void Handle_NEW(
             h = choice_method;
         } else if (wtype == "Output") {
             w = NEW_Output(m);
+            h = input_method;
+        } else if (wtype == "Checkbox") {
+            w = NEW_Checkbox(m);
+            h = widget_method; //TODO: button_method?
+        } else if (wtype == "TextLine") {
+            w = NEW_TextLine(m);
             h = input_method;
         } else if (wtype == "RowTable") {
             w = NEW_RowTable(m);

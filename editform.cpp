@@ -76,7 +76,7 @@ Fl_Widget* NEW_EditForm(
 
                 } else if (c == "TEXT") {
                     measure_label = true;
-                    e1 = new TextLine(efw->entry_height);
+                    e1 = new TextLine();
                     h = input_method;
                     efw->add(e1);
                     efw->widget(e1, n_entry, 1);
@@ -87,7 +87,7 @@ Fl_Widget* NEW_EditForm(
                     
                 } else if (c == "EDITOR") {
                     measure_label = true;
-                    e1 = new Fl_Output(0, 0, 0, efw->entry_height);
+                    e1 = new Fl_Output(0, 0, 0, WidgetData::line_height);
                     h = input_method;
                     efw->add(e1);
                     efw->widget(e1, n_entry, 1);
@@ -107,7 +107,6 @@ Fl_Widget* NEW_EditForm(
                 } else if (c == "CHOICE") {
                     measure_label = true;
                     e1 = NEW_Choice({});
-                    e1->size(0, efw->entry_height);
                     h = choice_method;
                     efw->add(e1);
                     efw->widget(e1, n_entry, 1);
@@ -118,8 +117,8 @@ Fl_Widget* NEW_EditForm(
                     e1->clear_visible_focus();
 
                 } else if (c == "CHECKBOX") {
-                    e1 = new Fl_Round_Button(0, 0, 0, efw->entry_height);
-                    h = widget_method; //???
+                    e1 = NEW_Checkbox({});
+                    h = widget_method; //TODO: button_method?
                     efw->add(e1);
                     efw->widget(e1, n_entry, 0, 1, 2);
                     efw->row_weight(n_entry, 0);

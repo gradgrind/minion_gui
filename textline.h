@@ -17,7 +17,7 @@ public:
     Fl_Color bg_normal;
     Fl_Color bg_pending;
     
-    TextLine(int height = 30);
+    TextLine();
 
     bool set(std::string_view newtext);
 };

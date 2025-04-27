@@ -13,6 +13,7 @@ void editform_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
 Fl_Widget *NEW_Box(minion::MinionMap param);
 Fl_Widget *NEW_Choice(minion::MinionMap param);
 Fl_Widget *NEW_Output(minion::MinionMap param);
+Fl_Widget *NEW_Checkbox(minion::MinionMap param);
 Fl_Widget *NEW_RowTable(minion::MinionMap param);
 Fl_Widget *NEW_EditForm(minion::MinionMap param);
 

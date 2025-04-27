@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-TextLine::TextLine(int height) : Fl_Input(0, 0, 0, height)
+TextLine::TextLine() : Fl_Input(0, 0, 0, WidgetData::line_height)
 {
     bg_normal = ENTRY_BG;
     bg_pending = PENDING_BG;
@@ -77,6 +77,5 @@ Fl_Widget *NEW_TextLine(
     minion::MinionMap param)
 {
     int h = 0;
-    param.get_int("HEIGHT", h);
-    return new TextLine(h);
+    return new TextLine();
 }

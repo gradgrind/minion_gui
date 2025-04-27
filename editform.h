@@ -9,7 +9,6 @@
 class EditForm : public Fl_Grid
 {
 public:
-    int entry_height{30}; // TODO: Do I need this?
     int list_title_space{30};
 
     EditForm();

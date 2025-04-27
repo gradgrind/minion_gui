@@ -6,8 +6,7 @@
 #include <iostream>
 
 using namespace std;
-using mlist = minion::MinionList;
-
+using  namespace minion;
 
 //TODO: ???
 void do_callback(
@@ -18,7 +17,7 @@ void do_callback(
 }
 
 void widget_method(
-    Fl_Widget *w, string_view c, mlist m)
+    Fl_Widget *w, string_view c, MinionList m)
 {
     int ww, wh;
     if (c == "SIZE") {
@@ -65,9 +64,9 @@ void widget_method(
 std::unordered_map<std::string_view, Fl_Widget *> WidgetData::widget_map;
 
 // static
-mlist WidgetData::list_widgets()
+MinionList WidgetData::list_widgets()
 {
-    mlist keys;
+    MinionList keys;
     for (const auto &kv : widget_map) {
         keys.emplace_back(string{kv.first});
     }

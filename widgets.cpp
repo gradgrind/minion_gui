@@ -6,6 +6,7 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Output.H>
+#include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Select_Browser.H>
 #include <iostream>
 using namespace std;
@@ -66,11 +67,10 @@ Fl_Widget *NEW_Box(
     return new Fl_Box(0, 0, 0, 0);
 }
 
-//TODO: default height?
 Fl_Widget *NEW_Choice(
     mmap param)
 {
-    auto w = new Fl_Choice(0, 0, 0, 0);
+    auto w = new Fl_Choice(0, 0, 0, WidgetData::line_height);
     w->callback(
         [](Fl_Widget* w, void* ud) {
             string dw{WidgetData::get_widget_name(w)};
@@ -85,5 +85,22 @@ Fl_Widget *NEW_Choice(
 Fl_Widget *NEW_Output(
     mmap param)
 {
-    return new Fl_Output(0, 0, 0, 0);
+    return new Fl_Output(0, 0, 0, WidgetData::line_height);
+}
+
+Fl_Widget *NEW_Checkbox(
+    mmap param)
+{
+    auto w = new Fl_Round_Button(0, 0, 0, WidgetData::line_height);
+    w->callback(
+        [](Fl_Widget* w, void* ud) {
+            string dw{WidgetData::get_widget_name(w)};
+            // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
+            auto ww = static_cast<Fl_Round_Button*>(w);
+            string val{};
+            if (ww->value() != 0) val = "1";
+            auto res = Callback1(dw, val);
+            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+        });
+    return w;
 }

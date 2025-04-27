@@ -37,6 +37,8 @@ public:
     static minion::MinionList list_widgets();
     static std::string_view get_widget_name(Fl_Widget *w);
 
+    inline static int line_height{30};
+
     method_handler handle_method;
 
     void remove_widget(std::string_view name);
