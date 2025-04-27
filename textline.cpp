@@ -1,4 +1,5 @@
 #include "textline.h"
+#include "callback.h"
 #include "widgetdata.h"
 #include <iostream>
 using namespace std;
@@ -15,15 +16,11 @@ TextLine::TextLine(int height) : Fl_Input(0, 0, 0, height)
             ww->insert_position( ww->insert_position());
             string v = ww->value();
             if (ww->set(v)) { 
-                auto dw = WidgetData::get_widget_name(w);
-                // or: auto dw = static_cast<WidgetData*>(ud)->get_widget_name(w);
+                string dw{WidgetData::get_widget_name(w)};
+                // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
                 
-                //TODO ... callback
+                Callback1(dw, v);
 
-                cout << "Activated: " << dw << ": " << ww->value() << endl; 
-                //auto res = backend(string{"EditForm: "} + string{dw});
-                //cout << "CALLBACK RETURNED: " << res << endl;
-                
                 // This would remove keyboard focus from the widget
                 //Fl::focus(w->parent());
             }

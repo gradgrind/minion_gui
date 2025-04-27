@@ -1,6 +1,7 @@
 #include "connector.h"
 #include "backend.h"
-#include "layout.h" //TODO: less ...
+#include "dispatcher.h"
+#include "minion.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
@@ -9,17 +10,38 @@
 #include <fmt/format.h>
 #include <iostream>
 using namespace std;
+using namespace minion;
 
-// *** The code for connecting to Go ***
+MinionMap Callback(MinionMap m)
+{
+    cout << "Callback: " << dump_map_items(m, -1) << endl;
+    
+    return MinionMap{};
+}
 
-// _cgo_export.h is auto-generated and has Go //export funcs
-#include "_cgo_export.h"
+MinionMap Callback1(string widget, MinionValue data)
+{
+    MinionMap m({{"CALLBACK", widget}, {"DATA", data}});
+    cout << "Callback: " << dump_map_items(m, -1) << endl;
+    
+    return MinionMap{};
+}
 
-std::string backend(const std::string data) {
-  std::cout << "C callback got '" << data << "'" << std::endl;
-  
-  char *result = goCallback(data.c_str());
-  return std::string{result};
+
+
+//TODO ...
+void tmp_run(
+    MinionMap data)
+{
+    auto dolist0 = data.get("GUI");
+    if (holds_alternative<MinionList>(dolist0)) {
+        auto dolist = get<MinionList>(dolist0);
+        for (const auto& cmd : dolist) {
+            GUI(get<MinionMap>(cmd));
+        }
+    } else {
+        cerr << "Input data not a GUI command list" << endl;
+    }
 }
 
 void init(char* data0) {

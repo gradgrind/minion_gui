@@ -1,23 +1,21 @@
+#include "dispatcher.h"
 #include "functions.h"
 #include "layout.h"
-#include "minion.h"
 #include "widgetdata.h"
 #include "widgets.h"
 #include <FL/Fl_Group.H>
 #include <fmt/format.h>
-#include <iostream>
-using mmap = minion::MinionMap;
-using mlist = minion::MinionList;
 using namespace std;
+using namespace minion;
 
 void Handle_methods(
-    Fl_Widget* w, mmap m, method_handler h)
+    Fl_Widget* w, MinionMap m, method_handler h)
 {
     auto dolist = m.get("DO");
-    if (holds_alternative<mlist>(dolist)) {
-        mlist do_list = get<mlist>(dolist);
+    if (holds_alternative<MinionList>(dolist)) {
+        MinionList do_list = get<MinionList>(dolist);
         for (const auto& cmd : do_list) {
-            mlist m = get<mlist>(cmd);
+            MinionList m = get<MinionList>(cmd);
             string_view c = get<string>(m.at(0));
             h(w, c, m);
         }
@@ -29,7 +27,7 @@ void Handle_methods(
 }
 
 void Handle_NEW(
-    string_view wtype, mmap m)
+    string_view wtype, MinionMap m)
 {
     //cout << "Handle_NEW " << wtype << ":" << minion::dump_map_items(m, 1) << endl;
     string name;
@@ -81,7 +79,7 @@ void Handle_NEW(
 }
 
 void GUI(
-    mmap obj)
+    MinionMap obj)
 {
     string w;
     if (obj.get_string("NEW", w)) {
@@ -96,21 +94,6 @@ void GUI(
         f(obj);
     } else {
         throw fmt::format("Invalid GUI parameters: {}", dump_map_items(obj, -1));
-    }
-}
-
-//TODO ...
-void tmp_run(
-    mmap data)
-{
-    auto dolist0 = data.get("GUI");
-    if (holds_alternative<mlist>(dolist0)) {
-        auto dolist = get<mlist>(dolist0);
-        for (const auto& cmd : dolist) {
-            GUI(get<mmap>(cmd));
-        }
-    } else {
-        cerr << "Input data not a GUI command list" << endl;
     }
 }
 
@@ -132,21 +115,21 @@ void tmp_run(
 // consider extending the C++ widgets.
 
 //TODO
-mmap message(
-    mmap data)
+MinionMap message(
+    MinionMap data)
 {
     return data;
 }
 
 void to_back_end(
-    mmap data)
+    MinionMap data)
 {
-    mmap result = message(data);
+    MinionMap result = message(data);
     auto dolist0 = data.get("DO");
-    if (holds_alternative<mlist>(dolist0)) {
-        auto dolist = get<mlist>(dolist0);
+    if (holds_alternative<MinionList>(dolist0)) {
+        auto dolist = get<MinionList>(dolist0);
         for (const auto& cmd : dolist) {
-            GUI(get<mmap>(cmd));
+            GUI(get<MinionMap>(cmd));
         }
     }
     // Any back-end function which can take more than about 100ms should

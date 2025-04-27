@@ -1,5 +1,5 @@
 #include "editform.h"
-#include "backend.h"
+#include "callback.h"
 #include "textline.h"
 #include "widgetdata.h"
 #include "widget_methods.h"
@@ -96,17 +96,14 @@ Fl_Widget* NEW_EditForm(
                     e1->align(FL_ALIGN_LEFT);
                     e1->color(entry_bg);
                     e1->clear_visible_focus();
-
-                    //TODO
                     e1->callback(
                         [](Fl_Widget* w, void* ud) {
-                            auto dw = WidgetData::get_widget_name(w);
-                            // or: auto dw = static_cast<WidgetData*>(ud)->get_widget_name(w);
-                            cout << "Activated: " << dw << endl;
-                            auto res = backend(string{"EditForm: "} + string{dw});
-                            cout << "CALLBACK RETURNED: " << res << endl;
+                            string dw{WidgetData::get_widget_name(w)};
+                            // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
+                            auto res = Callback1(dw, static_cast<Fl_Output*>(w)->value());
+                            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
                         });
-
+        
                 } else if (c == "CHOICE") {
                     measure_label = true;
                     e1 = new Fl_Choice(0, 0, 0, efw->entry_height);

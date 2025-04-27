@@ -85,7 +85,7 @@ void dump_string(
 // indentation.
 const int indent_depth = 2;
 void dump(
-    string &valstr, MinionValue item, int level)
+    string &valstr, const MinionValue &item, int level)
 {
     if (holds_alternative<string>(item)) {
         auto s{get<string>(item)};
@@ -120,7 +120,7 @@ void dump(
 }
 
 string dump_list_items(
-    const MinionList m, int level)
+    const MinionList &m, int level)
 {
     string padding;
     if (level >= 0) {
@@ -135,7 +135,7 @@ string dump_list_items(
 }
 
 string dump_map_items(
-    const MinionMap m, int level)
+    const MinionMap &m, int level)
 {
     string padding;
     string keysep{':'};
@@ -153,6 +153,13 @@ string dump_map_items(
     return valstr;
 }
 
+MinionMap::MinionMap() : std::vector<MinionMapPair>{}
+{}
+
+MinionMap::MinionMap(const std::vector<MinionMapPair> mmplist)
+  : std::vector<MinionMapPair>{mmplist}
+{}
+
 // This is, of course, rather inefficient for maps which are not very short.
 // Making a map out of this would make the MinionValues a bit larger and lose
 // the ordering, unless a more complicated map structure is used.
@@ -163,6 +170,11 @@ MinionValue MinionMap::get(
         if (mmp.key == key) return mmp.value;
     }
     return MinionValue{};
+}
+
+void MinionMap::add(const MinionMapPair &mmp)
+{
+    emplace_back(mmp);
 }
 
 /*

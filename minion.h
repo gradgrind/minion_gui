@@ -36,9 +36,9 @@ class MinionList;
 using MinionValue = std::variant<
     std::monostate, std::string, MinionMap, MinionList>;
 
-void dump(std::string &valstr, MinionValue item, int level = -1);
-std::string dump_list_items(const MinionList m, int level);
-std::string dump_map_items(const MinionMap m, int level);
+void dump(std::string &valstr, const MinionValue &item, int level = -1);
+std::string dump_list_items(const MinionList &m, int level);
+std::string dump_map_items(const MinionMap &m, int level);
 
 // The map class should preserve input order, so it is implemented as a vector.
 // For very small maps this might be completely adequate, but if multiple
@@ -48,6 +48,10 @@ struct MinionMapPair;
 class MinionMap : public std::vector<MinionMapPair>
 {
 public:
+    MinionMap();
+    MinionMap(const std::vector<MinionMapPair> mmplist);
+    
+    void add(const MinionMapPair &mmp);
     MinionValue get(std::string_view key);
     bool get_int(std::string_view key, int &value);
     bool get_string(std::string_view key, std::string &value);
