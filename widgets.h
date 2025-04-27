@@ -14,6 +14,7 @@ Fl_Widget *NEW_Box(minion::MinionMap param);
 Fl_Widget *NEW_Choice(minion::MinionMap param);
 Fl_Widget *NEW_Output(minion::MinionMap param);
 Fl_Widget *NEW_Checkbox(minion::MinionMap param);
+Fl_Widget *NEW_List(minion::MinionMap param);
 Fl_Widget *NEW_RowTable(minion::MinionMap param);
 Fl_Widget *NEW_EditForm(minion::MinionMap param);
 

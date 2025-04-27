@@ -7,6 +7,10 @@
 #include <string>
 #include <unordered_map>
 
+// These are default values. The values used by the widgets are taken from
+// static variables in WidgetData, which can be changed before creating
+// widgets to make global changes.
+const int LINE_HEIGHT = 30;
 const Fl_Color ENTRY_BG = 0xffffc800;
 const Fl_Color PENDING_BG = 0xffe0e000;
 
@@ -37,7 +41,9 @@ public:
     static minion::MinionList list_widgets();
     static std::string_view get_widget_name(Fl_Widget *w);
 
-    inline static int line_height{30};
+    inline static int line_height{LINE_HEIGHT};
+    inline static Fl_Color entry_bg{ENTRY_BG};
+    inline static Fl_Color pending_bg{PENDING_BG};
 
     method_handler handle_method;
 

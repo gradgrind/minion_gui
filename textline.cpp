@@ -1,13 +1,10 @@
 #include "textline.h"
 #include "callback.h"
 #include "widgetdata.h"
-#include <iostream>
 using namespace std;
 
 TextLine::TextLine() : Fl_Input(0, 0, 0, WidgetData::line_height)
 {
-    bg_normal = ENTRY_BG;
-    bg_pending = PENDING_BG;
     when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     callback(
         [](Fl_Widget* w, void* ud) {
@@ -34,30 +31,18 @@ int TextLine::handle(int event)
         if (modified) {
             modified = false;
             // Reset colour
-            color(bg_normal);
+            color(WidgetData::entry_bg);
             redraw();
         }
     } else {
         if (!modified) {
             modified = true;
             // Set modified/pending colour
-            color(bg_pending);
+            color(WidgetData::pending_bg);
             redraw();
         }
     }
     return result;
-    //TODO ... ???
-    // if focus in: change colour, if focus out: revert colour
-    if (event == FL_FOCUS) {
-        cout << "FOCUS" << endl;
-        color(bg_pending);
-        redraw();
-    } else if (event == FL_UNFOCUS) {
-        cout << "UNFOCUS" << endl;
-        color(bg_normal);
-        redraw();
-    }
-    return Fl_Input::handle(event);
 }
 
 bool TextLine::set(std::string_view newtext)

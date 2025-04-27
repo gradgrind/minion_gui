@@ -85,7 +85,9 @@ Fl_Widget *NEW_Choice(
 Fl_Widget *NEW_Output(
     mmap param)
 {
-    return new Fl_Output(0, 0, 0, WidgetData::line_height);
+    auto w = new Fl_Output(0, 0, 0, WidgetData::line_height);
+    w->color(WidgetData::entry_bg);
+    return w;
 }
 
 Fl_Widget *NEW_Checkbox(
@@ -100,6 +102,23 @@ Fl_Widget *NEW_Checkbox(
             string val{};
             if (ww->value() != 0) val = "1";
             auto res = Callback1(dw, val);
+            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+        });
+    return w;
+}
+
+Fl_Widget *NEW_List(
+    mmap param)
+{
+    auto w = new Fl_Select_Browser(0, 0, 0, 0);
+    Fl_Group::current(0); // disable "auto-grouping"
+    w->color(WidgetData::entry_bg);
+    w->callback(
+        [](Fl_Widget* w, void* ud) {
+            string dw{WidgetData::get_widget_name(w)};
+            // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
+            auto ww = static_cast<Fl_Choice*>(w);
+            auto res = Callback2(dw, to_string(ww->value()), ww->text());
             cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
         });
     return w;

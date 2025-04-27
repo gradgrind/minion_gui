@@ -2,7 +2,6 @@
 #include "callback.h"
 #include "textline.h"
 #include "widgetdata.h"
-#include "widget_methods.h"
 #include "widgets.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
@@ -46,10 +45,6 @@ Fl_Widget* NEW_EditForm(
         int n_entries = do_list.size();
         if (n_entries != 0) {
             auto efw = new EditForm();
-            auto entry_bg{ENTRY_BG};
-            string clr{};
-            if (param.get_string("ENTRY_BG", clr))
-                entry_bg = get_colour(clr);
             efw->layout(n_entries, 2);
             efw->col_weight(0, 0);
         
@@ -83,7 +78,7 @@ Fl_Widget* NEW_EditForm(
                     efw->row_weight(n_entry, 0);
                     e1->copy_label(label.c_str());
                     e1->align(FL_ALIGN_LEFT);
-                    e1->color(entry_bg);
+                    e1->color(WidgetData::entry_bg);
                     
                 } else if (c == "EDITOR") {
                     measure_label = true;
@@ -94,7 +89,7 @@ Fl_Widget* NEW_EditForm(
                     efw->row_weight(n_entry, 0);
                     e1->copy_label(label.c_str());
                     e1->align(FL_ALIGN_LEFT);
-                    e1->color(entry_bg);
+                    e1->color(WidgetData::entry_bg);
                     e1->clear_visible_focus();
                     e1->callback(
                         [](Fl_Widget* w, void* ud) {
@@ -113,7 +108,7 @@ Fl_Widget* NEW_EditForm(
                     efw->row_weight(n_entry, 0);
                     e1->copy_label(label.c_str());
                     e1->align(FL_ALIGN_LEFT);
-                    e1->color(entry_bg);
+                    e1->color(WidgetData::entry_bg);
                     e1->clear_visible_focus();
 
                 } else if (c == "CHECKBOX") {
@@ -123,7 +118,7 @@ Fl_Widget* NEW_EditForm(
                     efw->widget(e1, n_entry, 0, 1, 2);
                     efw->row_weight(n_entry, 0);
                     e1->copy_label(label.c_str());
-                    e1->color(entry_bg);
+                    e1->color(WidgetData::entry_bg);
                     e1->clear_visible_focus();
 
                 } else if (c == "LIST") {
@@ -134,7 +129,7 @@ Fl_Widget* NEW_EditForm(
                     efw->add(e1);
                     e1->copy_label(label.c_str());
                     e1->align(FL_ALIGN_TOP_LEFT);
-                    e1->color(entry_bg);
+                    e1->color(WidgetData::entry_bg);
                     e1->clear_visible_focus();
             
                     //TODO

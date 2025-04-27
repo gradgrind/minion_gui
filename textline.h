@@ -14,9 +14,6 @@ class TextLine : public Fl_Input
     int handle(int event) override;
 
 public:
-    Fl_Color bg_normal;
-    Fl_Color bg_pending;
-    
     TextLine();
 
     bool set(std::string_view newtext);
