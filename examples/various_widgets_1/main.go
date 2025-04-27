@@ -12,7 +12,7 @@ func main() {
 
 func callback(data string) string {
 	fmt.Printf("Go callback got '%s'\n", data)
-	return "Go callback result"
+	return "GoCallbackResult: Value"
 }
 
 var guidata string = `# Various widgets
@@ -169,6 +169,12 @@ GUI: [
     WIDGET: EF1
     DO: [
       [VALUE "Changed First"]
+    ]
+  }
+  {
+    WIDGET: EF3
+    DO: [
+      [ADD Item1 Item2]
     ]
   }
   {

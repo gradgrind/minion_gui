@@ -1,11 +1,13 @@
-#include "widgetdata.h"
 #include "widgets.h"
+#include "callback.h"
+#include "widgetdata.h"
 #include "widget_methods.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Select_Browser.H>
+#include <iostream>
 using namespace std;
 using mmap = minion::MinionMap;
 using mlist = minion::MinionList;
@@ -64,10 +66,20 @@ Fl_Widget *NEW_Box(
     return new Fl_Box(0, 0, 0, 0);
 }
 
+//TODO: default height?
 Fl_Widget *NEW_Choice(
     mmap param)
 {
-    return new Fl_Choice(0, 0, 0, 0);
+    auto w = new Fl_Choice(0, 0, 0, 0);
+    w->callback(
+        [](Fl_Widget* w, void* ud) {
+            string dw{WidgetData::get_widget_name(w)};
+            // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
+            auto ww = static_cast<Fl_Choice*>(w);
+            auto res = Callback2(dw, to_string(ww->value()), ww->text());
+            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+        });
+    return w;
 }
 
 Fl_Widget *NEW_Output(

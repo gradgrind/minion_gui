@@ -106,8 +106,9 @@ Fl_Widget* NEW_EditForm(
         
                 } else if (c == "CHOICE") {
                     measure_label = true;
-                    e1 = new Fl_Choice(0, 0, 0, efw->entry_height);
-                    h = input_method;
+                    e1 = NEW_Choice({});
+                    e1->size(0, efw->entry_height);
+                    h = choice_method;
                     efw->add(e1);
                     efw->widget(e1, n_entry, 1);
                     efw->row_weight(n_entry, 0);

@@ -1,7 +1,7 @@
 #include "connector.h"
 #include "backend.h"
+#include "callback.h"
 #include "dispatcher.h"
-#include "minion.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
@@ -14,20 +14,26 @@ using namespace minion;
 
 MinionMap Callback(MinionMap m)
 {
-    cout << "Callback: " << dump_map_items(m, -1) << endl;
-    
-    return MinionMap{};
+    string cbdata{dump_map_items(m, -1)};
+    cout << "Callback: " << cbdata << endl;
+    return Minion{backend(cbdata)}.top_level;
 }
 
 MinionMap Callback1(string widget, MinionValue data)
 {
     MinionMap m({{"CALLBACK", widget}, {"DATA", data}});
-    cout << "Callback: " << dump_map_items(m, -1) << endl;
-    
-    return MinionMap{};
+    return Callback(m);
 }
 
-
+MinionMap Callback2(string widget, MinionValue data, MinionValue data2)
+{
+    MinionMap m({
+        {"CALLBACK", widget},
+        {"DATA", data},
+        {"DATA2", data2}
+    });
+    return Callback(m);
+}
 
 //TODO ...
 void tmp_run(
