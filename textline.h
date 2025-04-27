@@ -8,13 +8,18 @@ Fl_Widget *NEW_TextLine(minion::MinionMap param);
 
 class TextLine : public Fl_Input
 {
+    std::string text;
+    bool modified;
+
+    int handle(int event) override;
+
 public:
     Fl_Color bg_normal;
     Fl_Color bg_pending;
     
-    TextLine(int height = 0);
+    TextLine(int height = 30);
 
-    int handle(int event) override;
+    bool set(std::string_view newtext);
 };
 
 #endif // TEXTLINE_H
