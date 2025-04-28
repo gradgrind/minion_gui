@@ -89,6 +89,39 @@ Fl_Widget *NEW_Output(
     return w;
 }
 
+Fl_Widget *NEW_PushButton(
+    MinionMap param)
+{
+    string label{};
+    if (!param.get_string("LABEL", label)) {
+        param.get_string("NAME", label);
+    }
+    auto w = new Fl_Button(0, 0, 0, 0);
+    w->copy_label(label.c_str());
+    int lw{0}, lh;
+    w->measure_label(lw, lh);
+    //TODO: margins settable?
+    w->size(lw + 20, WidgetData::line_height);
+    w->color(WidgetData::entry_bg);
+    w->callback(
+        [](Fl_Widget* w, void* ud) {
+            string dw{WidgetData::get_widget_name(w)};
+            // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
+            auto ww = static_cast<Fl_Button*>(w);
+            auto res = Callback1(dw, "");
+            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+            
+            //TODO--
+            auto wo = static_cast<Fl_Input *>(WidgetData::get_widget("Output_1"));
+            string v{"DUMMY"};
+            res.get_string("GoCallbackResult", v);
+            
+            cout << "CALLBACK VALUE: " << v << endl;
+            wo->value(v.c_str());
+        });
+    return w;
+}
+
 Fl_Widget *NEW_Checkbox(
     MinionMap param)
 {

@@ -76,7 +76,7 @@ GUI: [
     DO: [
       [MARGIN 5]
       [GAP 5]
-      [FIXED 40]
+      [FIXED 60]
     ]
   }
   {

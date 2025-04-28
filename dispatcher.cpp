@@ -4,6 +4,7 @@
 #include "textline.h"
 #include "widgetdata.h"
 #include "widgets.h"
+#include <FL/Fl_Flex.H>
 #include <FL/Fl_Group.H>
 #include <fmt/format.h>
 using namespace std;
@@ -48,6 +49,9 @@ void Handle_NEW(
             w = NEW_Grid(m);
             h = grid_method;
             // *** End of layouts, start of other widgets
+        } else if (wtype == "PushButton") {
+            w = NEW_PushButton(m);
+            h = widget_method;
         } else if (wtype == "Box") {
             w = NEW_Box(m);
             h = widget_method;
@@ -74,7 +78,22 @@ void Handle_NEW(
         }
         string parent;
         if (m.get_string("PARENT", parent) && !parent.empty()) {
-            static_cast<Fl_Group*>(WidgetData::get_widget(parent))->add(w);
+            
+            auto p = static_cast<Fl_Group*>(WidgetData::get_widget(parent));
+            p->add(w);
+
+            // Handle fixed sizes of Flex components
+            if (p->type() == Fl_Flex::VERTICAL) {
+                int wh = w->h();
+                if (wh != 0) {
+                    static_cast<Fl_Flex*>(p)->fixed(w, wh);
+                }
+            } else if (p->type() == Fl_Flex::HORIZONTAL) {
+                int wl = w->w();
+                if (wl != 0) {
+                    static_cast<Fl_Flex*>(p)->fixed(w, wl);
+                }
+            }
         }
         // Add a WidgetData as "user data" to the widget
         WidgetData::add_widget(name, w, h);
