@@ -24,6 +24,12 @@ void widget_method(
         ww = int_param(m, 1); // width
         wh = int_param(m, 2); // height
         w->size(ww, wh);
+    } else if (c == "HEIGHT") {
+        wh = int_param(m, 1); // height
+        w->size(w->w(), wh);
+    } else if (c == "WIDTH") {
+        ww = int_param(m, 1); // width
+        w->size(ww, w->h());
     } else if (c == "COLOUR") {
         auto clr = get_colour(get<string>(m.at(1)));
         w->color(clr);

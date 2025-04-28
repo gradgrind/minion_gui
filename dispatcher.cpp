@@ -48,6 +48,12 @@ void Handle_NEW(
         } else if (wtype == "Grid") {
             w = NEW_Grid(m);
             h = grid_method;
+        } else if (wtype == "Hgrid") {
+            w = NEW_Hgrid(m);
+            h = grid_method;
+        } else if (wtype == "Vgrid") {
+            w = NEW_Vgrid(m);
+            h = grid_method;
             // *** End of layouts, start of other widgets
         } else if (wtype == "PushButton") {
             w = NEW_PushButton(m);

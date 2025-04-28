@@ -12,6 +12,8 @@ Fl_Widget *NEW_Window(minion::MinionMap param);
 Fl_Widget *NEW_Vlayout(minion::MinionMap param);
 Fl_Widget *NEW_Hlayout(minion::MinionMap param);
 Fl_Widget *NEW_Grid(minion::MinionMap param);
+Fl_Widget *NEW_Hgrid(minion::MinionMap param);
+Fl_Widget *NEW_Vgrid(minion::MinionMap param);
 
 void grid_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
 void flex_method(Fl_Widget *w, std::string_view c, minion::MinionList m);

@@ -94,7 +94,7 @@ GUI: [
     ]
   }
   {
-    NEW: Option
+    NEW: Output
     NAME: TableTotals
     DO: [
       # [COLOUR &OUTPUT_COLOUR]
@@ -108,8 +108,8 @@ GUI: [
     NAME: ViewSelect
     PARENT: ComplexPanel   
     ITEMS: [
-      [TableType CENTER FIXED]
-      [TableRow CENTER FIXED]
+      [TableType CENTRE FIXED]
+      [TableRow CENTRE FIXED]
       [TableTotals HORIZONTAL]
     ]
     
