@@ -112,3 +112,41 @@ Fl_Widget *NEW_Grid(
     Fl_Group::current(0); // disable "auto-grouping"
     return widg;
 }
+
+//TODO: A problem with this approach is that some widgets need more info
+// to define them that must be passed as parameters. Indeed this one does!
+// Perhaps I should have unified widget descriptions – as maps ...
+// To avoid nesting I could define them before the grid with no parent?
+Fl_Widget *NEW_VGrid(
+    MinionMap param)
+{
+    auto widg = new Fl_Grid(0, 0, 0, 0);
+    Fl_Group::current(0); // disable "auto-grouping"
+    auto items = param.get("ITEMS");
+    //TODO: The items are lists, the first element is the widget name,
+    // subsequent elements are for "filling" and fixing.
+    if (holds_alternative<MinionList>(items)) {
+        auto item_list = get<MinionList>(items);
+        int n_items = item_list.size();
+        widg->layout(n_items, 1);
+        for (int i = 0; i < n_items; ++i) {
+            auto item = get<MinionList>(item_list.at(i));
+            int n_params = item.size();
+            if (n_params != 0) {
+                auto wname = get<string>(item.at(0));
+                // now options ???
+                for (int i = 1; i < item.size(); ++i) {
+                    auto p =  get<string>(item.at(i));
+                //TODO
+                
+                }
+                
+
+                return widg;
+            }
+        }
+    }
+    string s;
+    minion::dump(s, items, 0);
+    throw string{"Invalid ITEMS list: "} + s;    
+}
