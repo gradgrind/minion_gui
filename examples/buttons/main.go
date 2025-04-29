@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gradgrind/minion_gui"
+	"strings"
 )
 
 func main() {
@@ -12,7 +13,7 @@ func main() {
 
 func callback(data string) string {
 	fmt.Printf("Go callback got '%s'\n", data)
-	return "GoCallbackResult: Value"
+	return "GoCallbackResult:\"" + strings.ReplaceAll(data, "\"", "\\'") + "\""
 }
 
 var guidata string = `# buttons
@@ -31,20 +32,10 @@ GUI: [
       [COLOUR &BACKGROUND]
     ]
   }
-  {
-    NEW: Vlayout
-    NAME: l_MainWindow
-    PARENT: MainWindow
-    DO: [
-      [fit_to_parent]
-      [MARGIN 0]
-    ]
-  }
   # Top-level contents
   {
     NEW: PushButton
     NAME: PB1
-    PARENT: l_MainWindow
     LABEL: "PushButton 1"
     DO: [
       # [FIXED 30]
@@ -53,20 +44,33 @@ GUI: [
   {
     NEW: Output
     NAME: Output_1
-    PARENT: l_MainWindow
     DO: [
+      [LABEL "Pushed:" 20]
       [clear_visible_focus]
-      [LABEL "Button clicked:" 20] # adds padding box for label
-      # [FIXED 30]
+      [HEIGHT 50]
+      [WIDTH 400]
     ]
   }
   {
     NEW: PushButton
     NAME: PB2
-    PARENT: l_MainWindow
     LABEL: "PushButton 2"
     DO: [
       # [FIXED 30]
+    ]
+  }
+  {
+    NEW: Column
+    NAME: l_MainWindow
+    PARENT: MainWindow
+    ITEMS: [
+      [PB1 HORIZONTAL FIXED]
+      [Output_1 CENTRE FIXED]
+      [PB2 CENTRE FIXED]
+    ]
+    DO: [
+      [fit_to_parent]
+      [MARGIN 0]
     ]
   }
   

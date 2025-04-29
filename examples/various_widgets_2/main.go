@@ -19,7 +19,7 @@ var guidata string = `# Various widgets
 &APP_WIDTH: 1000
 &APP_HEIGHT: 700
 &BACKGROUND: f0f0f0
-&OUTPUT_COLOUR: ffc8ff
+&OUTPUT_COLOUR: ffc8ff # ffffc8 ?
 
 GUI: [
   # *** The main window
@@ -118,7 +118,7 @@ GUI: [
     ]
   }
   {
-    NEW: Hgrid
+    NEW: Row
     NAME: ViewSelect
     #PARENT: CoursePanel   
     ITEMS: [
@@ -176,7 +176,7 @@ GUI: [
     ]
   }
   {
-    NEW: Hgrid
+    NEW: Row
     NAME: Content
     #PARENT: CoursePanel
     DO: [
@@ -189,7 +189,7 @@ GUI: [
   }
   # --- Content
   {
-    NEW: Vgrid
+    NEW: Column
     NAME: CoursePanel
     #PARENT: l_MainWindow
     ITEMS: [
@@ -201,7 +201,7 @@ GUI: [
   # --- CoursePanel
   
   {
-    NEW: Vgrid
+    NEW: Column
     NAME: l_MainWindow
     PARENT: MainWindow
     DO: [

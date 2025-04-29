@@ -57,20 +57,6 @@ void group_method(
     }
 }
 
-void flex_method(
-    Fl_Widget *w, string_view c, MinionList m)
-{
-    if (c == "MARGIN") {
-        int sz = int_param(m, 1);
-        static_cast<Fl_Flex *>(w)->margin(sz);
-    } else if (c == "GAP") {
-        int sz = int_param(m, 1);
-        static_cast<Fl_Flex *>(w)->gap(sz);
-    } else {
-        group_method(w, c, m);
-    }
-}
-
 void grid_method(
     Fl_Widget *w, string_view c, MinionList m)
 {
@@ -112,22 +98,6 @@ Fl_Widget *NEW_Window(
     param.get_int("ESC_CLOSES", esc_closes);
     if (!esc_closes)
         widg->callback(callback_no_esc_closes);
-    Fl_Group::current(0); // disable "auto-grouping"
-    return widg;
-}
-
-Fl_Widget *NEW_Vlayout(
-    MinionMap param)
-{
-    auto widg = new Fl_Flex(Fl_Flex::COLUMN);
-    Fl_Group::current(0); // disable "auto-grouping"
-    return widg;
-}
-
-Fl_Widget *NEW_Hlayout(
-    MinionMap param)
-{
-    auto widg = new Fl_Flex(Fl_Flex::ROW);
     Fl_Group::current(0); // disable "auto-grouping"
     return widg;
 }
@@ -186,13 +156,13 @@ Fl_Widget *new_hvgrid(
     throw string{"Invalid ITEMS list: "} + s;    
 }
 
-Fl_Widget *NEW_Vgrid(
+Fl_Widget *NEW_Column(
     MinionMap param)
 {
     return new_hvgrid(param, false);
 }
 
-Fl_Widget *NEW_Hgrid(
+Fl_Widget *NEW_Row(
     MinionMap param)
 {
     return new_hvgrid(param, true);

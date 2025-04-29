@@ -39,20 +39,14 @@ void Handle_NEW(
         if (wtype == "Window") {
             w = NEW_Window(m);
             h = group_method;
-        } else if (wtype == "Vlayout") {
-            w = NEW_Vlayout(m);
-            h = flex_method;
-        } else if (wtype == "Hlayout") {
-            w = NEW_Hlayout(m);
-            h = flex_method;
         } else if (wtype == "Grid") {
             w = NEW_Grid(m);
             h = grid_method;
-        } else if (wtype == "Hgrid") {
-            w = NEW_Hgrid(m);
+        } else if (wtype == "Row") {
+            w = NEW_Row(m);
             h = grid_method;
-        } else if (wtype == "Vgrid") {
-            w = NEW_Vgrid(m);
+        } else if (wtype == "Column") {
+            w = NEW_Column(m);
             h = grid_method;
             // *** End of layouts, start of other widgets
         } else if (wtype == "PushButton") {
