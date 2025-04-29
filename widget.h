@@ -30,6 +30,9 @@ class Widget : public Fl_Callback_User_Data
     void *user_data = nullptr;
     bool auto_delete_user_data = false;
 
+protected:
+    Fl_Widget* fl_widget;
+
 public:
     //Widget(minion::MinionMap parammap, std::string_view w_name);
     Widget(minion::MinionMap parammap);
@@ -45,12 +48,9 @@ public:
     //inline static Fl_Color entry_bg{ENTRY_BG};
     //inline static Fl_Color pending_bg{PENDING_BG};
     
-    Fl_Widget* fl_widget;
     inline Fl_Widget* fltk_widget() { return fl_widget; }
 
-    void widget_method(std::string_view method, minion::MinionList paramlist);
-
-    virtual void handle_method(minion::MinionList);
+    virtual void handle_method(std::string_view method, minion::MinionList &mlist);
 
     void remove_widget(std::string_view name);
 

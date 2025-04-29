@@ -1,6 +1,6 @@
 #include "layout.h"
 #include "minion.h"
-#include "widgetdata.h"
+#include "widget.h"
 #include "widget_methods.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
@@ -36,44 +36,122 @@ const map<string, Fl_Grid_Align>GRID_ALIGN{
     {"BOTTOM_RIGHT", FL_GRID_BOTTOM_RIGHT}
 };
 
-// *** "Group" widgets ***
-
-void group_method(
-    Fl_Widget *w, string_view c, MinionList m)
+void callback_no_esc_closes(
+    Fl_Widget *w, void *x)
 {
-    if (c == "RESIZABLE") {
-        auto rsw = WidgetData::get_widget(get<string>(m.at(1)));
-        w->as_group()->resizable(rsw);
-    } else if (c == "fit_to_parent") {
-        if (auto parent = w->parent()) {
-            w->resize(0, 0, parent->w(), parent->h());
-            parent->resizable(w);
+    if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
+        return; // ignore Escape
+    //TODO: message to backend?
+    cout << "Closing " << Widget::get_widget_name(w) << endl;
+    //TODO--
+    exit(0);
+}
+
+// *** layout widgets – Fl_Group based
+
+W_Group::W_Group(MinionMap parammap) : Widget(parammap){}
+//W_Group* W_Group::make(MinionMap &parammap){}
+
+void W_Group::handle_method(std::string_view method, minion::MinionList &paramlist)
+{
+    if (method == "RESIZABLE") {
+        auto rsw = Widget::get_widget(get<string>(paramlist.at(1)));
+        fltk_widget()->as_group()->resizable(rsw);
+    } else if (method == "fit_to_parent") {
+        if (auto parent = fltk_widget()->parent()) {
+            fltk_widget()->resize(0, 0, parent->w(), parent->h());
+            parent->resizable(fltk_widget());
         } else {
-            throw fmt::format("Widget ({}) method fit_to_parent: no parent",
-                              WidgetData::get_widget_name(w));
+            throw "Widget (" + string{widget_name()}  + ") method 'fit_to_parent': no parent";
         }
     } else {
-        widget_method(w, c, m);
+        Widget::handle_method(method, paramlist);
     }
 }
 
-void grid_method(
-    Fl_Widget *w, string_view c, MinionList m)
+
+W_Window::W_Window(MinionMap parammap) : W_Group{parammap}{}
+W_Window* W_Window::make(MinionMap &parammap)
 {
-    if (c == "GAP") {
-        int szr = int_param(m, 1);
+    int ww = 800;
+    int wh = 600;
+    parammap.get_int("WIDTH", ww);
+    parammap.get_int("HEIGHT", wh);
+    auto w = new Fl_Double_Window(ww, wh);
+    int esc_closes{0};
+    parammap.get_int("ESC_CLOSES", esc_closes);
+    if (esc_closes != 0)
+        w->callback(callback_no_esc_closes);
+    Fl_Group::current(0); // disable "auto-grouping"
+    auto widget = new W_Window(parammap);
+    widget->fl_widget = w;
+    return widget;         
+}
+
+// Inherit handle_method from W_Group
+//void W_Window::handle_method(std::string_view method, minion::MinionList &paramlist);
+
+
+W_Grid::W_Grid(minion::MinionMap parammap) : W_Group{parammap}{}
+W_Grid* W_Grid::make(minion::MinionMap &parammap)
+{
+    auto w = new Fl_Grid(0, 0, 0, 0);
+    Fl_Group::current(0); // disable "auto-grouping"
+    auto widget = new W_Grid(parammap);
+    widget->fl_widget = w;
+    return widget;         
+}
+
+void W_Grid::handle_method(std::string_view method, minion::MinionList &paramlist)
+{
+    if (method == "GAP") {
+        int szr = int_param(paramlist, 1);
         int szc = szr;
-        if (m.size() > 2) {
-            szc = int_param(m, 2);
+        if (paramlist.size() > 2) {
+            szc = int_param(paramlist, 2);
         }
-        static_cast<Fl_Grid *>(w)->gap(szr, szc);
-    } else if (c == "MARGIN") {
-        int sz = int_param(m, 1);
-        static_cast<Fl_Grid *>(w)->margin(sz, sz, sz, sz);
+        static_cast<Fl_Grid *>(fltk_widget())->gap(szr, szc);
+    } else if (method == "MARGIN") {
+        int sz = int_param(paramlist, 1);
+        static_cast<Fl_Grid *>(fltk_widget())->margin(sz, sz, sz, sz);
     } else {
-        group_method(w, c, m);
+        W_Group::handle_method(method, paramlist);
     }
 }
+
+W_Row::W_Row(minion::MinionMap parammap) : W_Grid{parammap}{}
+W_Row* W_Row::make(minion::MinionMap &parammap)
+{
+    return new_hvgrid(param, true);
+
+}
+
+// Inherit handle_method from W_Grid
+//void W_Row::handle_method(std::string_view method, minion::MinionList &paramlist);
+
+
+class W_Row : public Widget
+{
+public:
+    W_Row(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Row* make(MinionMap &parammap);
+};
+
+class W_Column : public Widget
+{
+public:
+    W_Column(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Column* make(MinionMap &parammap);
+};
+
+// *** End of layouts
+
+
+
 
 void callback_no_esc_closes(
     Fl_Widget *w, void *x)
@@ -114,6 +192,17 @@ Fl_Widget *new_hvgrid(
     MinionMap &param,
     bool horizontal)
 {
+    auto w = new Fl_Grid(0, 0, 0, 0);
+    Fl_Group::current(0); // disable "auto-grouping"
+    auto widget = new W_Grid(parammap);
+    widget->fl_widget = w;
+
+//TODO
+
+    return widget;         
+
+
+
     auto widg = new Fl_Grid(0, 0, 0, 0);
     Fl_Group::current(0); // disable "auto-grouping"
     widg->color(0xe0ffe000);
