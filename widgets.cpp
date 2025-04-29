@@ -66,6 +66,27 @@ Fl_Widget *NEW_Box(
     return new Fl_Box(0, 0, 0, 0);
 }
 
+Fl_Widget *NEW_Label(
+    MinionMap param)
+{
+    string label{};
+    if (!param.get_string("LABEL", label)) {
+        param.get_string("NAME", label);
+    }
+    string align{};
+    param.get_string("ALIGN", align);
+
+    auto w = new Fl_Box(0, 0, 0, 0);
+    w->copy_label(label.c_str());
+    int lw{0}, lh;
+    w->measure_label(lw, lh);
+    //w->horizontal_label_margin(5);
+    w->size(lw + 20, WidgetData::line_height);
+    if (align == "LEFT") w->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT);
+    else if (align == "RIGHT") w->align(FL_ALIGN_INSIDE|FL_ALIGN_RIGHT);
+    return w;
+}
+
 Fl_Widget *NEW_Choice(
     MinionMap param)
 {
@@ -102,7 +123,8 @@ Fl_Widget *NEW_PushButton(
     w->measure_label(lw, lh);
     //TODO: margins settable?
     w->size(lw + 20, WidgetData::line_height);
-    w->color(WidgetData::entry_bg);
+    //TODO: "selection" colour
+    w->color(WidgetData::entry_bg, 0xe0e0ff00);
     w->callback(
         [](Fl_Widget* w, void* ud) {
             string dw{WidgetData::get_widget_name(w)};

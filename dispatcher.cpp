@@ -61,6 +61,9 @@ void Handle_NEW(
         } else if (wtype == "Box") {
             w = NEW_Box(m);
             h = widget_method;
+        } else if (wtype == "Label") {
+            w = NEW_Label(m);
+            h = widget_method;
         } else if (wtype == "Choice") {
             w = NEW_Choice(m);
             h = choice_method;

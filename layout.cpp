@@ -1,4 +1,5 @@
 #include "layout.h"
+#include "minion.h"
 #include "widgetdata.h"
 #include "widget_methods.h"
 #include <FL/Fl_Double_Window.H>
@@ -139,24 +140,23 @@ Fl_Widget *NEW_Grid(
     return widg;
 }
 
-//TODO: The new 1-d grids are not working yet.
-// Consider using the same code for both, using conditionals where there
-// are differences.
-
-Fl_Widget *NEW_Vgrid(
-    MinionMap param)
+Fl_Widget *new_hvgrid(
+    MinionMap &param,
+    bool horizontal)
 {
     auto widg = new Fl_Grid(0, 0, 0, 0);
     Fl_Group::current(0); // disable "auto-grouping"
+    widg->color(0xe0ffe000);
     auto items = param.get("ITEMS");
     // The items are lists, the first element is the widget name,
     // subsequent elements are for "filling" and fixing.
     if (holds_alternative<MinionList>(items)) {
         auto item_list = get<MinionList>(items);
         int n_items = item_list.size();
-        widg->layout(n_items, 1);
-        for (int i = 0; i < n_items; ++i) {
-            auto item = get<MinionList>(item_list.at(i));
+        if (horizontal) widg->layout(1, n_items);
+        else widg->layout(n_items, 1);
+        for (int rc = 0; rc < n_items; ++rc) {
+            auto item = get<MinionList>(item_list.at(rc));
             int n_params = item.size();
             if (n_params != 0) {
                 auto w = WidgetData::get_widget(get<string>(item.at(0)));
@@ -165,66 +165,35 @@ Fl_Widget *NEW_Vgrid(
                 for (int i = 1; i < item.size(); ++i) {
                     auto p =  get<string>(item.at(i));
                     if (p == "FIXED") {
-                        widg->row_weight(i, 0);
+                        if (horizontal) widg->col_weight(rc, 0);
+                        else widg->row_weight(rc, 0);
                     } else {
                         try {
                             auto align = GRID_ALIGN.at(p);
-                            widg->widget(w, i, 0, align);
+                            if (horizontal) widg->widget(w, 0, rc, align);
+                            else widg->widget(w, rc, 0, align);
                         } catch (out_of_range) {
                             throw "Invalid Grid flag: " + p;
                         }
                     }
                 }
-                return widg;
             }
         }
+        return widg;
     }
     string s;
     minion::dump(s, items, 0);
     throw string{"Invalid ITEMS list: "} + s;    
 }
 
+Fl_Widget *NEW_Vgrid(
+    MinionMap param)
+{
+    return new_hvgrid(param, false);
+}
+
 Fl_Widget *NEW_Hgrid(
     MinionMap param)
 {
-    auto widg = new Fl_Grid(0, 0, 0, 0);
-    Fl_Group::current(0); // disable "auto-grouping"
-    auto items = param.get("ITEMS");
-    // The items are lists, the first element is the widget name,
-    // subsequent elements are for "filling" and fixing.
-    if (holds_alternative<MinionList>(items)) {
-        auto item_list = get<MinionList>(items);
-        int n_items = item_list.size();
-        widg->layout(1, n_items);
-        for (int i = 0; i < n_items; ++i) {
-            auto item = get<MinionList>(item_list.at(i));
-            int n_params = item.size();
-            if (n_params != 0) {
-                auto w = WidgetData::get_widget(get<string>(item.at(0)));
-                widg->add(w);
-                // now options
-                for (int i = 1; i < item.size(); ++i) {
-                    auto p =  get<string>(item.at(i));
-                    cout << "§1 " << p << endl;
-                    if (p == "FIXED") {
-                        widg->col_weight(i, 0);
-                    } else {
-                        try {
-                            cout << "§2 " << endl;
-                            auto align = GRID_ALIGN.at(p);
-                            cout << "§3 " << align << " ? " << w << endl;
-                            widg->widget(w, 0, i, align);
-                            cout << "§4 " << endl;
-                        } catch (out_of_range) {
-                            throw "Invalid Grid flag: " + p;
-                        }
-                    }
-                }
-                return widg;
-            }
-        }
-    }
-    string s;
-    minion::dump(s, items, 0);
-    throw string{"Invalid ITEMS list: "} + s;    
+    return new_hvgrid(param, true);
 }
