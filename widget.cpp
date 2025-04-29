@@ -1,5 +1,6 @@
 #include "widget.h"
 #include "functions.h"
+#include "widget_methods.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Window.H>
 #include <functional>
@@ -249,5 +250,48 @@ void process_command(
         f(parammap);
     } else {
         throw "Invalid command: " + dump_map_items(parammap, -1);
+    }
+}
+
+
+void Widget::widget_method(std::string_view method, minion::MinionList paramlist)
+{
+    auto w = fltk_widget();
+    int ww, wh;
+    if (method == "SIZE") {
+        ww = int_param(paramlist, 1); // width
+        wh = int_param(paramlist, 2); // height
+        w->size(ww, wh);
+    } else if (method == "HEIGHT") {
+        wh = int_param(paramlist, 1); // height
+        w->size(w->w(), wh);
+    } else if (method == "WIDTH") {
+        ww = int_param(paramlist, 1); // width
+        w->size(ww, w->h());
+    } else if (method == "COLOUR") {
+        auto clr = get_colour(get<string>(paramlist.at(1)));
+        w->color(clr);
+    } else if (method == "BOXTYPE") {
+        auto bxt = get_boxtype(get<string>(paramlist.at(1)));
+        w->box(bxt);
+    } else if (method == "LABEL") {
+        //TODO: Do I really want this for all widgets?
+        auto lbl = get<string>(paramlist.at(1));
+        w->copy_label(lbl.c_str());
+    //} else if (method == "CALLBACK") {
+    //    auto cb = get<string>(paramlist.at(1));
+    //    w->callback(do_callback);
+    } else if (method == "SHOW") {
+        w->show();
+    } else if (method == "clear_visible_focus") {
+        w->clear_visible_focus();
+    } else if (method == "measure_label") {
+        int wl, hl;
+        w->measure_label(wl, hl);
+        //TODO ...
+        cout << "Measure " << widget_name() << " label: " << wl << ", " << hl
+             << endl;
+    } else {
+        throw "Unknown widget method: " + string{method};
     }
 }

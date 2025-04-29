@@ -54,7 +54,7 @@ public:
 
     void remove_widget(std::string_view name);
 
-    std::string_view widget_name();
+    inline std::string_view widget_name() { return w_name; }
     //int widget_type();
     //std::string_view widget_type_name();
 };
