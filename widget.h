@@ -45,7 +45,8 @@ public:
     //inline static Fl_Color entry_bg{ENTRY_BG};
     //inline static Fl_Color pending_bg{PENDING_BG};
     
-    Fl_Widget* fltk_widget();
+    Fl_Widget* fl_widget;
+    inline Fl_Widget* fltk_widget() { return fl_widget; }
 
     void widget_method(std::string_view method, minion::MinionList paramlist);
 

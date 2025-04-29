@@ -1,13 +1,86 @@
 #include "widget.h"
 #include "functions.h"
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Window.H>
 #include <functional>
+#include <iostream>
 #include <stdexcept>
 #include <FL/Fl_Group.H>
 using namespace std;
 using namespace minion;
 
+void callback_no_esc_closes(
+    Fl_Widget *w, void *x)
+{
+    if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
+        return; // ignore Escape
+    //TODO: message to backend?
+    cout << "Closing " << Widget::get_widget_name(w) << endl;
+    //TODO--
+    exit(0);
+}
+
+
 //TODO: more sub-classes, and their method handlers ...
+
+// *** layout widgets – Fl_Group based
+
+class W_Window : public Widget
+{
+public:
+    W_Window(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Window* make(MinionMap &parammap)
+    {
+            int w = 800;
+            int h = 600;
+            parammap.get_int("WIDTH", w);
+            parammap.get_int("HEIGHT", h);
+            auto widg = new Fl_Double_Window(w, h);
+            int esc_closes{0};
+            parammap.get_int("ESC_CLOSES", esc_closes);
+            if (esc_closes != 0)
+                widg->callback(callback_no_esc_closes);
+            Fl_Group::current(0); // disable "auto-grouping"
+        
+            auto widget = new W_Window(parammap);
+            widget->fl_widget = widg;
+            //TODO: keep fl_widget private and pass the Fl_Widget* to the
+            // constructor?
+        
+            return widget;         
+    }
+};
+
+class W_Grid : public Widget
+{
+public:
+    W_Grid(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Grid* make(MinionMap &parammap);
+};
+
+class W_Row : public Widget
+{
+public:
+    W_Row(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Row* make(MinionMap &parammap);
+};
+
+class W_Column : public Widget
+{
+public:
+    W_Column(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Column* make(MinionMap &parammap);
+};
+
+// *** End of layouts, start of other widgets
 
 class W_Box : public Widget
 {
@@ -27,9 +100,83 @@ public:
     static W_Label* make(MinionMap &parammap);
 };
 
+class W_PushButton : public Widget
+{
+public:
+    W_PushButton(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_PushButton* make(MinionMap &parammap);
+};
+
+class W_Checkbox : public Widget
+{
+public:
+    W_Checkbox(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Checkbox* make(MinionMap &parammap);
+};
+
+class W_Choice : public Widget
+{
+public:
+    W_Choice(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Choice* make(MinionMap &parammap);
+};
+
+class W_Output : public Widget
+{
+public:
+    W_Output(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_Output* make(MinionMap &parammap);
+};
+
+class W_TextLine : public Widget
+{
+public:
+    W_TextLine(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_TextLine* make(MinionMap &parammap);
+};
+
+class W_RowTable : public Widget
+{
+public:
+    W_RowTable(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_RowTable* make(MinionMap &parammap);
+};
+
+class W_EditForm : public Widget
+{
+public:
+    W_EditForm(MinionMap parammap) : Widget{parammap}
+    {}
+
+    static W_EditForm* make(MinionMap &parammap);
+};
+
 const map<string_view, function<Widget*(MinionMap&)>>widget_type_map{
+    {"Window", W_Window::make},
+    {"Grid", W_Grid::make},
+    {"Row", W_Row::make},
+    {"Column", W_Column::make},
+
     {"Box", W_Box::make},
-    {"Label", W_Label::make}
+    {"Label", W_Label::make},
+    {"PushButton", W_PushButton::make},
+    {"Checkbox", W_Checkbox::make},
+    {"Choice", W_Choice::make},
+    {"Output", W_Output::make},
+    {"TextLine", W_TextLine::make},
+    {"RowTable", W_RowTable::make},
 };
 
 void handle_methods(
