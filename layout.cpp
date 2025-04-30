@@ -122,7 +122,7 @@ void W_Grid::handle_method(std::string_view method, minion::MinionList &paramlis
 W_Row::W_Row(minion::MinionMap parammap) : W_Grid{parammap}{}
 W_Row* W_Row::make(minion::MinionMap &parammap)
 {
-    return new_hvgrid(param, true);
+    return new_hvgrid(parammap, true);
 
 }
 
@@ -164,22 +164,6 @@ void callback_no_esc_closes(
     exit(0);
 }
 
-Fl_Widget *NEW_Window(
-    MinionMap param)
-{
-    int w = 800;
-    int h = 600;
-    param.get_int("WIDTH", w);
-    param.get_int("HEIGHT", h);
-    auto widg = new Fl_Double_Window(w, h);
-    int esc_closes{0};
-    param.get_int("ESC_CLOSES", esc_closes);
-    if (!esc_closes)
-        widg->callback(callback_no_esc_closes);
-    Fl_Group::current(0); // disable "auto-grouping"
-    return widg;
-}
-
 Fl_Widget *NEW_Grid(
     MinionMap param)
 {
@@ -188,8 +172,9 @@ Fl_Widget *NEW_Grid(
     return widg;
 }
 
+
 Fl_Widget *new_hvgrid(
-    MinionMap &param,
+    MinionMap &parammap,
     bool horizontal)
 {
     auto w = new Fl_Grid(0, 0, 0, 0);
@@ -197,7 +182,7 @@ Fl_Widget *new_hvgrid(
     auto widget = new W_Grid(parammap);
     widget->fl_widget = w;
 
-//TODO
+//TODO: Get pending items ...
 
     return widget;         
 
