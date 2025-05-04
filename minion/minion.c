@@ -921,6 +921,7 @@ minion_doc minion_read(
     minion_value m = *remembered_items;
     remembered_items_index = 0;
     minion_doc doc = {m, {T_NoType, F_NoFlags, 0, NULL}, macros};
+    macros = NULL;
 
     // Check that there are no further items
     position current_position = here();
