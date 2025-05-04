@@ -1,0 +1,238 @@
+{
+  "ATTENDANCE": "Klassen/Anwesenheit/Anwesenheit_{klass}.json",
+  "CALENDAR_HEADER": "#*** MINION 3.0 ***#\n### Ferien und andere Jahresdaten\n### Version: {date}\n############################################################\n# Diese Kopfzeilen sollten nicht geändert werden, das Datum\n# wird beim Speichern automatisch aktualisiert.\n#-----------------------------------------------------------\n\n",
+  "CHOICE_TABLE": "Klassen/Kurswahl/Wahl-{klass}",
+  "CLASS_ATTENDANCE_TEMPLATE": "templates/Vorlage_Klassenbuch.xlsx",
+  "CLASS_TIMES": "Klassen/Zeiten",
+  "COURSE_CHOICE_TEMPLATE": "templates/Fachwahl.xlsx",
+  "DATEFORMAT": "%d.%m.%Y",
+  "DECIMAL_SEP": ",",
+  "DUMMY_PUPIL": [
+    [
+      "PID",
+      "TODO"
+    ],
+    [
+      "SORT_NAME",
+      "TODO"
+    ],
+    [
+      "LASTNAME",
+      "TODO"
+    ],
+    [
+      "FIRSTNAMES",
+      "TODO"
+    ],
+    [
+      "FIRSTNAME",
+      "TODO"
+    ],
+    [
+      "DATE_ENTRY",
+      "TODO"
+    ],
+    [
+      "DATE_BIRTH",
+      "TODO"
+    ],
+    [
+      "BIRTHPLACE",
+      "TODO"
+    ],
+    [
+      "SEX",
+      "w"
+    ],
+    [
+      "HOME",
+      "TODO"
+    ]
+  ],
+  "EXTRA_ROOM": "rXXX",
+  "FONT": "Droid Sans",
+  "LEAVING_GROUPS": [
+    "13",
+    "12K",
+    "12G.R"
+  ],
+  "LIBREOFFICE": "libreoffice",
+  "MASTER_DB": [
+    [
+      "CLASS",
+      "klasse"
+    ],
+    [
+      "PID",
+      "ID"
+    ],
+    [
+      "LASTNAME",
+      "Name"
+    ],
+    [
+      "FIRSTNAMES",
+      "vornamen"
+    ],
+    [
+      "FIRSTNAME",
+      "Rufname"
+    ],
+    [
+      "DATE_EXIT",
+      "Schulaustritt"
+    ],
+    [
+      "DATE_ENTRY",
+      "eintrittsdatum"
+    ],
+    [
+      "DATE_BIRTH",
+      "geburtsdatum"
+    ],
+    [
+      "BIRTHPLACE",
+      "geburtsort"
+    ],
+    [
+      "SEX",
+      "Geschlecht"
+    ],
+    [
+      "HOME",
+      "ort"
+    ]
+  ],
+  "MIGRATE_CLASS": {
+    "12G": "13"
+  },
+  "PRINT_SCHOOLYEAR": "{year1} – {year2}",
+  "PUPILS_FIELDS": [
+    [
+      "CLASS",
+      "Klasse",
+      "CLASS_CHOICE",
+      "",
+      "Pflicht"
+    ],
+    [
+      "PID",
+      "ID",
+      "PID",
+      "",
+      "Pflicht"
+    ],
+    [
+      "SORT_NAME",
+      "Sortiername",
+      "SORT_NAME",
+      "",
+      ""
+    ],
+    [
+      "LASTNAME",
+      "Name",
+      "LINE",
+      "",
+      "Pflicht"
+    ],
+    [
+      "FIRSTNAMES",
+      "Vornamen",
+      "LINE",
+      "",
+      "Pflicht"
+    ],
+    [
+      "FIRSTNAME",
+      "Rufname",
+      "LINE",
+      "",
+      "Pflicht"
+    ],
+    [
+      "GROUPS",
+      "Gruppen",
+      "GROUPS",
+      "",
+      ""
+    ],
+    [
+      "DATE_EXIT",
+      "Schulaustritt",
+      "DATE_OR_EMPTY",
+      "",
+      ""
+    ],
+    [
+      "LEVEL",
+      "Bewertungsmaßstab",
+      "CHOICE",
+      [
+        "",
+        "Gym",
+        "RS",
+        "HS"
+      ],
+      ""
+    ],
+    [
+      "DATE_ENTRY",
+      "Eintrittsdatum",
+      "DATE",
+      "",
+      "Pflicht"
+    ],
+    [
+      "DATE_BIRTH",
+      "Geburtsdatum",
+      "DATE",
+      "",
+      "Pflicht"
+    ],
+    [
+      "BIRTHPLACE",
+      "Geburtsort",
+      "LINE",
+      "",
+      "Pflicht"
+    ],
+    [
+      "SEX",
+      "Geschlecht",
+      "CHOICE",
+      [
+        "m",
+        "w"
+      ],
+      "Pflicht"
+    ],
+    [
+      "HOME",
+      "Wohnort",
+      "LINE",
+      "",
+      "Pflicht"
+    ],
+    [
+      "DATE_QPHASE",
+      "SekII-Eintritt",
+      "DATE_OR_EMPTY",
+      "",
+      ""
+    ]
+  ],
+  "PUPIL_TABLE": "Klassen/Schueler/Klasse_{klass}.tsv",
+  "SCHOOLYEAR_MONTH_1": "8",
+  "SCHOOL_DATA": "Schuldaten/Schule",
+  "SCHOOL_NAME": "Freie Michaelschule",
+  "SUBJECT_DATA": "Schuldaten/Fachliste",
+  "SUBJECT_TABLE": "Klassen/Kursdaten/Fachliste-{klass}",
+  "TABLE_FORMAT": "tsv",
+  "TEACHER_DATA": "Schuldaten/Lehrer",
+  "T_CLASS": "Klasse",
+  "T_GROUP": "Gruppe",
+  "T_GROUPS": "Gruppen",
+  "T_SCHOOLYEAR": "Schuljahr",
+  "T_SCHOOLYEARS": "Schuljahre"
+}
