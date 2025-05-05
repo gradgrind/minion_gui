@@ -136,7 +136,7 @@ void error(
     }
 
     // Add most recently read characters
-    char* ch_start = ch_pointer0;
+    const char* ch_start = ch_pointer0;
     int recent = ch_pointer - ch_start;
     if (recent > 80) {
         ch_start = ch_pointer - 80;
