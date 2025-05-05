@@ -37,6 +37,12 @@ typedef enum {
     T_PairArray,
 } minion_Type;
 
+// For character-by-character reading
+static const char* ch_pointer0;
+static const char* ch_pointer;
+static const char* ch_linestart = 0;
+static msize line_index;
+
 /* *** BUFFERS ***
  * minion uses buffers for various purposes. These get their space using
  * malloc and may grow when more space is needed.
@@ -122,25 +128,37 @@ void error(
     va_list args;
     va_start(args, msg);
     // Get string size (add 1 for 0-terminator) without writing anything
-    int n = vsnprintf(error_message, error_message_size, msg, args);
+    int n = vsnprintf(0, 0, msg, args);
+    //int n = vsnprintf(error_message, error_message_size, msg, args);
     if (n < 0) {
-        const char* emsg = "[BUG] Invalid error message: %s\n";
-        n = snprintf(error_message, error_message_size, emsg, msg);
-        if (n < 0) {
-            fputs("[BUG] Error in 'error' function", stderr);
-            exit(100);
-        }
-        if (error_message_size < ++n) {
-            free(error_message);
-            error_message = malloc(n);
-            if (!error_message)
-                exit(1);
-            error_message_size = n;
-            snprintf(error_message, error_message_size, emsg, msg);
-        }
-        fputs(error_message, stderr);
+        fprintf(stderr, "[BUG] Invalid error message: %s\n", msg);
         exit(100);
     }
+
+    // Add most recently read characters
+    char* ch_start = ch_pointer0;
+    int recent = ch_pointer - ch_start;
+    if (recent > 80) {
+        ch_start = ch_pointer - 80;
+        // Find start of utf-8 sequence
+        while (true) {
+            unsigned char ch = *ch_start;
+            if (ch < 0x80 || (ch >= 0xC0 && ch < 0xF8))
+                break;
+            ++ch_start;
+        }
+        recent = ch_pointer - ch_start;
+    }
+    int nx = n + recent + 10;
+    if (error_message_size < nx) {
+        free(error_message);
+        error_message = malloc(nx);
+        if (!error_message)
+            exit(1);
+        error_message_size = nx;
+    }
+
+    /*
     if (error_message_size < ++n) {
         free(error_message);
         error_message = malloc(n);
@@ -148,9 +166,16 @@ void error(
             exit(1);
         error_message_size = n;
     }
+    */
+
     va_start(args, msg); // restart the argument reading
     vsnprintf(error_message, error_message_size, msg, args);
     va_end(args);
+
+    n += snprintf(error_message + n, 8, "\n ... ");
+    memcpy(error_message + n, ch_start, recent);
+    error_message[n + recent] = 0;
+
     longjmp(recover, 2);
 }
 
@@ -374,12 +399,6 @@ void new_PairArray(
     }
     remember((minion_value) {T_PairArray, 0, len, a});
 }
-
-// +++ Handle character-by-character reading +++
-static const char* ch_pointer0;
-static const char* ch_pointer;
-static const char* ch_linestart = 0;
-static msize line_index;
 
 typedef struct
 {
@@ -607,15 +626,14 @@ minion_Type get_list()
                 mtype = get_item();
                 continue;
             }
-        }
-        if (mtype == F_Token_End) {
-            error("End of data within List structure");
+            error("Reading list, expecting ',' or ']' at position %s", pos(current_pos));
             exit(3); // unreachable
-        } else if (mtype == F_Macro) {
+        }
+        if (mtype == F_Macro) {
             error("Undefined macro name at position %s", pos(current_pos));
             exit(3); // unreachable
         } else {
-            error("Expecting list item at position %s", pos(current_pos));
+            error("Expecting list item or ']' at position %s", pos(current_pos));
             exit(3); // unreachable
         }
     }
@@ -649,7 +667,7 @@ bool is_key_unique(
 minion_Type get_map()
 {
     int start_index = remembered_items_index;
-    position current_position = here();
+    position current_pos = here();
     short mtype = get_item();
     char* seeking;
     while (true) {
@@ -661,16 +679,16 @@ minion_Type get_map()
             if (!is_key_unique(start_index)) {
                 error("Map key has already been defined: %s (at position %s)",
                       last_item().data,
-                      pos(current_position));
+                      pos(current_pos));
             }
-            current_position = here();
+            current_pos = here();
             mtype = get_item();
             // expect ':'
             if (mtype != F_Token_Colon) {
-                error("Expecting ':' in Map item at position %s", pos(current_position));
+                error("Expecting ':' in Map item at position %s", pos(current_pos));
                 exit(3); // unreachable
             }
-            current_position = here();
+            current_pos = here();
             mtype = get_item();
             // expect value
             seeking = "Reading map, expecting a value at position %s";
@@ -679,17 +697,19 @@ minion_Type get_map()
                 if (mtype == F_Token_MapEnd) {
                     break;
                 } else if (mtype == F_Token_Comma) {
-                    current_position = here();
+                    current_pos = here();
                     mtype = get_item();
                     continue;
                 }
+                error("Reading map, expecting ',' or '}' at position %s", pos(current_pos));
+                exit(3); // unreachable
             } else if (mtype == F_Macro) {
                 seeking = "Expecting map value, undefined macro name at position %s";
             }
         } else {
             seeking = "Reading map, expecting a key at position %s";
         }
-        error(seeking, pos(current_position));
+        error(seeking, pos(current_pos));
         exit(3); // unreachable
     }
     new_PairArray(start_index);
@@ -846,6 +866,7 @@ minion_doc minion_read(
     }
     ch_pointer0 = input;
     ch_pointer = input;
+    ch_linestart = input;
     line_index = 0;
     if (setjmp(recover)) {
         // Free redundant malloced items
