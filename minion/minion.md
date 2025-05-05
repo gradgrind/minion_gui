@@ -4,7 +4,7 @@ MINION is a simple data-transfer format closely related to JSON. The main aim wa
 
  - Single-word strings without certain characters can be used without `"` delimiters. This is particularly useful for map (~ JSON object) keys.
 
- - String escapes are the same as in JSON, but there is an additional `\Uxxxxx` form to represent 5-digit hexadecimal Unicode points.
+ - String escapes are the same as in JSON, but there is an additional `\Uxxxxxx` form to represent 6-digit hexadecimal Unicode points.
 
  - Comments are supported, including multiline ones. A form of multiline comment is also supported within delimited strings. This allows spreading a string over several lines.
 
@@ -69,7 +69,7 @@ Certain characters are not directly possible in a string; they may, however, be 
  - backspace: `\b`
  - carriage return: `\r`
  - form-feed: `\f`
- - hexadecimal Unicode character: `\uxxxx` or `\Uxxxxx`
+ - hexadecimal Unicode character: `\uxxxx` or `\Uxxxxxx`
 
 In addition, it is possible to have an "embedded comment" in a delimited string. This starts with `\[` and is ended by `\]`. As it may include newlines, this may be used to split a string over several lines.
 

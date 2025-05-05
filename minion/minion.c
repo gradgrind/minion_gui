@@ -565,7 +565,7 @@ minion_Type get_string()
                 error("Invalid unicode escape in string, position %s", pos(here()));
                 exit(3); // unreachable
             case 'U':
-                if (add_unicode_to_read_buffer(5))
+                if (add_unicode_to_read_buffer(6))
                     continue;
                 error("Invalid unicode escape in string, position %s", pos(here()));
                 exit(3); // unreachable
