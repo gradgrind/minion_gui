@@ -12,6 +12,7 @@
 
 ### Other
 /_lib/
+/.vscode/
 
 # Prerequisites
 *.d
