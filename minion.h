@@ -1,13 +1,13 @@
 #ifndef MINION_H
 #define MINION_H
 
-typedef unsigned int msize;
+#include <initializer_list>
 
 typedef struct
 {
     short type;
     short flags;
-    msize size;
+    unsigned int size;
     void* data;
 } minion_value;
 
@@ -40,5 +40,23 @@ void minion_tidy_dump();
 
 // Free longer term minion memory (can be retained between minion_read calls)
 void minion_tidy();
+
+// Construction functions – these are designed to take on ownership of any
+// minion_value items they are passed and need freeing with minion_free_item()
+// when they are no longer in use.
+
+minion_value new_minion_string(const char* text);
+
+minion_value new_minion_array(std::initializer_list<minion_value> items);
+
+struct pair_input // needed only for construction of maps in new_minion_map
+{
+    const char* key;
+    minion_value value;
+};
+
+minion_value new_minion_map(std::initializer_list<pair_input> items);
+
+void minion_free_item(minion_value mitem);
 
 #endif // MINION_H

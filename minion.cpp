@@ -37,6 +37,8 @@ typedef enum {
     T_PairArray,
 } minion_Type;
 
+typedef unsigned int msize;
+
 // For character-by-character reading
 static const char* ch_pointer0;
 static const char* ch_pointer;
@@ -186,14 +188,14 @@ static minion_value* remembered_items = 0;
 static int remembered_items_size = 0;
 static int remembered_items_index = 0;
 
-typedef struct
+struct minion_pair
 {
     minion_value key;
     minion_value value;
-} minion_pair;
+};
 
 // Free the memory used for a minion item.
-void free_item(
+void minion_free_item(
     minion_value mitem)
 {
     if (mitem.flags & F_MACRO_VALUE)
@@ -202,15 +204,15 @@ void free_item(
         minion_value* p = (minion_value*) mitem.data;
         msize n = mitem.size;
         for (msize i = 0; i < n; ++i) {
-            free_item(p[i]);
+            minion_free_item(p[i]);
         }
     } else if (mitem.type == T_PairArray) {
         minion_pair* p = (minion_pair*) mitem.data;
         msize n = mitem.size;
         for (msize i = 0; i < n; ++i) {
             minion_pair mp = p[i];
-            free_item(mp.key);
-            free_item(mp.value);
+            minion_free_item(mp.key);
+            minion_free_item(mp.value);
         }
     }
     // Free the memory pointed to directly by the data field. This will
@@ -233,7 +235,7 @@ void free_macros(
 {
     while (mp) {
         free(mp->name);
-        free_item(mp->value);
+        minion_free_item(mp->value);
         macro_node* mp0 = mp;
         mp = mp->next;
         free(mp0);
@@ -300,9 +302,9 @@ bool minion_isString(
 void minion_free(
     minion_doc doc)
 {
-    free_item(doc.minion_item);
+    minion_free_item(doc.minion_item);
     free_macros(doc.macros);
-    free_item(doc.error);
+    minion_free_item(doc.error);
 }
 
 void remember(
@@ -327,12 +329,24 @@ void remember(
 void release()
 {
     for (int i = 0; i < remembered_items_index; ++i) {
-        free_item(remembered_items[i]);
+        minion_free_item(remembered_items[i]);
     }
     remembered_items_index = 0;
 }
 
 // --- END: Keep track of "unbound" malloced items ---
+
+// Build a new ("normal") minion string item from the given char*.
+// It (eventually) needs to be freed with free_item().
+minion_value new_minion_string(const char* text)
+{
+    unsigned int l = strlen(text);
+    void* s = malloc(sizeof(char) * (l + 1));
+    if (!s)
+        exit(1);
+    memcpy(s, text, l + 1);
+    return minion_value{T_String, F_NoFlags, l, s};
+}
 
 // Build a new String item from a char*. Place the result on the
 // remember stack.
@@ -400,11 +414,11 @@ void new_PairArray(
     remember((minion_value) {T_PairArray, 0, (msize) len, a});
 }
 
-typedef struct
+struct position
 {
     msize line_n;
     msize byte_ix;
-} position;
+};
 
 position here()
 {
@@ -869,7 +883,7 @@ minion_doc minion_read(
     if (setjmp(recover)) {
         // Free redundant malloced items
         for (int i = 0; i < remembered_items_index; ++i) {
-            free_item(remembered_items[i]);
+            minion_free_item(remembered_items[i]);
         }
         remembered_items_index = 0;
         // Free any macros
@@ -1134,32 +1148,35 @@ char* minion_dump(
     return 0;
 }
 
-//TODO
 // *** Construction functions ...
-// How to manage the memory?
-
-struct pair_input
-{
-    char* key;
-    minion_value value;
-};
 
 minion_value pop_remembered()
 {
     return remembered_items[--remembered_items_index];
 }
 
-// Build a new list item from the arguments, which are pair_input items.
+// Build a new list item from the arguments, which are of type minion_value.
 // It (eventually) needs to be freed with free_item().
-minion_value new_minion_array(std::initializer_list<pair_input> items)
+minion_value new_minion_array(std::initializer_list<minion_value> items)
 {
     auto start_index = remembered_items_index;
-    
     for (const auto& item : items) {
-        new_String(item.key, T_String, F_NoFlags);
-        remember(item.value);
+        remember(item);
     }
     new_Array(start_index);
+    return pop_remembered();
+}
+
+// Build a new map item from the arguments, which are pair_input items.
+// It (eventually) needs to be freed with free_item().
+minion_value new_minion_map(std::initializer_list<pair_input> items)
+{
+    auto start_index = remembered_items_index;
+    for (const auto& item : items) {
+        remember(new_minion_string(item.key));
+        remember(item.value);
+    }
+    new_PairArray(start_index);
     return pop_remembered();
 }
 

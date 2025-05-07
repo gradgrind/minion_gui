@@ -12,33 +12,46 @@
 #include <iostream>
 using namespace std;
 
+// This is used to manage the memory of a result from minion_read. It is
+// freed before a call to backend(), whose result is then parsed and
+// stored there.
+// TODO: it should also be cleared on program exit.
+minion_doc input_doc;
+
 minion_value Callback(minion_value m)
 {
+    minion_free(input_doc);
     const char* cbdata{minion_dump(m, -1)};
+    minion_free_item(m); // TODO: Is this correct here?
     char* cbresult = backend(cbdata);
+    minion_tidy_dump();
     minion_doc mdoc = minion_read(cbresult);
     char* merr = minion_error(mdoc);
     if (merr) {
+        //TODO: I might not want to crash ... Is there any less dramatic way
+        // of handling this?
         cerr << "[BUG] backend() received invalid data:\n" << cbresult << endl;
         cerr << merr << endl;
         exit(1);
     }
+    input_doc = mdoc;
     return mdoc.minion_item;;
 }
 
 minion_value Callback1(const char* widget, minion_value data)
 {
-    minion_value m = minion_array({{"CALLBACK", widget}, {"DATA", data}});
-    return Callback(m);
+    minion_value m = new_minion_map({
+        {"CALLBACK", new_minion_string(widget)},
+        {"DATA", data}});
+    auto res = Callback(m);
 }
 
-minion_value Callback2(string widget, minion_value data, minion_value data2)
+minion_value Callback2(const char* widget, minion_value data, minion_value data2)
 {
-    minion_value m({
-        {"CALLBACK", widget},
+    minion_value m = new_minion_map({
+        {"CALLBACK", new_minion_string(widget)},
         {"DATA", data},
-        {"DATA2", data2}
-    });
+        {"DATA2", data2}});
     return Callback(m);
 }
 
