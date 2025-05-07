@@ -3,11 +3,11 @@
 
 #include "minion.h"
 
-minion::MinionMap Callback(minion::MinionMap m);
-minion::MinionMap Callback1(std::string widget, minion::MinionValue data);
-minion::MinionMap Callback2(
-    std::string widget, 
-    minion::MinionValue data, 
-    minion::MinionValue data2);
+minion_value Callback(minion_value m);
+minion_value Callback1(const char* widget, minion_value data);
+minion_value Callback2(
+    const char* widget, 
+    minion_value data, 
+    minion_value data2);
 
 #endif // CALLBACK_H

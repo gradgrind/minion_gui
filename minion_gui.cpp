@@ -2,6 +2,7 @@
 #include "backend.h"
 #include "callback.h"
 #include "dispatcher.h"
+#include "minion.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
@@ -10,24 +11,30 @@
 #include <fmt/format.h>
 #include <iostream>
 using namespace std;
-using namespace minion;
 
-MinionMap Callback(MinionMap m)
+minion_value Callback(minion_value m)
 {
-    string cbdata{dump_map_items(m, -1)};
-    cout << "Callback: " << cbdata << endl;
-    return Minion{backend(cbdata)}.top_level;
+    const char* cbdata{minion_dump(m, -1)};
+    char* cbresult = backend(cbdata);
+    minion_doc mdoc = minion_read(cbresult);
+    char* merr = minion_error(mdoc);
+    if (merr) {
+        cerr << "[BUG] backend() received invalid data:\n" << cbresult << endl;
+        cerr << merr << endl;
+        exit(1);
+    }
+    return mdoc.minion_item;;
 }
 
-MinionMap Callback1(string widget, MinionValue data)
+minion_value Callback1(const char* widget, minion_value data)
 {
-    MinionMap m({{"CALLBACK", widget}, {"DATA", data}});
+    minion_value m = minion_array({{"CALLBACK", widget}, {"DATA", data}});
     return Callback(m);
 }
 
-MinionMap Callback2(string widget, MinionValue data, MinionValue data2)
+minion_value Callback2(string widget, minion_value data, minion_value data2)
 {
-    MinionMap m({
+    minion_value m({
         {"CALLBACK", widget},
         {"DATA", data},
         {"DATA2", data2}
@@ -37,13 +44,13 @@ MinionMap Callback2(string widget, MinionValue data, MinionValue data2)
 
 //TODO ...
 void tmp_run(
-    MinionMap data)
+    minion_value data)
 {
     auto dolist0 = data.get("GUI");
     if (holds_alternative<MinionList>(dolist0)) {
         auto dolist = get<MinionList>(dolist0);
         for (const auto& cmd : dolist) {
-            GUI(get<MinionMap>(cmd));
+            GUI(get<minion_value>(cmd));
         }
     } else {
         cerr << "Input data not a GUI command list" << endl;
@@ -54,7 +61,7 @@ void init(char* data0) {
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
     string initgui{data0};
-    minion::MinionMap guidata;
+    minion::minion_value guidata;
     try {
         try {
             guidata = minion::read_minion(initgui);
@@ -79,7 +86,7 @@ void init(char* data0) {
 
     if (readfile(initgui, guipath)) {
         cout << "Reading " << fpath << endl;
-        minion::MinionMap guidata;
+        minion::minion_value guidata;
 
         try {
             try {

@@ -1,10 +1,10 @@
 #include "minion.h"
-//#include <stdbool.h>
 #include <csetjmp>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <initializer_list>
 
 /* All the values in minion_Flags (apart from the null F_NoFlags) are
  * greater than the highest value in minion_Type, so that when type is
@@ -1133,3 +1133,53 @@ char* minion_dump(
     }
     return 0;
 }
+
+//TODO
+// *** Construction functions ...
+// How to manage the memory?
+
+struct pair_input
+{
+    char* key;
+    minion_value value;
+};
+
+minion_value pop_remembered()
+{
+    return remembered_items[--remembered_items_index];
+}
+
+// Build a new list item from the arguments, which are pair_input items.
+// It (eventually) needs to be freed with free_item().
+minion_value new_minion_array(std::initializer_list<pair_input> items)
+{
+    auto start_index = remembered_items_index;
+    
+    for (const auto& item : items) {
+        new_String(item.key, T_String, F_NoFlags);
+        remember(item.value);
+    }
+    new_Array(start_index);
+    return pop_remembered();
+}
+
+/* Use of initializer_list:
+struct pa{char* k; int v;};
+void myFunction(initializer_list<pa> myList)
+{
+
+    // Print the size (length) of myList
+    cout << "Size of myList: " << myList.size();
+    cout << "\n";
+
+    // Print elements of myList
+    cout << "Elements of myList: ";
+
+    // iterate to all the values of myList
+    for (const auto& value : myList) {
+
+        // Print value at each iteration
+        cout << value.k << " ";
+    }
+}
+*/

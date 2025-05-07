@@ -1,8 +1,5 @@
 #ifndef MINION_H
 #define MINION_H
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 typedef unsigned int msize;
 
@@ -28,9 +25,13 @@ typedef struct
     macro_node* macros;
 } minion_doc;
 
+// The result must be freed when it is no longer needed
 minion_doc minion_read(const char* input);
+
+// Return the error message, or NULL if there was no error
 char* minion_error(minion_doc doc);
-// Free the memory used for a minion item.
+
+// Free the memory used for a minion_doc.
 void minion_free(minion_doc doc);
 
 char* minion_dump(minion_value source, int depth);
@@ -40,7 +41,4 @@ void minion_tidy_dump();
 // Free longer term minion memory (can be retained between minion_read calls)
 void minion_tidy();
 
-#ifdef __cplusplus
-}
-#endif
 #endif // MINION_H
