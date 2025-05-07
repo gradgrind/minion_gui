@@ -15,7 +15,7 @@
 /.vscode/
 
 # Prerequisites
-*.d
+#*.d
 
 # Compiled Object files
 *.slo
