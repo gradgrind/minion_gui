@@ -11,55 +11,53 @@
 #include <fmt/format.h>
 #include <iostream>
 using namespace std;
+using namespace minion;
 
 // This is used to manage the memory of a result from minion_read. It is
 // freed before a call to backend(), whose result is then parsed and
 // stored there.
 // TODO: it should also be cleared on program exit.
-minion_doc input_doc;
+MValue input_value;
 
-minion_value Callback(minion_value m)
+// This is used for reading (deserializing) MINION messages.
+InputBuffer input_buffer;
+
+// This is used for writing (serializing) MINION messages.
+DumpBuffer dump_buffer;
+
+void Callback(MValue m)
 {
-    minion_free(input_doc);
-    const char* cbdata{minion_dump(m, -1)};
-    minion_free_item(m); // TODO: Is this correct here?
+    delete_mvalue(input_value);
+    const char* cbdata{dump_buffer.dump(m)};
+    delete_mvalue(m); // TODO: Is this correct here?
     char* cbresult = backend(cbdata);
-    minion_tidy_dump();
-    minion_doc mdoc = minion_read(cbresult);
-    char* merr = minion_error(mdoc);
-    if (merr) {
-        //TODO: I might not want to crash ... Is there any less dramatic way
-        // of handling this?
-        cerr << "[BUG] backend() received invalid data:\n" << cbresult << endl;
-        cerr << merr << endl;
-        exit(1);
-    }
-    input_doc = mdoc;
-    return mdoc.minion_item;;
+    //TODO? minion_tidy_dump();
+    input_value = input_buffer.read(cbresult);
+    //TODO: Handle errors (thrown MinionError)?
 }
 
-minion_value Callback1(const char* widget, minion_value data)
+void Callback1(const char* widget, MValue data)
 {
-    minion_value m = new_minion_map({
-        {"CALLBACK", new_minion_string(widget)},
+    MValue m = new_map({
+        {"CALLBACK", new_string(widget)},
         {"DATA", data}});
-    auto res = Callback(m);
+    Callback(m);
 }
 
-minion_value Callback2(const char* widget, minion_value data, minion_value data2)
+void Callback2(const char* widget, MValue data, MValue data2)
 {
-    minion_value m = new_minion_map({
-        {"CALLBACK", new_minion_string(widget)},
+    MValue m = new_map({
+        {"CALLBACK", new_string(widget)},
         {"DATA", data},
         {"DATA2", data2}});
-    return Callback(m);
+    Callback(m);
 }
 
 //TODO ...
 void tmp_run(
-    minion_value data)
+    MValue data)
 {
-    auto dolist0 = data.get("GUI");
+    auto dolist0 = m_map(data)->get("GUI");
     if (holds_alternative<MinionList>(dolist0)) {
         auto dolist = get<MinionList>(dolist0);
         for (const auto& cmd : dolist) {
