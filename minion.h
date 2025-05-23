@@ -1,7 +1,7 @@
 #ifndef MINION_H
 #define MINION_H
 
-#include <map>
+#include <forward_list>
 #include <stdexcept>
 #include <vector>
 
@@ -25,80 +25,140 @@ struct position
     size_t byte_ix;
 };
 
-//class DumpBuffer; // forward declaration
+// forward declarations
+struct MValue;
+using MPair = std::pair<std::string, MValue>;
+struct MinionValue;
+class InputBuffer;
+class DumpBuffer;
+class MString;
+class MList;
+class MMap;
 
 struct MValue
 {
+    friend MinionValue;
+    friend InputBuffer;
+    friend DumpBuffer;
+
+    MValue() = default;
+    MValue(std::string_view s);
+    MValue(std::initializer_list<MValue> items);
+    MValue(std::initializer_list<MPair> items);
+
+    bool is_null();
+
+    MString* m_string();
+    MList* m_list();
+    MMap* m_map();
+
+    void copy(MinionValue& m); // deep copy function
+
+protected:
+    void free();
+
     int type{0};
     bool not_owner{false};
     void* minion_item{nullptr};
 
-    MValue copy(); // deep copy function
+    MValue(
+        int t, void* p, bool o = false)
+        : type{t}
+        , not_owner{o}
+        , minion_item{p}
+    {}
+
+    void mcopy(MValue& m); // used by copy method
 };
 
-//TODO: Use real classes for MString, MList, MMap? So they can have
-// their own methods ...
-
-using MString = std::string;
-using MList = std::vector<MValue>;
-
-struct MPair
+struct MinionValue : public MValue
 {
-    MString key;
-    MValue value;
-};
-
-using MMap = std::vector<MPair>;
-
-void delete_mvalue(MValue& m);
-
-// Special MValue "constructors"
-MValue new_string(std::string_view s);
-MValue new_list(std::initializer_list<MValue> items);
-MValue new_map(std::initializer_list<MPair> items);
-
-// Special MValue "methods"
-MString* m_string(MValue m) { return reinterpret_cast<MString*>(m.minion_item); }
-MList* m_list(MValue m) { return reinterpret_cast<MList*>(m.minion_item); }
-MMap* m_map(MValue m) { return reinterpret_cast<MMap*>(m.minion_item); }
-
-class MacroMap
-{
-    std::map<std::string, MValue> macros;
-
-public:
-    void clear()
+    MinionValue() = default;
+    MinionValue(
+        MValue m)
     {
-        for (auto& mp : macros) {
-            delete_mvalue(mp.second);
+        type = m.type;
+        minion_item = m.minion_item;
+    }
+
+    ~MinionValue() { free(); }
+
+    MinionValue& operator=(
+        const MinionValue& source)
+    {
+        // self-assignment check
+        if (this != &source) {
+            this->free();
+            type = source.type;
+            minion_item = source.minion_item;
+            not_owner = false;
         }
-        macros.clear();
-    }
-
-    bool has(
-        std::string& key)
-    {
-        return macros.contains(key);
-    }
-
-    MValue get(
-        std::string& key)
-    {
-        auto m = macros.at(key);
-        if (!m.not_owner)
-            macros.at(key) = {m.type, true, m.minion_item};
-        return m;
-    }
-
-    void add(
-        std::string& key, MValue value)
-    {
-        macros.emplace(key, value);
+        return *this;
     }
 };
+
+class MString : public std::string
+{};
+
+class MList : public std::vector<MValue>
+{};
+
+class MMap : public std::vector<MPair*>
+{};
 
 class InputBuffer
 {
+
+    class MacroMap
+    {
+        std::forward_list<MPair> macros;
+
+    public:
+        void clear()
+        {
+            for (auto& mp : macros) {
+                mp.second.free();
+            }
+            macros.clear();
+        }
+
+        bool has(
+            std::string& key)
+        {
+            for (auto& mp : macros) {
+                if (mp.first == key) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        MValue& first_value() { return macros.front().second; }
+
+        MValue get(
+            std::string& key)
+        {
+            for (auto& mp : macros) {
+                if (mp.first == key) {
+                    auto m = mp.second;
+                    mp.second.not_owner = true;
+                    return m;
+                }
+            }
+            return {};
+        }
+
+        MPair& add(
+            std::string& key, MValue value)
+        {
+            macros.emplace_front(key, value);
+            return macros.front();
+        }
+    };
+
+    MValue get_macro(std::string& s);
+
+
     std::string_view input;
     size_t ch_index;
     size_t line_index;
@@ -106,6 +166,7 @@ class InputBuffer
     std::string ch_buffer; // for reading strings
 
     MacroMap macro_map;
+    std::string error_message;
 
     char read_ch(bool instring);
     void unread_ch();
@@ -116,14 +177,13 @@ class InputBuffer
         return std::to_string(p.line_n) + '.' + std::to_string(p.byte_ix);
     }
     void error(std::string_view msg);
-    int get_item(MValue& value_buffer);
-    void get_string();
+    void get_item(MValue& mvalue, int expect = 0);
+    void get_string(char ch);
+    void get_bare_string(char ch);
     bool add_unicode_to_ch_buffer(int len);
-    void get_list(MValue& value_buffer);
-    void get_map(MValue& value_buffer);
 
 public:
-    MValue read(std::string_view s);
+    const char* read(MinionValue& data, std::string_view s);
 };
 
 class DumpBuffer

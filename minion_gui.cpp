@@ -17,7 +17,7 @@ using namespace minion;
 // freed before a call to backend(), whose result is then parsed and
 // stored there.
 // TODO: it should also be cleared on program exit.
-MValue input_value;
+MinionValue input_value;
 
 // This is used for reading (deserializing) MINION messages.
 InputBuffer input_buffer;
@@ -27,12 +27,12 @@ DumpBuffer dump_buffer;
 
 void Callback(MValue m)
 {
-    delete_mvalue(input_value);
+    input_value.free();
     const char* cbdata{dump_buffer.dump(m)};
-    delete_mvalue(m); // TODO: Is this correct here?
+    m.free(); // TODO: Is this correct here?
     char* cbresult = backend(cbdata);
     //TODO? minion_tidy_dump();
-    input_value = input_buffer.read(cbresult);
+    input_buffer.read(input_value, cbresult);
     //TODO: Handle errors (thrown MinionError)?
 }
 
