@@ -16,7 +16,6 @@ using namespace minion;
 // This is used to manage the memory of a result from minion_read. It is
 // freed before a call to backend(), whose result is then parsed and
 // stored there.
-// TODO: it should also be cleared on program exit.
 MinionValue input_value;
 
 // This is used for reading (deserializing) MINION messages.
@@ -25,11 +24,19 @@ InputBuffer input_buffer;
 // This is used for writing (serializing) MINION messages.
 DumpBuffer dump_buffer;
 
+//TODO: In the case of an error, intermediate MValues could cause
+// memory leaks. Should there be a MinionValue(&)-based builder which
+// can avoid this?
+
 void Callback(MValue m)
 {
-    input_value.free();
-    const char* cbdata{dump_buffer.dump(m)};
-    m.free(); // TODO: Is this correct here?
+    input_value = {};
+    const char* cbdata;
+    {
+        MinionValue mv = m;
+        cbdata = dump_buffer.dump(mv);
+        // TODO: Is the freeing of m correct here?
+    }
     char* cbresult = backend(cbdata);
     //TODO? minion_tidy_dump();
     input_buffer.read(input_value, cbresult);
@@ -38,83 +45,69 @@ void Callback(MValue m)
 
 void Callback1(const char* widget, MValue data)
 {
-    MValue m = new_map({
-        {"CALLBACK", new_string(widget)},
-        {"DATA", data}});
-    Callback(m);
+    Callback(
+        {
+            MPair{"CALLBACK", widget},
+            MPair{"DATA", data}
+        }
+    );
 }
 
 void Callback2(const char* widget, MValue data, MValue data2)
 {
-    MValue m = new_map({
-        {"CALLBACK", new_string(widget)},
-        {"DATA", data},
-        {"DATA2", data2}});
-    Callback(m);
+    Callback(
+        {
+            MPair{"CALLBACK", widget},
+            MPair{"DATA", data},
+            MPair{"DATA2", data2}
+        }
+    );
 }
 
-//TODO ...
+
+
+//TODO: extend minion with helper methods?
+//TODO ... What should the final form be?
 void tmp_run(
     MValue data)
 {
-    auto dolist0 = m_map(data)->get("GUI");
-    if (holds_alternative<MinionList>(dolist0)) {
-        auto dolist = get<MinionList>(dolist0);
-        for (const auto& cmd : dolist) {
-            GUI(get<minion_value>(cmd));
+    auto dolist0 = data.map_search("GUI");
+    if (!dolist0.is_null()) {
+        if (auto dolist = dolist0.m_list()) {
+            for (const auto& cmd : *dolist) {
+                GUI(cmd);
+            }
+            return;
         }
-    } else {
-        cerr << "Input data not a GUI command list" << endl;
     }
+    //TODO: throw?
+    cerr << "Input data not a GUI command list" << endl;
 }
+
+minion::InputBuffer minion_input; // for parsing minion
 
 void init(char* data0) {
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
     string initgui{data0};
-    minion::minion_value guidata;
-    try {
-        try {
-            guidata = minion::read_minion(initgui);
-        } catch (minion::MinionException &e) {
-            cerr << e.what() << endl;
-            return;
-        }
-
-        tmp_run(guidata);
+    minion::MinionValue guidata;
+    if (auto e = minion_input.read(guidata, initgui)) {
+        cerr << e << endl;
         return;
-
-    } catch (const std::exception &ex) {
-        cerr << "EXCEPTION: " << ex.what() << endl;
-    } catch (const std::string &ex) {
-        cerr << "ERROR: " << ex << endl;
     }
+    tmp_run(guidata);
+    return;
 
     /* *** This would handle a file path instead of the actual data ***
     #include "iofile.h"
 
     string initgui;
 
-    if (readfile(initgui, guipath)) {
+    if (readfile(initgui, data0)) {
         cout << "Reading " << fpath << endl;
-        minion::minion_value guidata;
 
-        try {
-            try {
-                guidata = minion::read_minion(gui);
-            } catch (minion::MinionException &e) {
-                cerr << e.what() << endl;
-                return;
-            }
+        ...
 
-            tmp_run(guidata);
-            return;
-
-        } catch (const std::exception &ex) {
-            cerr << "EXCEPTION: " << ex.what() << endl;
-        } catch (const std::string &ex) {
-            cerr << "ERROR: " << ex << endl;
-        }
     } else {
         cerr << "Error opening file: " << guipath << endl;
     }

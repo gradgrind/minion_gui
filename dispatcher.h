@@ -3,6 +3,6 @@
 
 #include "minion.h"
 
-void GUI(minion::MinionMap obj);
+void GUI(minion::MValue obj);
 
 #endif // DISPATCHER_H
