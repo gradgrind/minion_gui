@@ -46,8 +46,8 @@ void Callback(MValue m)
 void Callback1(const char* widget, MValue data)
 {
     Callback(
-        {
-            MPair{"CALLBACK", widget},
+        new MMap{
+            MPair{"CALLBACK", new MString{widget}},
             MPair{"DATA", data}
         }
     );
@@ -56,26 +56,25 @@ void Callback1(const char* widget, MValue data)
 void Callback2(const char* widget, MValue data, MValue data2)
 {
     Callback(
-        {
-            MPair{"CALLBACK", widget},
+        new MMap{
+            MPair{"CALLBACK", new MString{widget}},
             MPair{"DATA", data},
             MPair{"DATA2", data2}
         }
     );
 }
 
-
-
 //TODO: extend minion with helper methods?
 //TODO ... What should the final form be?
 void tmp_run(
     MValue data)
 {
-    auto dolist0 = data.map_search("GUI");
+    auto dolist0 = data.m_map()->get("GUI");
     if (!dolist0.is_null()) {
         if (auto dolist = dolist0.m_list()) {
-            for (const auto& cmd : *dolist) {
-                GUI(cmd);
+            auto len = dolist->size();
+            for (int i = 0; i < len; ++i) {
+                GUI(dolist->get(i));
             }
             return;
         }

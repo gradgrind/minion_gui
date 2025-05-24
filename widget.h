@@ -34,14 +34,14 @@ protected:
     Fl_Widget* fl_widget;
 
 public:
-    //Widget(minion::MinionMap parammap, std::string_view w_name);
-    Widget(minion::MinionMap parammap);
+    //Widget(minion::MMap* parammap, std::string_view w_name);
+    Widget(minion::MMap* parammap);
     ~Widget() override;
 
     //static void add_widget(std::string_view name, Fl_Widget *w, method_handler h);
     static Fl_Widget* get_widget(std::string_view name);
     static Widget* get_widget_data(std::string_view name);
-    static minion::MinionList list_widgets();
+    static minion::MList list_widgets();
     static std::string_view get_widget_name(Fl_Widget *w);
 
     //inline static int line_height{LINE_HEIGHT};
@@ -50,7 +50,7 @@ public:
     
     inline Fl_Widget* fltk_widget() { return fl_widget; }
 
-    virtual void handle_method(std::string_view method, minion::MinionList &mlist);
+    virtual void handle_method(std::string_view method, minion::MList* mlist);
 
     void remove_widget(std::string_view name);
 

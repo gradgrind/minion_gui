@@ -1,7 +1,6 @@
 #ifndef MINION_H
 #define MINION_H
 
-#include <forward_list>
 #include <stdexcept>
 #include <vector>
 
@@ -38,13 +37,15 @@ class MMap;
 struct MValue
 {
     friend MinionValue;
+    friend MList;
+    friend MMap;
     friend InputBuffer;
     friend DumpBuffer;
 
     MValue() = default;
-    MValue(std::string_view s);
-    MValue(std::initializer_list<MValue> items);
-    MValue(std::initializer_list<MPair> items);
+    MValue(MString* m);
+    MValue(MList* m);
+    MValue(MMap* m);
 
     bool is_null() { return type == 0; }
 
@@ -53,7 +54,6 @@ struct MValue
     MMap* m_map();
 
     void copy(MinionValue& m); // deep copy function
-    MValue map_search(std::string_view key);
 
 protected:
     void free();
@@ -98,67 +98,149 @@ struct MinionValue : public MValue
     }
 };
 
-class MString : public std::string
-{};
+class MString
+{
+    std::string data;
 
-class MList : public std::vector<MValue>
-{};
+public:
+    MString() = default;
 
-class MMap : public std::vector<MPair*>
-{};
+    MString(
+        std::string_view s)
+        : data{s}
+    {}
+
+    ~MString() = default;
+
+    std::string_view data_view() { return data; }
+};
+
+class MList
+{
+    std::vector<MValue> data;
+
+public:
+    MList() = default;
+
+    MList(
+        std::initializer_list<MValue> items)
+    {
+        for (const auto& item : items) {
+            add(item);
+        }
+    }
+
+    MList(
+        MList& source) // copy constructor
+    {
+        data.reserve(source.data.size());
+        for (auto& mv : source.data) {   // mv is reference to source element
+            data.emplace_back(MValue{}); // add null MValue
+            MValue& mref = data.back();  // get reference to added MValue
+            mv.mcopy(mref);
+        }
+    }
+
+    ~MList()
+    {
+        for (auto& m : data) {
+            m.free();
+        }
+    }
+
+    size_t size() { return data.size(); }
+
+    void add(
+        MValue m)
+    {
+        data.emplace_back(m);
+    }
+
+    MValue& get(
+        size_t index)
+    {
+        return data.at(index);
+    }
+};
+
+class MMap
+{
+    std::vector<MPair> data;
+
+public:
+    MMap() = default;
+
+    MMap(
+        std::initializer_list<MPair> items)
+    {
+        for (const auto& item : items) {
+            add(item);
+        }
+    }
+
+    MMap(
+        MMap& source) // copy constructor
+    {
+        data.reserve(source.data.size());
+        for (auto& mp : source.data) { // mv is reference to source element
+            // add pair with null MValue
+            data.emplace_back(MPair{mp.first, {}});
+            MValue& mref = data.back().second; // get reference to added MValue
+            mp.second.mcopy(mref);
+        }
+    }
+
+    ~MMap() { clear(); }
+
+    void clear()
+    {
+        for (auto& m : data) {
+            m.second.free();
+        }
+        data.clear();
+    }
+
+    size_t size() { return data.size(); }
+
+    void add(
+        MPair m)
+    {
+        data.emplace_back(m);
+    }
+
+    MPair& get_pair(
+        size_t index)
+    {
+        return data.at(index);
+    }
+
+    int search(
+        std::string_view key)
+    {
+        int i = 0;
+        for (auto& mp : data) {
+            if (mp.first == key)
+                return i;
+            ++i;
+        }
+        return -1;
+    }
+
+    MValue get(
+        std::string_view key)
+    {
+        for (auto& mp : data) {
+            if (mp.first == key)
+                return mp.second;
+        }
+        return {};
+    }
+};
 
 class InputBuffer
 {
-
-    class MacroMap
-    {
-        std::forward_list<MPair> macros;
-
-    public:
-        void clear()
-        {
-            for (auto& mp : macros) {
-                mp.second.free();
-            }
-            macros.clear();
-        }
-
-        bool has(
-            std::string& key)
-        {
-            for (auto& mp : macros) {
-                if (mp.first == key) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        MValue& first_value() { return macros.front().second; }
-
-        MValue get(
-            std::string& key)
-        {
-            for (auto& mp : macros) {
-                if (mp.first == key) {
-                    auto m = mp.second;
-                    mp.second.not_owner = true;
-                    return m;
-                }
-            }
-            return {};
-        }
-
-        MPair& add(
-            std::string& key, MValue value)
-        {
-            macros.emplace_front(key, value);
-            return macros.front();
-        }
-    };
-
-    MValue get_macro(std::string& s);
-
+    MMap macro_map;
+    MValue get_macro(std::string_view s);
 
     std::string_view input;
     size_t ch_index;
@@ -166,7 +248,6 @@ class InputBuffer
     size_t ch_linestart;
     std::string ch_buffer; // for reading strings
 
-    MacroMap macro_map;
     std::string error_message;
 
     char read_ch(bool instring);
@@ -199,8 +280,9 @@ class DumpBuffer
         buffer.push_back(ch);
     }
     void pop() { buffer.pop_back(); }
-    void dump_value(const MValue& source);
-    void dump_string(const std::string& source);
+    void dump_value(MValue& source);
+    void dump_string(std::string_view source);
+    void dump_string(MString& source);
     void dump_list(MList& source);
     void dump_map(MMap& source);
     void dump_pad();
