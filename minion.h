@@ -161,6 +161,9 @@ public:
     {
         return data.at(index);
     }
+
+    bool get_string(size_t index, std::string& s);
+    bool get_int(size_t index, int& i);
 };
 
 class MMap

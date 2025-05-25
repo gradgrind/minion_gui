@@ -897,6 +897,32 @@ MMap* MValue::m_map()
     return nullptr;
 }
 
+bool MList::get_string(
+    size_t index, std::string& s)
+{
+    if (index < size()) {
+        MValue m = get(index);
+        if (MString* ms = m.m_string()) {
+            s = ms->data_view();
+            return true;
+        }
+        std::string msg{"List: expecting string at index: "};
+        throw MinionError(msg.append(std::to_string(index)));
+    }
+    return false; // out of range
+}
+
+bool MList::get_int(
+    size_t index, int& i)
+{
+    std::string s;
+    if (!get_string(index, s))
+        return false; // out of range
+    std::string msg{"List, seeking integer value at index: "};
+    i = string2int(s, msg.append(std::to_string(index)));
+    return true;
+}
+
 bool MMap::get_string(
     std::string_view key, std::string& s)
 {
@@ -917,7 +943,7 @@ bool MMap::get_int(
     std::string s;
     if (!get_string(key, s))
         return false;
-    std::string msg{"Map: value not string for key: "};
+    std::string msg{"Map, seeking integer value at key: "};
     i = string2int(s, msg.append(key));
     return true;
 }

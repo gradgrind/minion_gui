@@ -50,14 +50,20 @@ void callback_no_esc_closes(
 
 // *** layout widgets – Fl_Group based
 
+// The Group widget is only needed for its `handle_method`.
 W_Group::W_Group(MMap* parammap) : Widget(parammap){}
 //W_Group* W_Group::make(MMap* &parammap){}
 
-void W_Group::handle_method(std::string_view method, minion::MList* &paramlist)
+void W_Group::handle_method(std::string_view method, minion::MList* paramlist)
 {
     if (method == "RESIZABLE") {
-        auto rsw = Widget::get_widget(get<string>(paramlist.at(1)));
-        fltk_widget()->as_group()->resizable(rsw);
+        std::string wname;
+        if (paramlist->get_string(1, wname)) {
+            auto rsw = Widget::get_widget(wname);
+            fltk_widget()->as_group()->resizable(rsw);
+        } else {
+            throw "Method RESIZABLE without widget";
+        }
     } else if (method == "fit_to_parent") {
         if (auto parent = fltk_widget()->parent()) {
             fltk_widget()->resize(0, 0, parent->w(), parent->h());
@@ -127,53 +133,8 @@ void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
     }
 }
 
-W_Row::W_Row(minion::MMap* parammap) : W_Grid{parammap}{}
-W_Row* W_Row::make(minion::MMap* &parammap)
-{
-    return new_hvgrid(parammap, true);
-
-}
-
-// Inherit handle_method from W_Grid
-//void W_Row::handle_method(std::string_view method, minion::MList* &paramlist);
-
-
-class W_Row : public Widget
-{
-public:
-    W_Row(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_Row* make(MMap* &parammap);
-};
-
-class W_Column : public Widget
-{
-public:
-    W_Column(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_Column* make(MMap* &parammap);
-};
-
-// *** End of layouts
-
-
-
-
-void callback_no_esc_closes(
-    Fl_Widget *w, void *x)
-{
-    if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
-        return; // ignore Escape
-    //TODO: message to backend?
-    cout << "Closing " << WidgetData::get_widget_name(w) << endl;
-    //TODO--
-    exit(0);
-}
-
-Fl_Widget *new_hvgrid(
-    MMap* &parammap,
+Fl_Widget* W_Grid::new_hvgrid(
+    MMap* parammap,
     bool horizontal)
 {
     auto w = new Fl_Grid(0, 0, 0, 0);
@@ -183,7 +144,7 @@ Fl_Widget *new_hvgrid(
 
 //TODO: Get pending items ...
 
-    return widget;         
+    return w;         
 
 
 
@@ -229,14 +190,26 @@ Fl_Widget *new_hvgrid(
     throw string{"Invalid ITEMS list: "} + s;    
 }
 
-Fl_Widget *NEW_Column(
-    MMap* param)
+
+
+W_Row::W_Row(minion::MMap* parammap) : W_Grid{parammap}{}
+W_Row* W_Row::make(minion::MMap* parammap)
 {
-    return new_hvgrid(param, false);
+    return new_hvgrid(parammap, true);
+
 }
 
-Fl_Widget *NEW_Row(
-    MMap* param)
+// Inherit handle_method from W_Grid
+//void W_Row::handle_method(std::string_view method, minion::MList* paramlist);
+
+W_Column::W_Column(minion::MMap* parammap) : W_Grid{parammap}{}
+W_Column* W_Column::make(minion::MMap* parammap)
 {
-    return new_hvgrid(param, true);
+    return new_hvgrid(parammap, false);
+
 }
+
+// Inherit handle_method from W_Grid
+//void W_Column::handle_method(std::string_view method, minion::MList* paramlist);
+
+// *** End of layouts
