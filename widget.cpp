@@ -17,85 +17,85 @@ using namespace minion;
 class W_Box : public Widget
 {
 public:
-    W_Box(MinionMap parammap) : Widget{parammap}
+    W_Box(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_Box* make(MinionMap &parammap);
+    static W_Box* make(MMap* &parammap);
 };
 
 class W_Label : public Widget
 {
 public:
-    W_Label(MinionMap parammap) : Widget{parammap}
+    W_Label(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_Label* make(MinionMap &parammap);
+    static W_Label* make(MMap* &parammap);
 };
 
 class W_PushButton : public Widget
 {
 public:
-    W_PushButton(MinionMap parammap) : Widget{parammap}
+    W_PushButton(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_PushButton* make(MinionMap &parammap);
+    static W_PushButton* make(MMap* &parammap);
 };
 
 class W_Checkbox : public Widget
 {
 public:
-    W_Checkbox(MinionMap parammap) : Widget{parammap}
+    W_Checkbox(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_Checkbox* make(MinionMap &parammap);
+    static W_Checkbox* make(MMap* &parammap);
 };
 
 class W_Choice : public Widget
 {
 public:
-    W_Choice(MinionMap parammap) : Widget{parammap}
+    W_Choice(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_Choice* make(MinionMap &parammap);
+    static W_Choice* make(MMap* &parammap);
 };
 
 class W_Output : public Widget
 {
 public:
-    W_Output(MinionMap parammap) : Widget{parammap}
+    W_Output(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_Output* make(MinionMap &parammap);
+    static W_Output* make(MMap* &parammap);
 };
 
 class W_TextLine : public Widget
 {
 public:
-    W_TextLine(MinionMap parammap) : Widget{parammap}
+    W_TextLine(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_TextLine* make(MinionMap &parammap);
+    static W_TextLine* make(MMap* &parammap);
 };
 
 class W_RowTable : public Widget
 {
 public:
-    W_RowTable(MinionMap parammap) : Widget{parammap}
+    W_RowTable(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_RowTable* make(MinionMap &parammap);
+    static W_RowTable* make(MMap* &parammap);
 };
 
 class W_EditForm : public Widget
 {
 public:
-    W_EditForm(MinionMap parammap) : Widget{parammap}
+    W_EditForm(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_EditForm* make(MinionMap &parammap);
+    static W_EditForm* make(MMap* &parammap);
 };
 
-const map<string_view, function<Widget*(MinionMap&)>>widget_type_map{
+const map<string_view, function<Widget*(MMap*&)>>widget_type_map{
     {"Window", W_Window::make},
     {"Grid", W_Grid::make},
     {"Row", W_Row::make},
@@ -112,14 +112,14 @@ const map<string_view, function<Widget*(MinionMap&)>>widget_type_map{
 };
 
 void handle_methods(
-    Widget* w, MinionMap mmap)
+    Widget* w, MMap* mmap)
 {
     auto dolist = mmap.get("DO");
-    if (holds_alternative<MinionList>(dolist)) {
-        MinionList do_list = get<MinionList>(dolist);
+    if (holds_alternative<MList*>(dolist)) {
+        MList* do_list = get<MList*>(dolist);
         for (const auto& cmd : do_list) {
-            if (holds_alternative<MinionList>(cmd)) {
-                MinionList mlist = get<MinionList>(cmd);
+            if (holds_alternative<MList*>(cmd)) {
+                MList* mlist = get<MList*>(cmd);
                 if (mlist.empty()) goto fail;
                 string c;
                 try {
@@ -140,12 +140,12 @@ fail:
 }
 
 void process_command(
-    MinionMap parammap)
+    MMap* parammap)
 {
     //TODO: widget type?
     string param0;
     if (parammap.get_string("NEW", param0)) {
-        function<Widget*(MinionMap&)> wmake;
+        function<Widget*(MMap*&)> wmake;
         try {
             wmake = widget_type_map.at(param0);
         } catch (std::out_of_range) {
@@ -195,7 +195,7 @@ void process_command(
 }
 
 
-void Widget::handle_method(std::string_view method, minion::MinionList &paramlist)
+void Widget::handle_method(std::string_view method, minion::MList* &paramlist)
 {
     auto w = fltk_widget();
     int ww, wh;

@@ -41,7 +41,7 @@ public:
 class W_Column : public W_Grid
 {
 public:
-    W_Column(minion::MMap parammap);
+    W_Column(minion::MMap* parammap);
     virtual void handle_method(std::string_view method, minion::MList* paramlist);
     static W_Window* make(minion::MMap* parammap);
 };
@@ -49,10 +49,10 @@ public:
 //TODO ...
 void tmp_run(minion::MMap data);
 
-Fl_Widget *NEW_Window(minion::MMap param);
-Fl_Widget *NEW_Grid(minion::MMap param);
-Fl_Widget *NEW_Row(minion::MMap param);
-Fl_Widget *NEW_Column(minion::MMap param);
+Fl_Widget *NEW_Window(minion::MMap* param);
+Fl_Widget *NEW_Grid(minion::MMap* param);
+Fl_Widget *NEW_Row(minion::MMap* param);
+Fl_Widget *NEW_Column(minion::MMap* param);
 
 void grid_method(Fl_Widget *w, std::string_view c, minion::MList m);
 void group_method(Fl_Widget *w, std::string_view c, minion::MList m);

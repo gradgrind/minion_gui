@@ -49,10 +49,10 @@ void callback_no_esc_closes(
 
 // *** layout widgets – Fl_Group based
 
-W_Group::W_Group(MinionMap parammap) : Widget(parammap){}
-//W_Group* W_Group::make(MinionMap &parammap){}
+W_Group::W_Group(MMap* parammap) : Widget(parammap){}
+//W_Group* W_Group::make(MMap* &parammap){}
 
-void W_Group::handle_method(std::string_view method, minion::MinionList &paramlist)
+void W_Group::handle_method(std::string_view method, minion::MList* &paramlist)
 {
     if (method == "RESIZABLE") {
         auto rsw = Widget::get_widget(get<string>(paramlist.at(1)));
@@ -70,8 +70,8 @@ void W_Group::handle_method(std::string_view method, minion::MinionList &paramli
 }
 
 
-W_Window::W_Window(MinionMap parammap) : W_Group{parammap}{}
-W_Window* W_Window::make(MinionMap &parammap)
+W_Window::W_Window(MMap* parammap) : W_Group{parammap}{}
+W_Window* W_Window::make(MMap* parammap)
 {
     int ww = 800;
     int wh = 600;
@@ -89,11 +89,11 @@ W_Window* W_Window::make(MinionMap &parammap)
 }
 
 // Inherit handle_method from W_Group
-//void W_Window::handle_method(std::string_view method, minion::MinionList &paramlist);
+//void W_Window::handle_method(std::string_view method, minion::MList* &paramlist);
 
 
-W_Grid::W_Grid(minion::MinionMap parammap) : W_Group{parammap}{}
-W_Grid* W_Grid::make(minion::MinionMap &parammap)
+W_Grid::W_Grid(minion::MMap* parammap) : W_Group{parammap}{}
+W_Grid* W_Grid::make(minion::MMap* parammap)
 {
     auto w = new Fl_Grid(0, 0, 0, 0);
     Fl_Group::current(0); // disable "auto-grouping"
@@ -101,13 +101,20 @@ W_Grid* W_Grid::make(minion::MinionMap &parammap)
     widget->fl_widget = w;
     return widget;         
 }
+Fl_Widget *NEW_Grid(
+    MMap* param)
+{
+    auto w = new Fl_Grid(0, 0, 0, 0);
+    Fl_Group::current(0); // disable "auto-grouping"
+    return w;
+}
 
-void W_Grid::handle_method(std::string_view method, minion::MinionList &paramlist)
+void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
 {
     if (method == "GAP") {
         int szr = int_param(paramlist, 1);
         int szc = szr;
-        if (paramlist.size() > 2) {
+        if (paramlist->size() > 2) {
             szc = int_param(paramlist, 2);
         }
         static_cast<Fl_Grid *>(fltk_widget())->gap(szr, szc);
@@ -119,33 +126,33 @@ void W_Grid::handle_method(std::string_view method, minion::MinionList &paramlis
     }
 }
 
-W_Row::W_Row(minion::MinionMap parammap) : W_Grid{parammap}{}
-W_Row* W_Row::make(minion::MinionMap &parammap)
+W_Row::W_Row(minion::MMap* parammap) : W_Grid{parammap}{}
+W_Row* W_Row::make(minion::MMap* &parammap)
 {
     return new_hvgrid(parammap, true);
 
 }
 
 // Inherit handle_method from W_Grid
-//void W_Row::handle_method(std::string_view method, minion::MinionList &paramlist);
+//void W_Row::handle_method(std::string_view method, minion::MList* &paramlist);
 
 
 class W_Row : public Widget
 {
 public:
-    W_Row(MinionMap parammap) : Widget{parammap}
+    W_Row(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_Row* make(MinionMap &parammap);
+    static W_Row* make(MMap* &parammap);
 };
 
 class W_Column : public Widget
 {
 public:
-    W_Column(MinionMap parammap) : Widget{parammap}
+    W_Column(MMap* parammap) : Widget{parammap}
     {}
 
-    static W_Column* make(MinionMap &parammap);
+    static W_Column* make(MMap* &parammap);
 };
 
 // *** End of layouts
@@ -164,17 +171,8 @@ void callback_no_esc_closes(
     exit(0);
 }
 
-Fl_Widget *NEW_Grid(
-    MinionMap param)
-{
-    auto widg = new Fl_Grid(0, 0, 0, 0);
-    Fl_Group::current(0); // disable "auto-grouping"
-    return widg;
-}
-
-
 Fl_Widget *new_hvgrid(
-    MinionMap &parammap,
+    MMap* &parammap,
     bool horizontal)
 {
     auto w = new Fl_Grid(0, 0, 0, 0);
@@ -194,13 +192,13 @@ Fl_Widget *new_hvgrid(
     auto items = param.get("ITEMS");
     // The items are lists, the first element is the widget name,
     // subsequent elements are for "filling" and fixing.
-    if (holds_alternative<MinionList>(items)) {
-        auto item_list = get<MinionList>(items);
+    if (holds_alternative<MList*>(items)) {
+        auto item_list = get<MList*>(items);
         int n_items = item_list.size();
         if (horizontal) widg->layout(1, n_items);
         else widg->layout(n_items, 1);
         for (int rc = 0; rc < n_items; ++rc) {
-            auto item = get<MinionList>(item_list.at(rc));
+            auto item = get<MList*>(item_list.at(rc));
             int n_params = item.size();
             if (n_params != 0) {
                 auto w = WidgetData::get_widget(get<string>(item.at(0)));
@@ -231,13 +229,13 @@ Fl_Widget *new_hvgrid(
 }
 
 Fl_Widget *NEW_Column(
-    MinionMap param)
+    MMap* param)
 {
     return new_hvgrid(param, false);
 }
 
 Fl_Widget *NEW_Row(
-    MinionMap param)
+    MMap* param)
 {
     return new_hvgrid(param, true);
 }

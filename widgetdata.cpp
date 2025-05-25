@@ -6,7 +6,7 @@
 #include <iostream>
 
 using namespace std;
-using  namespace minion;
+using namespace minion;
 
 //TODO: ???
 void do_callback(
@@ -17,7 +17,7 @@ void do_callback(
 }
 
 void widget_method(
-    Fl_Widget *w, string_view c, MinionList m)
+    Fl_Widget *w, string_view c, MList* m)
 {
     int ww, wh;
     if (c == "SIZE") {
@@ -70,9 +70,9 @@ void widget_method(
 std::unordered_map<std::string_view, Fl_Widget *> WidgetData::widget_map;
 
 // static
-MinionList WidgetData::list_widgets()
+MList* WidgetData::list_widgets()
 {
-    MinionList keys;
+    MList* keys;
     for (const auto &kv : widget_map) {
         keys.emplace_back(string{kv.first});
     }
@@ -91,14 +91,22 @@ Fl_Widget *WidgetData::get_widget(
 }
 
 // static
-void WidgetData::add_widget(
-    string_view name, Fl_Widget *w, method_handler h)
+void WidgetData::check_new_widget_name(string_view name)
 {
     if (name.empty()) {
         throw "Unnamed widget ...";
     } else if (widget_map.contains(name)) {
         throw string{"Widget name already exists: "} + string{name};
     }
+}
+
+// static
+void WidgetData::add_widget(
+    string_view name, Fl_Widget *w, method_handler h)
+{
+    //TODO--??
+    check_new_widget_name(name);
+    
     auto wd = new WidgetData(name, h);
     widget_map.emplace(wd->w_name, w);
     w->user_data(wd, true); // auto-free = true

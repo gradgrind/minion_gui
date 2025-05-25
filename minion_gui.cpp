@@ -2,7 +2,7 @@
 #include "backend.h"
 #include "callback.h"
 #include "dispatcher.h"
-#include "minion.h"
+#include "minion_gui.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
@@ -23,10 +23,6 @@ InputBuffer input_buffer;
 
 // This is used for writing (serializing) MINION messages.
 DumpBuffer dump_buffer;
-
-//TODO: In the case of an error, intermediate MValues could cause
-// memory leaks. Should there be a MinionValue(&)-based builder which
-// can avoid this?
 
 void Callback(MValue m)
 {
@@ -69,18 +65,20 @@ void Callback2(const char* widget, MValue data, MValue data2)
 void tmp_run(
     MValue data)
 {
-    auto dolist0 = data.m_map()->get("GUI");
-    if (!dolist0.is_null()) {
-        if (auto dolist = dolist0.m_list()) {
-            auto len = dolist->size();
-            for (int i = 0; i < len; ++i) {
-                GUI(dolist->get(i));
+    if (MMap* m0 = data.m_map()) {
+        MValue dolist0 = m0->get("GUI");
+        if (!dolist0.is_null()) {
+            if (MList* dolist = dolist0.m_list()) {
+                auto len = dolist->size();
+                for (int i = 0; i < len; ++i) {
+                    GUI(dolist->get(i));
+                }
+                return;
             }
-            return;
         }
     }
-    //TODO: throw?
-    cerr << "Input data not a GUI command list" << endl;
+    throw string{"Input data not a GUI command list: "}
+        + dump_buffer.dump(data, 0);
 }
 
 minion::InputBuffer minion_input; // for parsing minion

@@ -52,6 +52,7 @@ public:
 
     virtual void handle_method(std::string_view method, minion::MList* mlist);
 
+    //TODO: Should this be static?
     void remove_widget(std::string_view name);
 
     inline std::string_view widget_name() { return w_name; }

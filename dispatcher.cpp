@@ -1,41 +1,54 @@
 #include "dispatcher.h"
 #include "functions.h"
 #include "layout.h"
+#include "minion_gui.h"
 #include "textline.h"
 #include "widgetdata.h"
 #include "widgets.h"
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Group.H>
 #include <fmt/format.h>
+#include <string_view>
 using namespace std;
 using namespace minion;
 
 void Handle_methods(
-    Fl_Widget* w, MinionMap m, method_handler h)
+    Fl_Widget* w, MMap* m, method_handler h)
 {
-    auto dolist = m.get("DO");
-    if (holds_alternative<MinionList>(dolist)) {
-        MinionList do_list = get<MinionList>(dolist);
-        for (const auto& cmd : do_list) {
-            MinionList m = get<MinionList>(cmd);
-            string_view c = get<string>(m.at(0));
-            h(w, c, m);
+    auto dolist0 = m->get("DO");
+    if (!dolist0.is_null()) {
+        if (auto dolist = dolist0.m_list()) {
+            auto len = dolist->size();
+            for (int i = 0; i < len; ++i) {
+                MList* mlist = dolist->get(i).m_list();
+                string_view c = mlist->get(0).m_string()->data_view();
+                h(w, c, mlist);
+            }
+            return;
         }
-    } else if (dolist.index() != 0) {
-        string s;
-        minion::dump(s, dolist, 0);
-        throw string{"Invalid DO list: "} + s;
     }
+    MValue m0{m};
+    throw string{"Invalid DO list: "} + dump_buffer.dump(m0, 0);
 }
 
 void Handle_NEW(
-    string_view wtype, MinionMap m)
+    string_view wtype, MMap* m)
 {
-    //cout << "Handle_NEW " << wtype << ":" << minion::dump_map_items(m, 1) << endl;
-    string name;
+    string_view name;
+    { // Check new widget name
+        MString* name0;
+        auto n = m->get("NAME");
+        if (n.is_null() || !(name0 = n.m_string())) {
+            MValue m0{m};
+            throw fmt::format("Bad NEW command: {}",
+                dump_buffer.dump(m0, 0));
+        }
+        //TODO: Check name unique ...
+        name = name0->data_view();
+        WidgetData::check_new_widget_name(name);
+    }
     Fl_Widget* w;
     method_handler h;
-    if (m.get_string("NAME", name)) {
         if (wtype == "Window") {
             w = NEW_Window(m);
             h = group_method;
@@ -102,13 +115,10 @@ void Handle_NEW(
         WidgetData::add_widget(name, w, h);
         // Handle methods
         Handle_methods(w, m, h);
-        return;
-    }
-    throw fmt::format("Bad NEW command: {}", minion::dump_map_items(m, -1));
 }
 
 void GUI(
-    MinionMap obj)
+    MMap* obj)
 {
     string w;
     if (obj.get_string("NEW", w)) {
@@ -144,21 +154,21 @@ void GUI(
 // consider extending the C++ widgets.
 
 //TODO
-MinionMap message(
-    MinionMap data)
+MMap* message(
+    MMap* data)
 {
     return data;
 }
 
 void to_back_end(
-    MinionMap data)
+    MMap* data)
 {
-    MinionMap result = message(data);
+    MMap* result = message(data);
     auto dolist0 = data.get("DO");
-    if (holds_alternative<MinionList>(dolist0)) {
-        auto dolist = get<MinionList>(dolist0);
+    if (holds_alternative<MList*>(dolist0)) {
+        auto dolist = get<MList*>(dolist0);
         for (const auto& cmd : dolist) {
-            GUI(get<MinionMap>(cmd));
+            GUI(get<MMap*>(cmd));
         }
     }
     // Any back-end function which can take more than about 100ms should
