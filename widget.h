@@ -6,10 +6,18 @@
 #include <string>
 #include <unordered_map>
 
-// Each widget needs additional data, including its name. To make the
+//TODO?
+// These are default values. The values used by the widgets are taken from
+// static variables in `Widget`, which can be changed before creating
+// widgets to make global changes.
+const int LINE_HEIGHT = 30;
+const Fl_Color ENTRY_BG = 0xffffc800;
+const Fl_Color PENDING_BG = 0xffe0e000;
+
+/// Each widget needs additional data, including its name. To make the
 // widget accessible to the text-based (MINION) interface, a map is
 // built from the widget-names to their management data, which would
-// also include a pointer to the widget itself (as Fl_Widget*, which
+// also include a pointer to the FLTK widget itself (as Fl_Widget*, which
 // can then be cast to the appropriate sub-class).
 // This management data is based on the Widget class, which is a sub-class
 // of Fl_Callback_User_Data so that it can be saved as the user-data for
@@ -39,8 +47,12 @@ public:
     ~Widget() override;
 
     //static void add_widget(std::string_view name, Fl_Widget *w, method_handler h);
-    static Fl_Widget* get_widget(std::string_view name);
-    static Widget* get_widget_data(std::string_view name);
+    static void check_new_widget_name(std::string_view name);
+    static Widget* get_widget(std::string_view name);
+    static Fl_Widget* get_fltk_widget(std::string_view name)
+    {
+        return get_widget(name)->fl_widget;
+    }
     static minion::MList list_widgets();
     static std::string_view get_widget_name(Fl_Widget *w);
 
@@ -48,7 +60,7 @@ public:
     //inline static Fl_Color entry_bg{ENTRY_BG};
     //inline static Fl_Color pending_bg{PENDING_BG};
     
-    inline Fl_Widget* fltk_widget() { return fl_widget; }
+    Fl_Widget* fltk_widget() { return fl_widget; }
 
     virtual void handle_method(std::string_view method, minion::MList* mlist);
 

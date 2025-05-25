@@ -3,17 +3,18 @@
 #include "layout.h"
 #include "minion_gui.h"
 #include "textline.h"
-#include "widgetdata.h"
+#include "widget.h"
 #include "widgets.h"
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Group.H>
-#include <fmt/format.h>
+#include <functional>
+#include <map>
 #include <string_view>
 using namespace std;
 using namespace minion;
 
 void Handle_methods(
-    Fl_Widget* w, MMap* m, method_handler h)
+    Widget* w, MMap* m)
 {
     auto dolist0 = m->get("DO");
     if (!dolist0.is_null()) {
@@ -22,7 +23,7 @@ void Handle_methods(
             for (int i = 0; i < len; ++i) {
                 MList* mlist = dolist->get(i).m_list();
                 string_view c = mlist->get(0).m_string()->data_view();
-                h(w, c, mlist);
+                w->handle_method(c, mlist);
             }
             return;
         }
@@ -30,6 +31,24 @@ void Handle_methods(
     MValue m0{m};
     throw string{"Invalid DO list: "} + dump_buffer.dump(m0, 0);
 }
+
+using new_function = function<Widget* (MMap*)>;
+
+const map<string, new_function> new_function_map{
+    {"Window", W_Window::make},
+    {"Grid", W_Grid::make},
+    {"Row", W_Row::make},
+    {"Column", W_Column::make},
+    {"PushButton", W_PushButton::make},
+    {"Box", W_Box::make},
+    {"Label", W_Label::make},
+    {"Choice", W_Choice::make},
+    {"Output", W_Output::make},
+    {"Checkbox", W_Checkbox::make},
+    {"TextLine", W_TextLine::make},
+    {"RowTable", W_RowTable::make},
+    {"EditForm", W_EditForm::make}
+};
 
 void Handle_NEW(
     string_view wtype, MMap* m)
@@ -40,99 +59,51 @@ void Handle_NEW(
         auto n = m->get("NAME");
         if (n.is_null() || !(name0 = n.m_string())) {
             MValue m0{m};
-            throw fmt::format("Bad NEW command: {}",
-                dump_buffer.dump(m0, 0));
+            throw string{"Bad NEW command: "} + dump_buffer.dump(m0, 0);
         }
-        //TODO: Check name unique ...
+        // Check name unique
         name = name0->data_view();
-        WidgetData::check_new_widget_name(name);
+        Widget::check_new_widget_name(name);
     }
-    Fl_Widget* w;
-    method_handler h;
-        if (wtype == "Window") {
-            w = NEW_Window(m);
-            h = group_method;
-        } else if (wtype == "Grid") {
-            w = NEW_Grid(m);
-            h = grid_method;
-        } else if (wtype == "Row") {
-            w = NEW_Row(m);
-            h = grid_method;
-        } else if (wtype == "Column") {
-            w = NEW_Column(m);
-            h = grid_method;
-            // *** End of layouts, start of other widgets
-        } else if (wtype == "PushButton") {
-            w = NEW_PushButton(m);
-            h = widget_method;
-        } else if (wtype == "Box") {
-            w = NEW_Box(m);
-            h = widget_method;
-        } else if (wtype == "Label") {
-            w = NEW_Label(m);
-            h = widget_method;
-        } else if (wtype == "Choice") {
-            w = NEW_Choice(m);
-            h = choice_method;
-        } else if (wtype == "Output") {
-            w = NEW_Output(m);
-            h = input_method;
-        } else if (wtype == "Checkbox") {
-            w = NEW_Checkbox(m);
-            h = widget_method; //TODO: button_method?
-        } else if (wtype == "TextLine") {
-            w = NEW_TextLine(m);
-            h = input_method;
-        } else if (wtype == "RowTable") {
-            w = NEW_RowTable(m);
-            h = rowtable_method;
-        } else if (wtype == "EditForm") {
-            w = NEW_EditForm(m);
-            h = editform_method;
-        } else {
-            throw fmt::format("Unknown widget type: {}", wtype);
-        }
-        string parent;
-        if (m.get_string("PARENT", parent) && !parent.empty()) {
-            
-            auto p = static_cast<Fl_Group*>(WidgetData::get_widget(parent));
-            p->add(w);
-
-            // Handle fixed sizes of Flex components
-            if (p->type() == Fl_Flex::VERTICAL) {
-                int wh = w->h();
-                if (wh != 0) {
-                    static_cast<Fl_Flex*>(p)->fixed(w, wh);
-                }
-            } else if (p->type() == Fl_Flex::HORIZONTAL) {
-                int wl = w->w();
-                if (wl != 0) {
-                    static_cast<Fl_Flex*>(p)->fixed(w, wl);
-                }
-            }
-        }
-        // Add a WidgetData as "user data" to the widget
-        WidgetData::add_widget(name, w, h);
-        // Handle methods
-        Handle_methods(w, m, h);
+    new_function f;
+    try {
+        f = new_function_map.at(string{wtype});
+    } catch (std::out_of_range) {
+        throw string{"Unknown widget type: "}.append(wtype);
+    }
+    // Create widget
+    Widget* w = f(m);
+    // Add to parent, if specified
+    string parent;
+    if (m->get_string("PARENT", parent) && !parent.empty()) {
+        auto p = static_cast<Fl_Group*>(Widget::get_fltk_widget(parent));
+        p->add(w->fltk_widget());
+    }
+     // Handle method calls supplied with the widget creation
+    Handle_methods(w, m);
 }
 
 void GUI(
-    MMap* obj)
+    MMap* mmap)
 {
     string w;
-    if (obj.get_string("NEW", w)) {
-        Handle_NEW(w, obj);
-    } else if (obj.get_string("WIDGET", w)) {
-        // Handle methods
+    if (mmap->get_string("NEW", w)) {
+        // Make a new widget
+        Handle_NEW(w, mmap);
+    } else if (mmap->get_string("WIDGET", w)) {
+        // Handle widget methods
         auto widg = WidgetData::get_widget(w);
         auto wd{static_cast<WidgetData*>(widg->user_data())};
-        Handle_methods(widg, obj, wd->handle_method);
-    } else if (obj.get_string("FUNCTION", w)) {
+        Handle_methods(widg, mmap, wd->handle_method);
+    } else if (mmap->get_string("FUNCTION", w)) {
+        // Some other function
         auto f = function_map.at(w);
-        f(obj);
+        f(mmap);
     } else {
-        throw fmt::format("Invalid GUI parameters: {}", dump_map_items(obj, -1));
+        // Error
+        MValue m = mmap;
+        dump_buffer.dump(m, 0);
+        throw string{"Invalid GUI parameters: "} + dump_buffer.dump(m, 0);
     }
 }
 
@@ -164,11 +135,13 @@ void to_back_end(
     MMap* data)
 {
     MMap* result = message(data);
-    auto dolist0 = data.get("DO");
-    if (holds_alternative<MList*>(dolist0)) {
-        auto dolist = get<MList*>(dolist0);
-        for (const auto& cmd : dolist) {
-            GUI(get<MMap*>(cmd));
+    auto dolist0 = data->get("DO");
+    if (MList* mlist = dolist0.m_list()) {
+        size_t n = mlist->size();
+        for (size_t i = 0; i < n; ++i) {
+            MValue cmd = mlist->get(i);
+            if (MMap* mmap = cmd.m_map())
+                GUI(mmap);
         }
     }
     // Any back-end function which can take more than about 100ms should

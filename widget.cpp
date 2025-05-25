@@ -10,6 +10,19 @@
 using namespace std;
 using namespace minion;
 
+//TODO: get missing methods from widgetdata.cpp?
+
+// static
+void Widget::check_new_widget_name(string_view name)
+{
+    if (name.empty()) {
+        throw "A new widget must have a name ...";
+    } else if (widget_map.contains(name)) {
+        throw string{"Widget name already exists: "}.append(name);
+    }
+}
+
+//TODO: Shouldn't this be in widgets.h / widgets.cpp ...
 //TODO: more sub-classes, and their method handlers ...
 
 // *** non-layout widgets

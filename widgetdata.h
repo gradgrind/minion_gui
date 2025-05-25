@@ -1,6 +1,8 @@
 #ifndef WIDGETDATA_H
 #define WIDGETDATA_H
 
+//TODO-- deprecated, use widget.h instead
+
 #include "minion.h"
 #include <FL/Fl_Widget.H>
 #include <functional>
@@ -14,7 +16,7 @@ const int LINE_HEIGHT = 30;
 const Fl_Color ENTRY_BG = 0xffffc800;
 const Fl_Color PENDING_BG = 0xffe0e000;
 
-using method_handler = std::function<void(Fl_Widget*, std::string_view, minion::MList*)>;
+//using method_handler = std::function<void(Fl_Widget*, std::string_view, minion::MList*)>;
 
 void widget_method(Fl_Widget* w, std::string_view c, minion::MList* m);
 
@@ -31,14 +33,14 @@ class WidgetData : public Fl_Callback_User_Data
     void* user_data = nullptr;
     bool auto_delete_user_data = false;
 
-    WidgetData(std::string_view w_name, method_handler h);
+    //WidgetData(std::string_view w_name, method_handler h);
 
 public:
     ~WidgetData() override;
 
     static void check_new_widget_name(std::string_view name);
-    static void add_widget(std::string_view name, Fl_Widget* w, method_handler h);
-    static Fl_Widget* get_widget(std::string_view name);
+    //static void add_widget(std::string_view name, Fl_Widget* w, method_handler h);
+    static Widget* get_widget(std::string_view name);
     static minion::MList list_widgets();
     static std::string_view get_widget_name(Fl_Widget* w);
 
@@ -46,7 +48,7 @@ public:
     inline static Fl_Color entry_bg{ENTRY_BG};
     inline static Fl_Color pending_bg{PENDING_BG};
 
-    method_handler handle_method;
+    //method_handler handle_method;
 
     void remove_widget(std::string_view name);
 

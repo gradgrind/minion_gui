@@ -108,13 +108,6 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
     widget->fl_widget = w;
     return widget;         
 }
-Fl_Widget *NEW_Grid(
-    MMap* param)
-{
-    auto w = new Fl_Grid(0, 0, 0, 0);
-    Fl_Group::current(0); // disable "auto-grouping"
-    return w;
-}
 
 void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
 {
