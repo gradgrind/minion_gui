@@ -7,6 +7,7 @@
 #include <FL/Fl_Grid.H>
 #include <fmt/format.h>
 #include <iostream>
+#include <map>
 using namespace std;
 using namespace minion;
 
@@ -75,11 +76,11 @@ W_Window* W_Window::make(MMap* parammap)
 {
     int ww = 800;
     int wh = 600;
-    parammap.get_int("WIDTH", ww);
-    parammap.get_int("HEIGHT", wh);
+    parammap->get_int("WIDTH", ww);
+    parammap->get_int("HEIGHT", wh);
     auto w = new Fl_Double_Window(ww, wh);
     int esc_closes{0};
-    parammap.get_int("ESC_CLOSES", esc_closes);
+    parammap->get_int("ESC_CLOSES", esc_closes);
     if (esc_closes != 0)
         w->callback(callback_no_esc_closes);
     Fl_Group::current(0); // disable "auto-grouping"

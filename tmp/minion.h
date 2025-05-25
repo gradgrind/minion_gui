@@ -1,62 +1,102 @@
 #ifndef MINION_H
 #define MINION_H
 
-#include <initializer_list>
+#include <map>
+#include <string>
+#include <variant>
+#include <vector>
 
-typedef struct
+namespace minion {
+
+class MinionException : public std::exception
 {
-    short type;
-    short flags;
-    unsigned int size;
-    void* data;
-} minion_value;
+private:
+    std::string message;
 
-typedef struct macro_node
-{
-    char* name;
-    struct macro_node* next;
-    minion_value value;
-} macro_node;
+public:
+    // Constructor accepts the exception message
+    MinionException(
+        std::string_view msg)
+        : message{std::string{"MinionException: "} + std::string{msg}}
+    {}
 
-typedef struct
-{
-    minion_value minion_item;
-    minion_value error;
-    macro_node* macros;
-} minion_doc;
-
-// The result must be freed when it is no longer needed
-minion_doc minion_read(const char* input);
-
-// Return the error message, or NULL if there was no error
-char* minion_error(minion_doc doc);
-
-// Free the memory used for a minion_doc.
-void minion_free(minion_doc doc);
-
-char* minion_dump(minion_value source, int depth);
-// Free the memory used for a minion dump.
-void minion_tidy_dump();
-
-// Free longer term minion memory (can be retained between minion_read calls)
-void minion_tidy();
-
-// Construction functions – these are designed to take on ownership of any
-// minion_value items they are passed and need freeing with minion_free_item()
-// when they are no longer in use.
-
-minion_value new_minion_string(const char* text);
-
-minion_value new_minion_array(std::initializer_list<minion_value> items);
-
-struct pair_input // needed only for construction of maps in new_minion_map
-{
-    const char* key;
-    minion_value value;
+    // Override the what() method to return the error message
+    const char *what() noexcept { return message.c_str(); }
 };
 
-minion_value new_minion_map(std::initializer_list<pair_input> items);
+using Char = unsigned char;
 
-void minion_free_item(minion_value mitem);
+bool unicode_utf8(std::string &utf8, const std::string &unicode);
+
+// *** The basic minion types ***
+// Use forward declarations to allow mutual references.
+
+class MinionMap;
+class MinionList;
+using MinionValue = std::variant<
+    std::monostate, std::string, MinionMap, MinionList>;
+
+void dump(std::string &valstr, const MinionValue &item, int level = -1);
+std::string dump_list_items(const MinionList &m, int level);
+std::string dump_map_items(const MinionMap &m, int level);
+
+// The map class should preserve input order, so it is implemented as a vector.
+// For very small maps this might be completely adequate, but if multiple
+// lookups to larger maps are required, a proper map should be built.
+struct MinionMapPair;
+
+class MinionMap : public std::vector<MinionMapPair>
+{
+public:
+    MinionMap();
+    MinionMap(const std::vector<MinionMapPair> mmplist);
+    
+    void add(const MinionMapPair &mmp);
+    MinionValue get(std::string_view key);
+    bool get_int(std::string_view key, int &value);
+    bool get_string(std::string_view key, std::string &value);
+};
+
+class MinionList : public std::vector<MinionValue>
+{};
+
+struct MinionMapPair
+{
+    std::string key;
+    MinionValue value;
+};
+
+
+class Minion
+{
+public:
+    Minion(const std::string_view source);
+    //void to_json(std::string &json_string, bool compact);
+
+    MinionMap top_level;       // collect the top-level map here
+    std::string error_message; // if not empty, explain failure
+
+private:
+    const std::string_view minion_string; // the source string
+    const size_t source_size;
+    int iter_i;
+    int line_i;
+    Char ch_pending;
+    std::map<std::string, MinionValue> macros;
+
+    Char read_ch(bool instring);
+    void unread_ch(Char ch);
+    Char get_item(MinionValue &m);
+    void get_list(MinionValue &m);
+    bool get_map(MinionMap &m, Char terminator);
+    void get_string(MinionValue &m);
+    MinionValue macro_replace(MinionValue item);
+};
+
+MinionMap read_minion(std::string_view minion_string);
+
+} // END namespace minion
+
+void testminion();
 
 #endif // MINION_H
