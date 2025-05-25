@@ -86,18 +86,17 @@ void Handle_NEW(
 void GUI(
     MMap* mmap)
 {
-    string w;
-    if (mmap->get_string("NEW", w)) {
+    string s;
+    if (mmap->get_string("NEW", s)) {
         // Make a new widget
-        Handle_NEW(w, mmap);
-    } else if (mmap->get_string("WIDGET", w)) {
+        Handle_NEW(s, mmap);
+    } else if (mmap->get_string("WIDGET", s)) {
         // Handle widget methods
-        auto widg = WidgetData::get_widget(w);
-        auto wd{static_cast<WidgetData*>(widg->user_data())};
-        Handle_methods(widg, mmap, wd->handle_method);
-    } else if (mmap->get_string("FUNCTION", w)) {
+        auto w = Widget::get_widget(s);
+        Handle_methods(w, mmap);
+    } else if (mmap->get_string("FUNCTION", s)) {
         // Some other function
-        auto f = function_map.at(w);
+        auto f = function_map.at(s);
         f(mmap);
     } else {
         // Error

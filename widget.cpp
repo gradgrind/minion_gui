@@ -22,108 +22,7 @@ void Widget::check_new_widget_name(string_view name)
     }
 }
 
-//TODO: Shouldn't this be in widgets.h / widgets.cpp ...
-//TODO: more sub-classes, and their method handlers ...
-
-// *** non-layout widgets
-
-class W_Box : public Widget
-{
-public:
-    W_Box(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_Box* make(MMap* &parammap);
-};
-
-class W_Label : public Widget
-{
-public:
-    W_Label(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_Label* make(MMap* &parammap);
-};
-
-class W_PushButton : public Widget
-{
-public:
-    W_PushButton(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_PushButton* make(MMap* &parammap);
-};
-
-class W_Checkbox : public Widget
-{
-public:
-    W_Checkbox(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_Checkbox* make(MMap* &parammap);
-};
-
-class W_Choice : public Widget
-{
-public:
-    W_Choice(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_Choice* make(MMap* &parammap);
-};
-
-class W_Output : public Widget
-{
-public:
-    W_Output(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_Output* make(MMap* &parammap);
-};
-
-class W_TextLine : public Widget
-{
-public:
-    W_TextLine(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_TextLine* make(MMap* &parammap);
-};
-
-class W_RowTable : public Widget
-{
-public:
-    W_RowTable(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_RowTable* make(MMap* &parammap);
-};
-
-class W_EditForm : public Widget
-{
-public:
-    W_EditForm(MMap* parammap) : Widget{parammap}
-    {}
-
-    static W_EditForm* make(MMap* &parammap);
-};
-
-const map<string_view, function<Widget*(MMap*&)>>widget_type_map{
-    {"Window", W_Window::make},
-    {"Grid", W_Grid::make},
-    {"Row", W_Row::make},
-    {"Column", W_Column::make},
-
-    {"Box", W_Box::make},
-    {"Label", W_Label::make},
-    {"PushButton", W_PushButton::make},
-    {"Checkbox", W_Checkbox::make},
-    {"Choice", W_Choice::make},
-    {"Output", W_Output::make},
-    {"TextLine", W_TextLine::make},
-    {"RowTable", W_RowTable::make},
-};
-
+//TODO??? Is this a duplicate? Is it needed?
 void handle_methods(
     Widget* w, MMap* mmap)
 {
@@ -208,7 +107,7 @@ void process_command(
 }
 
 
-void Widget::handle_method(std::string_view method, minion::MList* &paramlist)
+void Widget::handle_method(std::string_view method, minion::MList* paramlist)
 {
     auto w = fltk_widget();
     int ww, wh;

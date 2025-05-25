@@ -2,22 +2,90 @@
 #define WIDGETS_H
 
 #include "minion.h"
+#include "widget.h"
 #include <FL/Fl_Widget.H>
 
-void choice_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
-void input_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
-void list_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
-void rowtable_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
-void editform_method(Fl_Widget *w, std::string_view c, minion::MinionList m);
+// *** non-layout widgets
 
-Fl_Widget *NEW_PushButton(minion::MinionMap param);
-Fl_Widget *NEW_Box(minion::MinionMap param);
-Fl_Widget *NEW_Label(minion::MinionMap param);
-Fl_Widget *NEW_Choice(minion::MinionMap param);
-Fl_Widget *NEW_Output(minion::MinionMap param);
-Fl_Widget *NEW_Checkbox(minion::MinionMap param);
-Fl_Widget *NEW_List(minion::MinionMap param);
-Fl_Widget *NEW_RowTable(minion::MinionMap param);
-Fl_Widget *NEW_EditForm(minion::MinionMap param);
+class W_Box : public Widget
+{
+public:
+    W_Box(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_Box* make(minion::MMap* parammap);
+};
+
+class W_Label : public Widget
+{
+public:
+    W_Label(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_Label* make(minion::MMap* parammap);
+};
+
+class W_PushButton : public Widget
+{
+public:
+    W_PushButton(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_PushButton* make(minion::MMap* parammap);
+};
+
+class W_Checkbox : public Widget
+{
+public:
+    W_Checkbox(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_Checkbox* make(minion::MMap* parammap);
+};
+
+class W_Choice : public Widget
+{
+public:
+    W_Choice(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_Choice* make(minion::MMap* parammap);
+};
+
+class W_Output : public Widget
+{
+public:
+    W_Output(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_Output* make(minion::MMap* parammap);
+};
+
+class W_TextLine : public Widget
+{
+public:
+    W_TextLine(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_TextLine* make(minion::MMap* parammap);
+};
+
+class W_RowTable : public Widget
+{
+public:
+    W_RowTable(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_RowTable* make(minion::MMap* parammap);
+};
+
+class W_EditForm : public Widget
+{
+public:
+    W_EditForm(minion::MMap* parammap) : Widget{parammap}
+    {}
+
+    static W_EditForm* make(minion::MMap* parammap);
+};
 
 #endif // WIDGETS_H
