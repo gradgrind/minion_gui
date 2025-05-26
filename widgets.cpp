@@ -88,7 +88,7 @@ Fl_Widget *NEW_Label(
 }
 
 Fl_Widget *NEW_Choice(
-    MinionMap param)
+    MMap* param)
 {
     auto w = new Fl_Choice(0, 0, 0, WidgetData::line_height);
     w->callback(

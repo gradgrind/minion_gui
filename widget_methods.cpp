@@ -1,20 +1,28 @@
 #include "widget_methods.h"
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Flex.H>
-#include <FL/fl_draw.H>
+//#include <FL/Fl_Box.H>
+//#include <FL/Fl_Flex.H>
+//#include <FL/fl_draw.H>
 #define MAGIC_ENUM_RANGE_MIN 0
 #define MAGIC_ENUM_RANGE_MAX 255
 #include "_lib/magic_enum/magic_enum.hpp"
-#include <fmt/format.h>
 using namespace std;
 
+
+// Read a string with 6 characters as a hex integer, returning the value
+// multiplied by 0x100 to make an FLTK colour value.
 Fl_Color get_colour(
-    string& colour)
+    const string& colour)
 {
-    if (colour.length() == 6) {
-        return static_cast<Fl_Color>(stoi(colour, nullptr, 16)) * 0x100;
+    if (colour.size() == 6) {
+        unsigned int i;
+        try {
+            size_t index;
+            i = stoul(colour, &index, 16);
+            if (index == colour.size()) return i * 0x100;
+        } catch (...) {}
     }
-    throw fmt::format("Invalid colour: '{}'", colour);
+    string msg{"Invalid FLTK colour: '" + colour + "'"};
+    throw msg; 
 }
 
 Fl_Boxtype get_boxtype(
@@ -23,18 +31,15 @@ Fl_Boxtype get_boxtype(
     return magic_enum::enum_cast<Fl_Boxtype>(boxtype).value();
 }
 
-int int_param(
-    minion::MinionList m, int i)
-{
-    return stoi(get<string>(m.at(i)));
-}
-
 Fl_Color colour_param(
-    minion::MinionList m, int i)
+    minion::MList* m, int i)
 {
-    return get_colour(get<string>(m.at(i)));
+    string c;
+    if (m->get_string(i, c)) 
+    return get_colour(c);
 }
 
+//TODO--
 void left_label(
     Fl_Widget *w, minion::MinionList m)
 {

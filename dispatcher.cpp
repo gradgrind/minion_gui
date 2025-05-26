@@ -2,7 +2,6 @@
 #include "functions.h"
 #include "layout.h"
 #include "minion_gui.h"
-#include "textline.h"
 #include "widget.h"
 #include "widgets.h"
 #include <FL/Fl_Flex.H>

@@ -3,6 +3,8 @@
 
 #include "minion.h"
 
+const char* dump_value(minion::MValue m);
+
 void Callback(minion::MValue m);
 void Callback1(std::string_view widget, minion::MValue data);
 void Callback2(

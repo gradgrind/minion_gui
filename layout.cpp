@@ -1,4 +1,5 @@
 #include "layout.h"
+#include "callback.h"
 #include "minion.h"
 #include "widget.h"
 #include "widget_methods.h"
@@ -112,18 +113,27 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
 void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
 {
     if (method == "GAP") {
-        int szr = int_param(paramlist, 1);
-        int szc = szr;
-        if (paramlist->size() > 2) {
-            szc = int_param(paramlist, 2);
+        int rowgap;
+        if (paramlist->get_int(1, rowgap)) {
+            int colgap = rowgap;
+            if (paramlist->size() > 2)
+                paramlist->get_int(2, colgap);
+            static_cast<Fl_Grid *>(fl_widget)->gap(rowgap, colgap);
+            return;   
         }
-        static_cast<Fl_Grid *>(fltk_widget())->gap(szr, szc);
     } else if (method == "MARGIN") {
-        int sz = int_param(paramlist, 1);
-        static_cast<Fl_Grid *>(fltk_widget())->margin(sz, sz, sz, sz);
+        int s;
+        if (paramlist->get_int(1, s)) {
+            static_cast<Fl_Grid *>(fl_widget)->margin(s, s, s, s);
+            return;
+        }
     } else {
         W_Group::handle_method(method, paramlist);
+        return;
     }
+    MValue m = paramlist;
+    throw string{"Invalid command on grid '"}.append(widget_name())
+        .append("':\n  ").append(dump_value(m));
 }
 
 Fl_Widget* W_Grid::new_hvgrid(

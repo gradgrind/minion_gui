@@ -23,6 +23,9 @@ InputBuffer input_buffer;
 
 // This is used for writing (serializing) MINION messages.
 DumpBuffer dump_buffer;
+const char* dump_value(MValue m) {
+    return dump_buffer.dump(m, 0);
+}
 
 void Callback(MValue m)
 {
@@ -30,7 +33,7 @@ void Callback(MValue m)
     const char* cbdata;
     {
         MinionValue mv = m;
-        cbdata = dump_buffer.dump(mv);
+        cbdata = dump_value(mv);
         // TODO: Is the freeing of m correct here?
     }
     char* cbresult = backend(cbdata);
@@ -78,7 +81,7 @@ void tmp_run(
         }
     }
     throw string{"Input data not a GUI command list: "}
-        + dump_buffer.dump(data, 0);
+        + dump_value(data);
 }
 
 minion::InputBuffer minion_input; // for parsing minion
