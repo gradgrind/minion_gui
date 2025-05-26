@@ -4,7 +4,7 @@
 #include "minion.h"
 #include <functional>
 
-using function_handler = std::function<void(minion::MinionMap)>;
+using function_handler = std::function<void(minion::MMap*)>;
 extern std::unordered_map<std::string, function_handler> function_map;
 
 #endif // FUNCTIONS_H

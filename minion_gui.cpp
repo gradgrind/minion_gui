@@ -39,7 +39,7 @@ void Callback(MValue m)
     //TODO: Handle errors (thrown MinionError)?
 }
 
-void Callback1(const char* widget, MValue data)
+void Callback1(string_view widget, MValue data)
 {
     Callback(
         new MMap{
@@ -49,7 +49,7 @@ void Callback1(const char* widget, MValue data)
     );
 }
 
-void Callback2(const char* widget, MValue data, MValue data2)
+void Callback2(string_view widget, MValue data, MValue data2)
 {
     Callback(
         new MMap{

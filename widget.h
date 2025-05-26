@@ -56,9 +56,9 @@ public:
     static minion::MList list_widgets();
     static std::string_view get_widget_name(Fl_Widget *w);
 
-    //inline static int line_height{LINE_HEIGHT};
-    //inline static Fl_Color entry_bg{ENTRY_BG};
-    //inline static Fl_Color pending_bg{PENDING_BG};
+    inline static int line_height{LINE_HEIGHT};
+    inline static Fl_Color entry_bg{ENTRY_BG};
+    inline static Fl_Color pending_bg{PENDING_BG};
     
     Fl_Widget* fltk_widget() { return fl_widget; }
 

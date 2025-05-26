@@ -66,8 +66,10 @@ class W_TextLine : public Widget
 public:
     W_TextLine(minion::MMap* parammap) : Widget{parammap}
     {}
-
+    virtual void handle_method(std::string_view method, minion::MList* paramlist);
     static W_TextLine* make(minion::MMap* parammap);
+
+    bool set(std::string_view newtext);
 };
 
 class W_RowTable : public Widget

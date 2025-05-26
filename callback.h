@@ -4,9 +4,9 @@
 #include "minion.h"
 
 void Callback(minion::MValue m);
-void Callback1(const char* widget, minion::MValue data);
+void Callback1(std::string_view widget, minion::MValue data);
 void Callback2(
-    const char* widget, 
+    std::string_view widget, 
     minion::MValue data, 
     minion::MValue data2);
 

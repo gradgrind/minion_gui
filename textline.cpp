@@ -1,66 +1,78 @@
-#include "textline.h"
+#include "widgets.h"
 #include "callback.h"
-#include "widgetdata.h"
+#include <FL/Fl_Input.H>
 using namespace std;
 
-TextLine::TextLine() : Fl_Input(0, 0, 0, WidgetData::line_height)
+class TextLine : public Fl_Input
 {
-    when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-    callback(
+    int handle(int event) override
+    { 
+        auto result = Fl_Input::handle(event);
+        if (strcmp(value(), text.c_str()) == 0) {
+            if (modified) {
+                modified = false;
+                // Reset colour
+                color(Widget::entry_bg);
+                redraw();
+            }
+        } else {
+            if (!modified) {
+                modified = true;
+                // Set modified/pending colour
+                color(Widget::pending_bg);
+                redraw();
+            }
+        }
+        return result;
+    }
+
+public:
+    TextLine() : Fl_Input(0, 0, 0, Widget::line_height) {}
+
+    std::string text;
+    bool modified;
+};
+
+//static
+W_TextLine* W_TextLine::make(minion::MMap* parammap)
+{
+    auto w = new TextLine();
+    auto widget = new W_TextLine(parammap);
+    widget->fl_widget = w;
+
+    w->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
+    w->callback(
         [](Fl_Widget* w, void* ud) {
+            auto widget = static_cast<W_TextLine*>(ud);
             auto ww = static_cast<TextLine*>(w);
             // Don't leave all text selected when return is pressed
             ww->insert_position( ww->insert_position());
             string v = ww->value();
-            if (ww->set(v)) { 
-                string dw{WidgetData::get_widget_name(w)};
-                // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
-                
-                Callback1(dw, v);
+            if (widget->set(v)) { 
+                string dw{widget->widget_name()};
+                // or string dw{static_cast<Widget*>(ud)->get_widget_name(w)};
+                Callback1(dw, new minion::MString{v});
 
                 // This would remove keyboard focus from the widget
                 //Fl::focus(w->parent());
             }
         });
+    return widget;         
 }
 
-int TextLine::handle(int event)
-{ 
-    auto result = Fl_Input::handle(event);
-    if (strcmp(value(), text.c_str()) == 0) {
-        if (modified) {
-            modified = false;
-            // Reset colour
-            color(WidgetData::entry_bg);
-            redraw();
-        }
-    } else {
-        if (!modified) {
-            modified = true;
-            // Set modified/pending colour
-            color(WidgetData::pending_bg);
-            redraw();
-        }
-    }
-    return result;
-}
+//TODO
+//void TextLine::handle_method(std::string_view method, minion::MList* paramlist){}
 
-bool TextLine::set(std::string_view newtext)
+bool W_TextLine::set(std::string_view newtext)
 {
+    auto w = static_cast<TextLine*>(fl_widget);
     //modified = false;
-    string v = value();
-    bool res{false};
-    if (newtext != text) {
-        text = newtext;
+    string v = w->value();
+    bool res = false;
+    if (newtext != w->text) {
+        w->text = newtext;
         res = true;
     }
-    if (v != text) value(text.c_str());
+    if (v != w->text) w->value(w->text.c_str());
     return res;
-}
-
-Fl_Widget *NEW_TextLine(
-    minion::MinionMap param)
-{
-    int h = 0;
-    return new TextLine();
 }
