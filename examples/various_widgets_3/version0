@@ -1,21 +1,3 @@
-package main
-
-import (
-	"fmt"
-	"github.com/gradgrind/minion_gui"
-)
-
-func main() {
-	minion_gui.MinionGui(guidata, callback)
-	//minion_gui.MinionGui("testA data", callback)
-}
-
-func callback(data string) string {
-	fmt.Printf("Go callback got '%s'\n", data)
-	return "GoCallbackResult: Value"
-}
-
-var guidata string = `# Various widgets
 &APP_WIDTH: 1000,
 &APP_HEIGHT: 700,
 &BACKGROUND: f0f0f0,
@@ -38,7 +20,9 @@ GUI: [
   {
     NEW: Box,
     NAME: P1,
-    #PARENT: l_MainWindow,
+    PARENT: l_MainWindow,
+    FILL: HORIZONTAL,
+    GROW: 0,
     DO: [
       [LABEL, "Panel 1"],
       [BOXTYPE, FL_BORDER_FRAME],
@@ -52,7 +36,9 @@ GUI: [
   {
     NEW: Box,
     NAME: todo,
-    #PARENT: CoursePanel,
+    PARENT: CoursePanel,
+    FILL: HORIZONTAL,
+    GROW: 0,
     DO: [
       [LABEL, "Another Panel"],
       [BOXTYPE, FL_FLAT_BOX],
@@ -64,7 +50,9 @@ GUI: [
   {
     NEW: Choice,
     NAME: TableType,
-    #PARENT: ViewSelect,
+    PARENT: ViewSelect,
+    FILL: CENTRE,
+    GROW: 0,
     DO: [
       [clear_visible_focus],
       [WIDTH, 100],
@@ -72,22 +60,13 @@ GUI: [
     ]
   },
   {
-    NEW: Label,
-    NAME: TableRowLabel,
-    #PARENT: ViewSelect,
-    PADDING: {
-    	LEFT: 10,
-    	RIGHT: 5
-    }
-    DO: [
-      [TEXT, "X X X X X X:"],
-    ]
-  },
-  {
     NEW: Choice,
     NAME: TableRow,
-    #PARENT: ViewSelect,
+    PARENT: ViewSelect,
+    FILL: CENTRE,
+    GROW: 0,
     DO: [
+      [LABEL, "X X X X X X:", 10], # adds padding box for label
       [clear_visible_focus],
       [WIDTH, 150],
       [ADD, "FB: Fritz Jolander Jeremias Braun",
@@ -97,25 +76,27 @@ GUI: [
     ]
   },
   {
-    NEW: Label,
-    NAME: TableTotalsLabel,
-    #PARENT: ViewSelect,
-    PADDING: {
-    	LEFT: 20,
-    	RIGHT: 5
-    }
-    DO: [
-      [TEXT, "Total lessons:"],
-    ]
-  },
-  {
     NEW: Output,
     NAME: TableTotals,
-    #PARENT: ViewSelect,
+    PARENT: ViewSelect,
+    FILL: HORIZONTAL,
     DO: [
       # [COLOUR, &OUTPUT_COLOUR],
       [VALUE, "Read only ˝Öößŋħĸ€"],
-      [clear_visible_focus]
+      [clear_visible_focus],
+      [LABEL, "Total lessons:", 20] # adds padding box for label
+    ]
+  },
+  {
+    NEW: Hgrid,
+    NAME: ViewSelect,
+    PARENT: CoursePanel,
+    FILL: HORIZONTAL,
+    GROW: 0,
+    DO: [
+      [MARGIN, 5],
+      [GAP, 10],
+      [HEIGHT, 60]
     ]
   },
   # --- ViewSelect: end Top Panel
@@ -124,7 +105,8 @@ GUI: [
   {
     NEW: RowTable,
     NAME: T1,
-    #PARENT: Content,
+    PARENT: Content,
+    FILL: FILL,
     DO: [
       # [COLOUR, ffffe0],
       [col_headers, "Col 1", "Column 2", "Col 3", "Col 4"],
@@ -144,56 +126,56 @@ GUI: [
   {
     NEW: PopupEditor,
     NAME: EF1,
-    #PARENT: EditorForm,
+    PARENT: EditorForm,
     LABEL: "EDITOR 1"
   },
   {
     NEW: TextEditor,
     NAME: EF2,
-    #PARENT: EditorForm,
+    PARENT: EditorForm,
     LABEL: "TEXT 1"
   },
   {
     NEW: TextEditor,
     NAME: EF2X,
-    #PARENT: EditorForm,
+    PARENT: EditorForm,
     LABEL: "TEXT 2"
   },
   {
     NEW: Choice,
     NAME: EF3,
-    #PARENT: EditorForm,
+    PARENT: EditorForm,
     LABEL: "CHOICE 1"
   },
   {
     NEW: Separator,
     NAME: Sep1,
-    #PARENT: EditorForm
+    PARENT: EditorForm
   },
   {
     NEW: PopupEditor,
     NAME: EF4,
-    #PARENT: EditorForm,
+    PARENT: EditorForm,
     LABEL: "ANOTHER EDITOR"
   },
   {
     NEW: Checkbox,
     NAME: EF5,
-    #PARENT: EditorForm,
+    PARENT: EditorForm,
     LABEL: "CHECKBOX with a long label"
   },
   {
     NEW: List,
     NAME: EF6,
-    #PARENT: EditorForm,
+    PARENT: EditorForm,
     LABEL: "List entry"
   },
   {
     NEW: EditForm,
     NAME: EditorForm,
-    #PARENT: Content,
-    ENTRIES: [
-      EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6],
+    PARENT: Content,
+    FILL: VERTICAL,
+    GROW: 0,
     DO: [
       [WIDTH, 300]
     ]
@@ -202,29 +184,9 @@ GUI: [
   
   {
     NEW: Hgrid,
-    NAME: ViewSelect,
-    #PARENT: CoursePanel,
-    WIDGETS: [
-      [TableType, CENTRE, 0],
-      [TableRowLabel, RIGHT, 0],
-      [TableRow, CENTRE, 0],
-      [TableTotalsLabel, RIGHT, 0],
-      [TableTotals, HORIZONTAL, 1]
-    ]
-    DO: [
-      [MARGIN, 5],
-      [GAP, 10],
-      [HEIGHT, 60]
-    ]
-  },
-  {
-    NEW: Hgrid,
     NAME: Content,
-    #PARENT: CoursePanel,
-    WIDGETS: [
-      [T1, FILL, 1],
-      [EditorForm, VERTICAL, 0]
-    ],
+    PARENT: CoursePanel,
+    FILL: FILL,
     DO: [
       [GAP, 3]
     ]
@@ -233,12 +195,8 @@ GUI: [
   {
     NEW: Vgrid,
     NAME: CoursePanel,
-    #PARENT: l_MainWindow,
-    WIDGETS: {    
-      [todo, HORIZONTAL, 0],
-      [ViewSelect, HORIZONTAL, 0],
-      [Content, FILL, 1]
-    }
+    PARENT: l_MainWindow,
+    FILL: FILL
   },
   # --- CoursePanel
   
@@ -246,12 +204,6 @@ GUI: [
     NEW: Vgrid,
     NAME: l_MainWindow,
     PARENT: MainWindow,
-    WIDGETS: {
-      [P1, HORIZONTAL, 0] # widget, fill, grow
-      [CoursePanel, FILL, 1]
-    },
-    
-    },
     DO: [
       [fit_to_parent],
       # [MARGIN, 5]
@@ -288,4 +240,3 @@ GUI: [
   },
   {FUNCTION: RUN} # Enter main event loop
 ]
-`

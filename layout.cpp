@@ -59,8 +59,8 @@ void W_Group::handle_method(std::string_view method, minion::MList* paramlist)
     if (method == "RESIZABLE") {
         std::string wname;
         if (paramlist->get_string(1, wname)) {
-            auto rsw = Widget::get_widget(wname);
-            fltk_widget()->as_group()->resizable(rsw);
+            auto rsw = Widget::get_fltk_widget(wname);
+            fl_widget->as_group()->resizable(rsw);
         } else {
             throw "Method RESIZABLE without widget";
         }
