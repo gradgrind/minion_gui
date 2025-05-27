@@ -36,8 +36,8 @@ using new_function = function<Widget* (MMap*)>;
 const map<string, new_function> new_function_map{
     {"Window", W_Window::make},
     {"Grid", W_Grid::make},
-    {"Row", W_Row::make},
-    {"Column", W_Column::make},
+    {"Hgrid", W_Grid::make_hgrid},
+    {"Vgrid", W_Grid::make_vgrid},
     {"PushButton", W_PushButton::make},
     {"Box", W_Box::make},
     {"Label", W_Label::make},

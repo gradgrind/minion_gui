@@ -25,28 +25,20 @@ public:
 class W_Grid : public W_Group
 {
 protected:
-    Fl_Widget* new_hvgrid(minion::MMap* parammap, bool horizontal);
+    static W_Grid* new_hvgrid(minion::MMap* parammap, bool horizontal);
     
 public:
     W_Grid(minion::MMap* parammap);
     virtual void handle_method(std::string_view method, minion::MList* paramlist);
     static W_Grid* make(minion::MMap* parammap);
-};
-
-class W_Row : public W_Grid
-{
-public:
-    W_Row(minion::MMap* parammap);
-    virtual void handle_method(std::string_view method, minion::MList* paramlist);
-    static W_Row* make(minion::MMap* parammap);
-};
-
-class W_Column : public W_Grid
-{
-public:
-    W_Column(minion::MMap* parammap);
-    virtual void handle_method(std::string_view method, minion::MList* paramlist);
-    static W_Column* make(minion::MMap* parammap);
+    static W_Grid* make_hgrid(minion::MMap* parammap)
+    {
+        return new_hvgrid(parammap, true);
+    }
+    static W_Grid* make_vgrid(minion::MMap* parammap)
+    {
+        return new_hvgrid(parammap, false);
+    }
 };
 
 //TODO ...

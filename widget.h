@@ -25,7 +25,7 @@ const Fl_Color PENDING_BG = 0xffe0e000;
 // widget (which is sometimes necessary for callbacks, etc.).
 class Widget : public Fl_Callback_User_Data
 {
-    static std::unordered_map<std::string_view, Fl_Widget *> widget_map;
+    static std::unordered_map<std::string_view, Widget*> widget_map;
 
     // Widget name, used for look-up, etc.
     std::string w_name;

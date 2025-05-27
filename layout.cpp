@@ -2,7 +2,6 @@
 #include "callback.h"
 #include "minion.h"
 #include "widget.h"
-#include "widget_methods.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Grid.H>
@@ -107,6 +106,9 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
     Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Grid(parammap);
     widget->fl_widget = w;
+
+//TODO: adding widgets ...
+
     return widget;         
 }
 
@@ -136,7 +138,8 @@ void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
         .append("':\n  ").append(dump_value(m));
 }
 
-Fl_Widget* W_Grid::new_hvgrid(
+//static
+W_Grid* W_Grid::new_hvgrid(
     MMap* parammap,
     bool horizontal)
 {
@@ -145,74 +148,37 @@ Fl_Widget* W_Grid::new_hvgrid(
     auto widget = new W_Grid(parammap);
     widget->fl_widget = w;
 
-//TODO: Get pending items ...
-
-    return w;         
-
-
-
-    auto widg = new Fl_Grid(0, 0, 0, 0);
-    Fl_Group::current(0); // disable "auto-grouping"
-    widg->color(0xe0ffe000);
-    auto items = param.get("ITEMS");
-    // The items are lists, the first element is the widget name,
-    // subsequent elements are for "filling" and fixing.
-    if (holds_alternative<MList*>(items)) {
-        auto item_list = get<MList*>(items);
-        int n_items = item_list.size();
-        if (horizontal) widg->layout(1, n_items);
-        else widg->layout(n_items, 1);
-        for (int rc = 0; rc < n_items; ++rc) {
-            auto item = get<MList*>(item_list.at(rc));
-            int n_params = item.size();
-            if (n_params != 0) {
-                auto w = WidgetData::get_widget(get<string>(item.at(0)));
-                widg->add(w);
-                // now options
-                for (int i = 1; i < item.size(); ++i) {
-                    auto p =  get<string>(item.at(i));
-                    if (p == "FIXED") {
-                        if (horizontal) widg->col_weight(rc, 0);
-                        else widg->row_weight(rc, 0);
-                    } else {
-                        try {
-                            auto align = GRID_ALIGN.at(p);
-                            if (horizontal) widg->widget(w, 0, rc, align);
-                            else widg->widget(w, rc, 0, align);
-                        } catch (out_of_range) {
-                            throw "Invalid Grid flag: " + p;
-                        }
+    // Get contained widgets ...
+    auto wlist0 = parammap->get("WIDGETS");
+    auto wlist = wlist0.m_list();
+    auto n = wlist->size();
+    if (horizontal) w->layout(1, n);
+    else w->layout(n, 1);
+    for (size_t i = 0; i < n; ++i) {
+        auto entry0 = wlist->get(i);
+        auto entry = entry0.m_list();
+        string wname;
+        if (entry->get_string(0, wname)) {
+            if (auto w_i = Widget::get_fltk_widget(wname)) {
+                w->add(w_i);
+                string fill;
+                if (entry->get_string(1, fill)) {
+                    try {
+                        auto align = GRID_ALIGN.at(fill);
+                        if (horizontal) w->widget(w_i, 0, i, align);
+                        else w->widget(w_i, i, 0, align);
+                    } catch (out_of_range) {
+                        throw string{"Invalid Grid alignment (fill): "} + fill;
                     }
+                    int weight = 1;
+                    entry->get_int(2, weight);
+                    if (horizontal) w->col_weight(i, weight);
+                    else w->row_weight(i, weight);
+                    continue;   
                 }
             }
         }
-        return widg;
+        throw string{"Invalid ITEMS list: "} + dump_value(entry0);
     }
-    string s;
-    minion::dump(s, items, 0);
-    throw string{"Invalid ITEMS list: "} + s;    
+    return widget;         
 }
-
-
-
-W_Row::W_Row(minion::MMap* parammap) : W_Grid{parammap}{}
-W_Row* W_Row::make(minion::MMap* parammap)
-{
-    return new_hvgrid(parammap, true);
-
-}
-
-// Inherit handle_method from W_Grid
-//void W_Row::handle_method(std::string_view method, minion::MList* paramlist);
-
-W_Column::W_Column(minion::MMap* parammap) : W_Grid{parammap}{}
-W_Column* W_Column::make(minion::MMap* parammap)
-{
-    return new_hvgrid(parammap, false);
-
-}
-
-// Inherit handle_method from W_Grid
-//void W_Column::handle_method(std::string_view method, minion::MList* paramlist);
-
-// *** End of layouts

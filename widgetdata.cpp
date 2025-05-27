@@ -82,27 +82,6 @@ MList* WidgetData::list_widgets()
 }
 
 // static
-Fl_Widget *WidgetData::get_widget(
-    string_view name)
-{
-    try {
-        return widget_map.at(name);
-    } catch (const std::out_of_range &e) {
-        throw fmt::format("Unknown widget: {} ({})", name, e.what());
-    }
-}
-
-// static
-void WidgetData::check_new_widget_name(string_view name)
-{
-    if (name.empty()) {
-        throw "Unnamed widget ...";
-    } else if (widget_map.contains(name)) {
-        throw string{"Widget name already exists: "} + string{name};
-    }
-}
-
-// static
 void WidgetData::add_widget(
     string_view name, Fl_Widget *w, method_handler h)
 {

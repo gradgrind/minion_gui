@@ -22,6 +22,17 @@ void Widget::check_new_widget_name(string_view name)
     }
 }
 
+// static
+Widget* Widget::get_widget(
+    string_view name)
+{
+    try {
+        return widget_map.at(name);
+    } catch (const out_of_range) {
+        throw string{"Unknown widget: "}.append(name);
+    }
+}
+
 //TODO??? Is this a duplicate? Is it needed?
 void handle_methods(
     Widget* w, MMap* mmap)
