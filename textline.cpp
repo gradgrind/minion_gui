@@ -50,7 +50,6 @@ W_TextLine* W_TextLine::make(minion::MMap* parammap)
             string v = ww->value();
             if (widget->set(v)) { 
                 string dw{widget->widget_name()};
-                // or string dw{static_cast<Widget*>(ud)->get_widget_name(w)};
                 Callback1(dw, new minion::MString{v});
 
                 // This would remove keyboard focus from the widget

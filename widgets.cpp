@@ -99,7 +99,6 @@ W_Choice* W_Choice::make(minion::MMap* parammap)
     w->callback(
         [](Fl_Widget* w, void* ud) {
             string dw{Widget::get_widget_name(w)};
-            // or string dw{static_cast<Widget*>(ud)->get_widget_name(w)};
             auto ww = static_cast<Fl_Choice*>(w);
             Callback2(
                 dw,
@@ -112,63 +111,63 @@ W_Choice* W_Choice::make(minion::MMap* parammap)
     return widget;         
 }
 
-Fl_Widget *NEW_Output(
-    MinionMap param)
+//static
+W_Output* W_Output::make(minion::MMap* parammap)
 {
-    auto w = new Fl_Output(0, 0, 0, WidgetData::line_height);
-    w->color(WidgetData::entry_bg);
-    return w;
+    auto w = new Fl_Output(0, 0, 0, Widget::line_height);
+    auto widget = new W_Output(parammap);
+    widget->fl_widget = w;
+    w->color(Widget::entry_bg);
+    return widget;         
 }
 
-Fl_Widget *NEW_PushButton(
-    MinionMap param)
+//static
+W_PushButton* W_PushButton::make(minion::MMap* parammap)
 {
     string label{};
-    if (!param.get_string("LABEL", label)) {
-        param.get_string("NAME", label);
+    if (!parammap->get_string("LABEL", label)) {
+        parammap->get_string("NAME", label);
     }
     auto w = new Fl_Button(0, 0, 0, 0);
+    auto widget = new W_PushButton(parammap);
+    widget->fl_widget = w;
+
     w->copy_label(label.c_str());
     int lw{0}, lh;
     w->measure_label(lw, lh);
     //TODO: margins settable?
-    w->size(lw + 20, WidgetData::line_height);
+    w->size(lw + 20, Widget::line_height);
     //TODO: "selection" colour
-    w->color(WidgetData::entry_bg, 0xe0e0ff00);
+    w->color(Widget::entry_bg, 0xe0e0ff00);
     w->callback(
         [](Fl_Widget* w, void* ud) {
-            string dw{WidgetData::get_widget_name(w)};
-            // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
+            string dw{Widget::get_widget_name(w)};
+            // or string dw{static_cast<Widget*>(ud)->widget_name()};
             auto ww = static_cast<Fl_Button*>(w);
-            auto res = Callback1(dw, "");
-            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
-            
-            //TODO--
-            auto wo = static_cast<Fl_Input *>(WidgetData::get_widget("Output_1"));
-            string v{"DUMMY"};
-            res.get_string("GoCallbackResult", v);
-            
-            cout << "CALLBACK VALUE: " << v << endl;
-            wo->value(v.c_str());
+            Callback1(dw, MValue{});
+            cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
         });
-    return w;
+    return widget;         
 }
 
-Fl_Widget *NEW_Checkbox(
-    MinionMap param)
+//static
+W_Checkbox* W_Checkbox::make(minion::MMap* parammap)
 {
-    auto w = new Fl_Round_Button(0, 0, 0, WidgetData::line_height);
+    //TODO: does this need a label?
+    auto w = new Fl_Round_Button(0, 0, 0, Widget::line_height);
+    auto widget = new W_Checkbox(parammap);
+    widget->fl_widget = w;
     w->callback(
         [](Fl_Widget* w, void* ud) {
-            string dw{WidgetData::get_widget_name(w)};
-            // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
+            string dw{Widget::get_widget_name(w)};
+            // or string dw{static_cast<Widget*>(ud)->widget_name()};
             auto ww = static_cast<Fl_Round_Button*>(w);
             string val{};
             if (ww->value() != 0) val = "1";
-            auto res = Callback1(dw, val);
-            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+            Callback1(dw, new MString{val});
+            cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
         });
-    return w;
+    return widget;
 }
 
 Fl_Widget *NEW_List(
