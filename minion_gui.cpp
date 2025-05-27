@@ -2,7 +2,6 @@
 #include "backend.h"
 #include "callback.h"
 #include "dispatcher.h"
-#include "minion_gui.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
@@ -29,7 +28,7 @@ const char* dump_value(MValue m) {
 
 void Callback(MValue m)
 {
-    input_value = {};
+    input_value = {}; // clear the result
     const char* cbdata;
     {
         MinionValue mv = m;
@@ -38,8 +37,8 @@ void Callback(MValue m)
     }
     char* cbresult = backend(cbdata);
     //TODO? minion_tidy_dump();
-    input_buffer.read(input_value, cbresult);
-    //TODO: Handle errors (thrown MinionError)?
+    const char* error_message = input_buffer.read(input_value, cbresult);
+    throw error_message;
 }
 
 void Callback1(string_view widget, MValue data)

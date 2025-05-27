@@ -1,7 +1,6 @@
 #include "widgets.h"
 #include "callback.h"
-#include "widgetdata.h"
-#include "widget_methods.h"
+#include "support_functions.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Flex.H>
@@ -60,46 +59,57 @@ void list_method(
 
 // *** Non-layout widgets ***
 
-Fl_Widget *NEW_Box(
-    MinionMap param)
+//static
+W_Box* W_Box::make(minion::MMap* parammap)
 {
-    return new Fl_Box(0, 0, 0, 0);
+    auto w = new Fl_Box(0, 0, 0, 0);
+    auto widget = new W_Box(parammap);
+    widget->fl_widget = w;
+    return widget;         
 }
 
-Fl_Widget *NEW_Label(
-    MinionMap param)
+//static
+W_Label* W_Label::make(minion::MMap* parammap)
 {
     string label{};
-    if (!param.get_string("LABEL", label)) {
-        param.get_string("NAME", label);
+    if (!parammap->get_string("LABEL", label)) {
+        parammap->get_string("NAME", label);
     }
     string align{};
-    param.get_string("ALIGN", align);
+    parammap->get_string("ALIGN", align);
 
     auto w = new Fl_Box(0, 0, 0, 0);
     w->copy_label(label.c_str());
     int lw{0}, lh;
     w->measure_label(lw, lh);
     //w->horizontal_label_margin(5);
-    w->size(lw + 20, WidgetData::line_height);
+    w->size(lw + 20, Widget::line_height);
     if (align == "LEFT") w->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT);
     else if (align == "RIGHT") w->align(FL_ALIGN_INSIDE|FL_ALIGN_RIGHT);
-    return w;
+
+    auto widget = new W_Label(parammap);
+    widget->fl_widget = w;
+    return widget;         
 }
 
-Fl_Widget *NEW_Choice(
-    MMap* param)
+//static
+W_Choice* W_Choice::make(minion::MMap* parammap)
 {
-    auto w = new Fl_Choice(0, 0, 0, WidgetData::line_height);
+    auto w = new Fl_Choice(0, 0, 0, Widget::line_height);
     w->callback(
         [](Fl_Widget* w, void* ud) {
-            string dw{WidgetData::get_widget_name(w)};
-            // or string dw{static_cast<WidgetData*>(ud)->get_widget_name(w)};
+            string dw{Widget::get_widget_name(w)};
+            // or string dw{static_cast<Widget*>(ud)->get_widget_name(w)};
             auto ww = static_cast<Fl_Choice*>(w);
-            auto res = Callback2(dw, to_string(ww->value()), ww->text());
-            cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+            Callback2(
+                dw,
+                new MString(to_string(ww->value())),
+                new MString(ww->text()));
+            cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
         });
-    return w;
+    auto widget = new W_Choice(parammap);
+    widget->fl_widget = w;
+    return widget;         
 }
 
 Fl_Widget *NEW_Output(

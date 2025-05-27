@@ -1,6 +1,6 @@
 #include "widget.h"
 #include "callback.h"
-#include "widget_methods.h"
+#include "support_functions.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Window.H>
 #include <functional>
