@@ -39,6 +39,7 @@ void Widget::new_widget(
     // Create widget
     Widget* w = f(m);
     widget_map.at(name) = w;
+    w->fltk_widget()->user_data(w, true); // auto-free = true
     // Add to parent, if specified
     string parent;
     if (m->get_string("PARENT", parent) && !parent.empty()) {
@@ -49,6 +50,28 @@ void Widget::new_widget(
     }
      // Handle method calls supplied with the widget creation
     w->handle_methods(m);
+}
+
+// static
+Widget* Widget::get_widget(
+    string_view name)
+{
+    try {
+        return widget_map.at(name);
+    } catch (const out_of_range) {
+        throw string{"Unknown widget: "}.append(name);
+    }
+}
+
+// The destructor will be called when the associated fltk_widget is destroyed,
+// thanks to that widget's user_data setting.
+Widget::~Widget() {
+    // Delete any associated "user_data"
+    if (auto_delete_user_data && user_data) {
+        delete static_cast<Fl_Callback_User_Data*>(user_data);
+    }
+    // Remove from widget map
+    widget_map.erase(w_name);
 }
 
 void Widget::handle_methods(
@@ -68,18 +91,6 @@ void Widget::handle_methods(
     }
     MValue m0{m};
     throw string{"Invalid DO list on widget "} + w_name + ": " + dump_value(m0);
-}
-
-
-// static
-Widget* Widget::get_widget(
-    string_view name)
-{
-    try {
-        return widget_map.at(name);
-    } catch (const out_of_range) {
-        throw string{"Unknown widget: "}.append(name);
-    }
 }
 
 void Widget::handle_method(std::string_view method, minion::MList* paramlist)

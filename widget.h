@@ -45,7 +45,7 @@ protected:
 
 public:
     Widget(minion::MMap* parammap);
-    ~Widget() override; //TODO???
+    ~Widget() override;
 
     static void new_widget(std::string_view wtype, minion::MMap* m);
     static Widget* get_widget(std::string_view name);
