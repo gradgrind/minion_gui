@@ -46,26 +46,39 @@ public:
 class W_Choice : public Widget
 {
 public:
-    W_Choice(minion::MMap* parammap) : Widget{parammap}
-    {}
-
+    W_Choice(minion::MMap* parammap) : Widget{parammap} {}
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Choice* make(minion::MMap* parammap);
 };
 
-class W_Output : public Widget
+class W_Input : public Widget
 {
 public:
-    W_Output(minion::MMap* parammap) : Widget{parammap}
-    {}
+    W_Input(minion::MMap* parammap) : Widget{parammap} {}
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
+    static W_Input* make(minion::MMap* parammap);
+};
 
+class W_Output : public W_Input
+{
+public:
+    W_Output(minion::MMap* parammap) : W_Input{parammap} {}
+    // handle_method inherited from W_Input?
     static W_Output* make(minion::MMap* parammap);
+};
+
+class W_List : public Widget
+{
+public:
+    W_List(minion::MMap* parammap) : Widget{parammap} {}
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
+    static W_List* make(minion::MMap* parammap);
 };
 
 class W_TextLine : public Widget
 {
 public:
-    W_TextLine(minion::MMap* parammap) : Widget{parammap}
-    {}
+    W_TextLine(minion::MMap* parammap) : Widget{parammap} {}
     virtual void handle_method(std::string_view method, minion::MList* paramlist);
     static W_TextLine* make(minion::MMap* parammap);
 
@@ -75,18 +88,14 @@ public:
 class W_RowTable : public Widget
 {
 public:
-    W_RowTable(minion::MMap* parammap) : Widget{parammap}
-    {}
-
+    W_RowTable(minion::MMap* parammap) : Widget{parammap} {}
     static W_RowTable* make(minion::MMap* parammap);
 };
 
 class W_EditForm : public Widget
 {
 public:
-    W_EditForm(minion::MMap* parammap) : Widget{parammap}
-    {}
-
+    W_EditForm(minion::MMap* parammap) : Widget{parammap} {}
     static W_EditForm* make(minion::MMap* parammap);
 };
 

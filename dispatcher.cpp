@@ -1,7 +1,7 @@
 #include "dispatcher.h"
+#include "callback.h"
 #include "functions.h"
 #include "layout.h"
-#include "minion_gui.h"
 #include "widget.h"
 #include "widgets.h"
 #include <FL/Fl_Flex.H>
@@ -22,7 +22,9 @@ const map<string, new_function> new_function_map{
     {"Label", W_Label::make},
     {"Choice", W_Choice::make},
     {"Output", W_Output::make},
+    {"Input", W_Input::make},
     {"Checkbox", W_Checkbox::make},
+    {"List", W_List::make},
     {"TextLine", W_TextLine::make},
     {"RowTable", W_RowTable::make},
     {"EditForm", W_EditForm::make}
@@ -46,7 +48,7 @@ void GUI(
     } else {
         // Error
         MValue m = mmap;
-        dump_buffer.dump(m, 0);
+        dump_value(m);
         throw string{"Invalid GUI parameters: "} + dump_buffer.dump(m, 0);
     }
 }
