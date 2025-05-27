@@ -3,6 +3,8 @@
 
 #include "minion.h"
 #include <FL/Fl_Widget.H>
+#include <functional>
+#include <map>
 #include <string>
 #include <unordered_map>
 
@@ -42,19 +44,21 @@ protected:
     Fl_Widget* fl_widget;
 
 public:
-    //Widget(minion::MMap* parammap, std::string_view w_name);
     Widget(minion::MMap* parammap);
-    ~Widget() override;
+    ~Widget() override; //TODO???
 
-    //static void add_widget(std::string_view name, Fl_Widget *w, method_handler h);
-    static void check_new_widget_name(std::string_view name);
+    static void new_widget(std::string_view wtype, minion::MMap* m);
     static Widget* get_widget(std::string_view name);
     static Fl_Widget* get_fltk_widget(std::string_view name)
     {
         return get_widget(name)->fl_widget;
     }
-    static minion::MList list_widgets();
-    static std::string_view get_widget_name(Fl_Widget *w);
+    //TODO? static minion::MList list_widgets();
+    static std::string_view get_widget_name(Fl_Widget *w)
+    { //TODO: is this needed?
+        auto wd{static_cast<Widget*>(w->user_data())};
+        return wd->w_name;
+    }
 
     inline static int line_height{LINE_HEIGHT};
     inline static Fl_Color entry_bg{ENTRY_BG};
@@ -64,7 +68,10 @@ public:
 
     virtual void handle_method(std::string_view method, minion::MList* mlist);
 
-    //TODO: Should this be static?
+    void handle_methods(minion::MMap* m); // handle the calls in a DO-list
+
+    //TODO: Should this be static? Do I need this at all? What exactly
+    // should it do?
     void remove_widget(std::string_view name);
 
     inline std::string_view widget_name() { return w_name; }
@@ -72,5 +79,7 @@ public:
     //std::string_view widget_type_name();
 };
 
+using new_function = std::function<Widget* (minion::MMap*)>;
+extern const std::map<std::string, new_function> new_function_map;
 
 #endif // WIDGET_H

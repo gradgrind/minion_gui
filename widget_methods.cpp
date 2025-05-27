@@ -31,14 +31,6 @@ Fl_Boxtype get_boxtype(
     return magic_enum::enum_cast<Fl_Boxtype>(boxtype).value();
 }
 
-Fl_Color colour_param(
-    minion::MList* m, int i)
-{
-    string c;
-    if (m->get_string(i, c)) 
-    return get_colour(c);
-}
-
 //TODO--
 void left_label(
     Fl_Widget *w, minion::MinionList m)

@@ -12,27 +12,6 @@
 using namespace std;
 using namespace minion;
 
-void Handle_methods(
-    Widget* w, MMap* m)
-{
-    auto dolist0 = m->get("DO");
-    if (!dolist0.is_null()) {
-        if (auto dolist = dolist0.m_list()) {
-            auto len = dolist->size();
-            for (int i = 0; i < len; ++i) {
-                MList* mlist = dolist->get(i).m_list();
-                string_view c = mlist->get(0).m_string()->data_view();
-                w->handle_method(c, mlist);
-            }
-            return;
-        }
-    }
-    MValue m0{m};
-    throw string{"Invalid DO list: "} + dump_buffer.dump(m0, 0);
-}
-
-using new_function = function<Widget* (MMap*)>;
-
 const map<string, new_function> new_function_map{
     {"Window", W_Window::make},
     {"Grid", W_Grid::make},
@@ -49,50 +28,17 @@ const map<string, new_function> new_function_map{
     {"EditForm", W_EditForm::make}
 };
 
-void Handle_NEW(
-    string_view wtype, MMap* m)
-{
-    string_view name;
-    { // Check new widget name
-        MString* name0;
-        auto n = m->get("NAME");
-        if (n.is_null() || !(name0 = n.m_string())) {
-            MValue m0{m};
-            throw string{"Bad NEW command: "} + dump_buffer.dump(m0, 0);
-        }
-        // Check name unique
-        name = name0->data_view();
-        Widget::check_new_widget_name(name);
-    }
-    new_function f;
-    try {
-        f = new_function_map.at(string{wtype});
-    } catch (std::out_of_range) {
-        throw string{"Unknown widget type: "}.append(wtype);
-    }
-    // Create widget
-    Widget* w = f(m);
-    // Add to parent, if specified
-    string parent;
-    if (m->get_string("PARENT", parent) && !parent.empty()) {
-        auto p = static_cast<Fl_Group*>(Widget::get_fltk_widget(parent));
-        p->add(w->fltk_widget());
-    }
-     // Handle method calls supplied with the widget creation
-    Handle_methods(w, m);
-}
-
 void GUI(
     MMap* mmap)
 {
     string s;
     if (mmap->get_string("NEW", s)) {
         // Make a new widget
-        Handle_NEW(s, mmap);
+        Widget::new_widget(s, mmap);
     } else if (mmap->get_string("WIDGET", s)) {
         // Handle widget methods
         auto w = Widget::get_widget(s);
-        Handle_methods(w, mmap);
+        w->handle_methods(mmap);
     } else if (mmap->get_string("FUNCTION", s)) {
         // Some other function
         auto f = function_map.at(s);
