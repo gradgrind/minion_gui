@@ -1,16 +1,15 @@
 #include "rowtable.h"
 #include "callback.h"
-#include "widgetdata.h"
-#include "widget_methods.h"
+#include "support_functions.h"
+//#include "widget.h"
 #include "widgets.h"
 #include <FL/fl_draw.H>
-//#include <fmt/format.h>
 #include <iostream>
 using namespace std;
 using namespace minion;
 
 //TODO: When the table doesn't fit in the space, scrollbars should appear.
-// It is not clear to me why they don't!
+// It is not clear to me why they don't! Isn't this solved already?
 
 //TODO: After changes I probably need to force a redraw (redraw()).
 
@@ -22,71 +21,6 @@ RowTable::RowTable()
     row_header(0); // disable row headers (along left)
     col_header(0); // disable column headers (along top)
     type(Fl_Table_Row::SELECT_SINGLE);
-}
-
-void rowtable_method(
-    Fl_Widget *w, string_view c, MinionList m)
-{
-    auto t = static_cast<RowTable *>(w);
-
-    //TODO: It would probably be better to use an enum and switch!
-    if (c == "rows") {
-        t->set_rows(int_param(m, 1));
-    } else if (c == "cols") {
-        t->set_cols(int_param(m, 1));
-    } else if (c == "row_header_width") {
-        int rhw = int_param(m, 1);
-        if (rhw) {
-            t->row_header(1);
-            t->row_header_width(rhw);
-        } else {
-            t->row_header(0);
-        }
-    } else if (c == "col_header_height") {
-        int chh = int_param(m, 1);
-        if (chh) {
-            t->col_header(1);
-            t->col_header_height(chh);
-        } else {
-            t->col_header(0);
-        }
-    } else if (c == "col_header_color") {
-        t->col_header_color(colour_param(m, 1));
-    } else if (c == "row_header_color") {
-        t->row_header_color(colour_param(m, 1));
-    } else if (c == "row_height_all") {
-        t->row_height_all(int_param(m, 1));
-    } else if (c == "col_width_all") {
-        t->col_width_all(int_param(m, 1));
-    } else if (c == "col_headers") {
-        t->col_headers.clear();
-        int n = m.size() - 1;
-        t->set_cols(n);
-        for (int i = 0; i < n; ++i) {
-            t->col_headers[i] = get<string>(m.at(i + 1));
-        }
-    } else if (c == "row_headers") {
-        t->row_headers.clear();
-        int n = m.size() - 1;
-        t->set_rows(n);
-        for (int i = 0; i < n; ++i) {
-            t->row_headers[i] = get<string>(m.at(i + 1));
-        }
-    } else if (c == "add_row") {
-        int n = m.size() - 2;
-        if (n != t->cols()) {
-            throw "RowTable: add_row with wrong length";
-        }
-        t->row_headers.emplace_back(get<string>(m.at(1)));
-        vector<string> r(n);
-        for (int i = 0; i < n; ++i) {
-            r[i] = get<string>(m.at(i + 2));
-        }
-        t->data.emplace_back(r);
-        t->rows(t->rows() + 1);
-    } else {
-        widget_method(w, c, m);
-    }
 }
 
 // Need to handle the effect of column changes on data stores.
@@ -113,16 +47,6 @@ void RowTable::set_rows(
     if (n && nc) {
         data.resize(n, vector<string>(nc));
     }
-}
-
-Fl_Widget *NEW_RowTable(
-    MinionMap param)
-{
-    auto widg = new RowTable();
-    widg->color(widg->bg);
-    widg->col_header_color(widg->header_bg);
-    widg->row_header_color(widg->header_bg);
-    return widg;
 }
 
 void RowTable::draw_cell(
@@ -258,7 +182,7 @@ void RowTable::_row_cb(
     string dw{Widget::get_widget_name(ww)};
     int i = ww->_current_row;
     //auto res = Callback1(dw, to_string(i));
-    //cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+    //cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
 
     //TODO: Do I want the row data?
     auto rowheader = ww->row_headers.at(i);
@@ -273,4 +197,97 @@ void RowTable::_row_cb(
         to_string(i),
         ml);
     cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
+}
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+W_RowTable* W_RowTable::make(minion::MMap* parammap)
+{
+    auto w = new RowTable();
+    auto widget = new W_RowTable(parammap);
+    widget->fl_widget = w;
+    w->color(w->bg);
+    w->col_header_color(w->header_bg);
+    w->row_header_color(w->header_bg);
+    return widget;
+}
+
+//TODO
+void W_RowTable::handle_method(std::string_view method, minion::MList* paramlist)
+{
+    auto t = static_cast<RowTable*>(fl_widget);
+
+    //TODO: It would probably be better to use an enum and switch!
+    if (method == "rows") {
+        int n;
+        if (paramlist->get_int(1, n))
+            t->set_rows(n);
+    } else if (method == "cols") {
+        int n;
+        if (paramlist->get_int(1, n))
+            t->set_cols(n);
+    } else if (method == "row_header_width") {
+        int rhw;
+        if (paramlist->get_int(1, rhw) && rhw > 0) {
+            t->row_header(1);
+            t->row_header_width(rhw);
+        } else {
+            t->row_header(0);
+        }
+    } else if (method == "col_header_height") {
+        int chh;
+        if (paramlist->get_int(1, chh) && chh > 0) {
+            t->col_header(1);
+            t->col_header_height(chh);
+        } else {
+            t->col_header(0);
+        }
+    } else if (method == "col_header_color") {
+        string clr;
+        if (paramlist->get_string(1, clr)) {
+            t->col_header_color(get_colour(clr));
+        } else {
+            t->col_header_color(t->header_bg);
+        }
+        t->col_header_color(colour_param(m, 1));
+    } else if (method == "row_header_color") {
+        string clr;
+        if (paramlist->get_string(1, clr)) {
+            t->row_header_color(get_colour(clr));
+        } else {
+            t->row_header_color(t->header_bg);
+        }
+    } else if (method == "row_height_all") {
+        t->row_height_all(int_param(m, 1));
+    } else if (method == "col_width_all") {
+        t->col_width_all(int_param(m, 1));
+    } else if (method == "col_headers") {
+        t->col_headers.clear();
+        int n = m.size() - 1;
+        t->set_cols(n);
+        for (int i = 0; i < n; ++i) {
+            t->col_headers[i] = get<string>(m.at(i + 1));
+        }
+    } else if (method == "row_headers") {
+        t->row_headers.clear();
+        int n = m.size() - 1;
+        t->set_rows(n);
+        for (int i = 0; i < n; ++i) {
+            t->row_headers[i] = get<string>(m.at(i + 1));
+        }
+    } else if (method == "add_row") {
+        int n = m.size() - 2;
+        if (n != t->cols()) {
+            throw "RowTable: add_row with wrong length";
+        }
+        t->row_headers.emplace_back(get<string>(m.at(1)));
+        vector<string> r(n);
+        for (int i = 0; i < n; ++i) {
+            r[i] = get<string>(m.at(i + 2));
+        }
+        t->data.emplace_back(r);
+        t->rows(t->rows() + 1);
+    } else {
+        Widget::handle_method(method, paramlist);
+    }
 }

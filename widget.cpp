@@ -14,21 +14,17 @@ using namespace minion;
 void Widget::new_widget(
     string_view wtype, MMap* m)
 {
-    string_view name;
-    { // Check new widget name
-        MString* name0;
-        auto n = m->get("NAME");
-        if (n.is_null() || !(name0 = n.m_string())) {
-            MValue m0{m};
-            throw string{"Bad NEW command: "} + dump_value(m0);
-        }
-        // Check name unique
-        name = name0->data_view();
-        if (name.empty()) {
-            throw "A new widget must have a name ...";
-        } else if (widget_map.contains(name)) {
-            throw string{"Widget name already exists: "}.append(name);
+    string name;
+    // Check new widget name
+    if (!m->get_string("NAME", name)) {
+        MValue m0{*m};
+        throw string{"Bad NEW command: "} + dump_value(m0);
     }
+    // Check name unique
+    if (name.empty()) {
+        throw "A new widget must have a name ...";
+    } else if (widget_map.contains(name)) {
+        throw string{"Widget name already exists: "}.append(name);
     }
     new_function f;
     try {
@@ -80,17 +76,22 @@ void Widget::handle_methods(
     auto dolist0 = m->get("DO");
     if (!dolist0.is_null()) {
         if (auto dolist = dolist0.m_list()) {
-            auto len = dolist->size();
+            auto len = (*dolist)->size();
             for (int i = 0; i < len; ++i) {
-                MList* mlist = dolist->get(i).m_list();
-                string_view c = mlist->get(0).m_string()->data_view();
-                handle_method(c, mlist);
+                auto n = (*dolist)->get(i);
+                auto mlist = n.m_list();
+                string c;
+                if ((*mlist)->get_string(0, c)) {
+                    handle_method(c, mlist->get());
+                } else {
+                    throw string{"Invalid DO method on widget "} + w_name + ": " + dump_value(n);
+                }
             }
             return;
         }
+        MValue m0{*m};
+        throw string{"Invalid DO list on widget "} + w_name + ": " + dump_value(m0);
     }
-    MValue m0{m};
-    throw string{"Invalid DO list on widget "} + w_name + ": " + dump_value(m0);
 }
 
 void Widget::handle_method(std::string_view method, minion::MList* paramlist)

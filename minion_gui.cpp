@@ -38,13 +38,13 @@ void Callback(MValue m)
         throw e;
 }
 
-void Callback1(string_view widget, MValue data)
+void Callback1(string& widget, MValue data)
 {
     MMap m{{{"CALLBACK", widget}, {"DATA", data}}};
     Callback(m);
 }
 
-void Callback2(string_view widget, MValue data, MValue data2)
+void Callback2(string& widget, MValue data, MValue data2)
 {
     MMap m{{{"CALLBACK", widget}, {"DATA", data}, {"DATA2", data2}}};
     Callback(m);

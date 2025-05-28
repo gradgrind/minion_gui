@@ -89,6 +89,7 @@ class W_RowTable : public Widget
 {
 public:
     W_RowTable(minion::MMap* parammap) : Widget{parammap} {}
+    virtual void handle_method(std::string_view method, minion::MList* paramlist);
     static W_RowTable* make(minion::MMap* parammap);
 };
 
