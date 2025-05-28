@@ -55,8 +55,8 @@ W_Choice* W_Choice::make(minion::MMap* parammap)
             auto ww = static_cast<Fl_Choice*>(w);
             Callback2(
                 dw,
-                new MString(to_string(ww->value())),
-                new MString(ww->text()));
+                to_string(ww->value()),
+                ww->text());
             cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
         });
     auto widget = new W_Choice(parammap);
@@ -138,7 +138,8 @@ W_PushButton* W_PushButton::make(minion::MMap* parammap)
 //static
 W_Checkbox* W_Checkbox::make(minion::MMap* parammap)
 {
-    //TODO: does this need a label?
+    //TODO: does this need a label? YES!
+    
     auto w = new Fl_Round_Button(0, 0, 0, Widget::line_height);
     auto widget = new W_Checkbox(parammap);
     widget->fl_widget = w;
@@ -149,7 +150,7 @@ W_Checkbox* W_Checkbox::make(minion::MMap* parammap)
             auto ww = static_cast<Fl_Round_Button*>(w);
             string val{};
             if (ww->value() != 0) val = "1";
-            Callback1(dw, new MString{val});
+            Callback1(dw, val);
             cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
         });
     return widget;
@@ -170,11 +171,10 @@ W_List* W_List::make(minion::MMap* parammap)
             auto i = ww->value();
             // Callback only for actual items (1-based indexing)
             if (i > 0) {
-                string itemtext{ww->text(i)};
                 Callback2(
                     dw, 
-                    new MString{to_string(i - 1)}, 
-                    new MString{itemtext});
+                    to_string(i - 1), 
+                    ww->text(i));
                 cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
             }
         });

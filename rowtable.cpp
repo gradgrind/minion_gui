@@ -255,7 +255,7 @@ void RowTable::_row_cb(
     void *table)
 {
     auto ww = static_cast<RowTable *>(table);
-    string dw{WidgetData::get_widget_name(ww)};
+    string dw{Widget::get_widget_name(ww)};
     int i = ww->_current_row;
     //auto res = Callback1(dw, to_string(i));
     //cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
@@ -263,14 +263,14 @@ void RowTable::_row_cb(
     //TODO: Do I want the row data?
     auto rowheader = ww->row_headers.at(i);
     auto row = ww->data.at(i);
-    MinionList ml{};
+    MList ml{};
     ml.emplace_back(rowheader);
     for (const auto & s : row) {
         ml.emplace_back(s);
     }
-    auto res = Callback2(
+    Callback2(
         dw, 
         to_string(i),
         ml);
-    cout << "CALLBACK RETURNED: " << dump_map_items(res, -1) << endl;
+    cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
 }

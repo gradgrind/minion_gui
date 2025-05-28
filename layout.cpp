@@ -133,7 +133,7 @@ void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
         W_Group::handle_method(method, paramlist);
         return;
     }
-    MValue m = paramlist;
+    MValue m{*paramlist};
     throw string{"Invalid command on grid '"}.append(widget_name())
         .append("':\n  ").append(dump_value(m));
 }
@@ -150,13 +150,13 @@ W_Grid* W_Grid::new_hvgrid(
 
     // Get contained widgets ...
     auto wlist0 = parammap->get("WIDGETS");
-    auto wlist = wlist0.m_list();
+    auto wlist = wlist0.m_list()->get();
     auto n = wlist->size();
     if (horizontal) w->layout(1, n);
     else w->layout(n, 1);
     for (size_t i = 0; i < n; ++i) {
         auto entry0 = wlist->get(i);
-        auto entry = entry0.m_list();
+        auto entry = entry0.m_list()->get();
         string wname;
         if (entry->get_string(0, wname)) {
             if (auto w_i = Widget::get_fltk_widget(wname)) {

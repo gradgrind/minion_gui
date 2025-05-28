@@ -15,7 +15,7 @@ using namespace minion;
 // This is used to manage the memory of a result from minion_read. It is
 // freed before a call to backend(), whose result is then parsed and
 // stored there.
-MinionValue input_value;
+MValue input_value;
 
 // This is used for reading (deserializing) MINION messages.
 InputBuffer input_buffer;
@@ -30,47 +30,38 @@ void Callback(MValue m)
 {
     input_value = {}; // clear the result
     const char* cbdata;
-    {
-        MinionValue mv = m;
-        cbdata = dump_value(mv);
-        // TODO: Is the freeing of m correct here?
-    }
+        cbdata = dump_value(m);
     char* cbresult = backend(cbdata);
     //TODO? minion_tidy_dump();
-    const char* error_message = input_buffer.read(input_value, cbresult);
-    throw error_message;
+    input_value = input_buffer.read(cbresult);
+    if (const char* e = input_value.error_message())
+        throw e;
 }
 
 void Callback1(string_view widget, MValue data)
 {
-    Callback(
-        new MMap{
-            MPair{"CALLBACK", new MString{widget}},
-            MPair{"DATA", data}
-        }
-    );
+    MMap m{{{"CALLBACK", widget}, {"DATA", data}}};
+    Callback(m);
 }
 
 void Callback2(string_view widget, MValue data, MValue data2)
 {
-    Callback(
-        new MMap{
-            MPair{"CALLBACK", new MString{widget}},
-            MPair{"DATA", data},
-            MPair{"DATA2", data2}
-        }
-    );
+    MMap m{{{"CALLBACK", widget}, {"DATA", data}, {"DATA2", data2}}};
+    Callback(m);
 }
 
-//TODO: extend minion with helper methods?
 //TODO ... What should the final form be?
 void tmp_run(
     MValue data)
 {
-    if (MMap* m0 = data.m_map()) {
+    auto mp = data.m_map();
+    if (mp) {
+        MMap* m0 = mp->get();
         MValue dolist0 = m0->get("GUI");
         if (!dolist0.is_null()) {
-            if (MList* dolist = dolist0.m_list()) {
+            auto lp = dolist0.m_list();
+            if (lp) {
+                MList* dolist =lp->get();
                 auto len = dolist->size();
                 for (int i = 0; i < len; ++i) {
                     GUI(dolist->get(i));
@@ -89,8 +80,8 @@ void init(char* data0) {
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
     string initgui{data0};
-    minion::MinionValue guidata;
-    if (auto e = minion_input.read(guidata, initgui)) {
+    minion::MValue guidata = minion_input.read(initgui);
+    if (auto e = guidata.error_message()) {
         cerr << e << endl;
         return;
     }

@@ -6,7 +6,7 @@
 // This is used to manage the memory of a result from minion_read. It is
 // freed before a call to backend(), whose result is then parsed and
 // stored there.
-extern minion::MinionValue input_value;
+extern minion::MValue input_value;
 
 // This is used for writing (serializing) MINION messages.
 extern minion::DumpBuffer dump_buffer;

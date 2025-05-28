@@ -47,7 +47,7 @@ void GUI(
         f(mmap);
     } else {
         // Error
-        MValue m = mmap;
+        MValue m = *mmap;
         dump_value(m);
         throw string{"Invalid GUI parameters: "} + dump_buffer.dump(m, 0);
     }
@@ -82,11 +82,11 @@ void to_back_end(
 {
     MMap* result = message(data);
     auto dolist0 = data->get("DO");
-    if (MList* mlist = dolist0.m_list()) {
+    if (MList* mlist = dolist0.m_list()->get()) {
         size_t n = mlist->size();
         for (size_t i = 0; i < n; ++i) {
             MValue cmd = mlist->get(i);
-            if (MMap* mmap = cmd.m_map())
+            if (MMap* mmap = cmd.m_map()->get())
                 GUI(mmap);
         }
     }
