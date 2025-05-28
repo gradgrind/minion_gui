@@ -212,7 +212,6 @@ W_RowTable* W_RowTable::make(minion::MMap* parammap)
     return widget;
 }
 
-//TODO
 void W_RowTable::handle_method(std::string_view method, minion::MList* paramlist)
 {
     auto t = static_cast<RowTable*>(fl_widget);
@@ -249,7 +248,6 @@ void W_RowTable::handle_method(std::string_view method, minion::MList* paramlist
         } else {
             t->col_header_color(t->header_bg);
         }
-        t->col_header_color(colour_param(m, 1));
     } else if (method == "row_header_color") {
         string clr;
         if (paramlist->get_string(1, clr)) {
@@ -258,32 +256,43 @@ void W_RowTable::handle_method(std::string_view method, minion::MList* paramlist
             t->row_header_color(t->header_bg);
         }
     } else if (method == "row_height_all") {
-        t->row_height_all(int_param(m, 1));
+        int h;
+        if (paramlist->get_int(1, h))
+            t->row_height_all(h);
     } else if (method == "col_width_all") {
-        t->col_width_all(int_param(m, 1));
+        int w;
+        if (paramlist->get_int(1, w))
+            t->col_width_all(w);
     } else if (method == "col_headers") {
         t->col_headers.clear();
-        int n = m.size() - 1;
+        auto n = paramlist->size() - 1;
         t->set_cols(n);
-        for (int i = 0; i < n; ++i) {
-            t->col_headers[i] = get<string>(m.at(i + 1));
+        string hdr;
+        for (size_t i = 0; i < n; ++i) {
+            paramlist->get_string(i + 1, hdr);
+            t->col_headers[i] = hdr;
         }
     } else if (method == "row_headers") {
         t->row_headers.clear();
-        int n = m.size() - 1;
+        auto n = paramlist->size() - 1;
         t->set_rows(n);
-        for (int i = 0; i < n; ++i) {
-            t->row_headers[i] = get<string>(m.at(i + 1));
+        string hdr;
+        for (size_t i = 0; i < n; ++i) {
+            paramlist->get_string(i + 1, hdr);
+            t->row_headers[i] = hdr;
         }
     } else if (method == "add_row") {
-        int n = m.size() - 2;
+        auto n = paramlist->size() - 2;
         if (n != t->cols()) {
             throw "RowTable: add_row with wrong length";
         }
-        t->row_headers.emplace_back(get<string>(m.at(1)));
+        string hdr;
+        paramlist->get_string(1, hdr);
+        t->row_headers.emplace_back(hdr);
         vector<string> r(n);
         for (int i = 0; i < n; ++i) {
-            r[i] = get<string>(m.at(i + 2));
+            paramlist->get_string(i + 2, hdr);
+            r[i] = hdr;
         }
         t->data.emplace_back(r);
         t->rows(t->rows() + 1);
