@@ -9,7 +9,7 @@
 class EditForm : public Fl_Grid
 {
 public:
-    int list_title_space{30};
+    int v_title_gap{5};
 
     EditForm();
 };
