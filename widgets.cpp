@@ -24,25 +24,30 @@ W_Box* W_Box::make(minion::MMap* parammap)
 //static
 W_Label* W_Label::make(minion::MMap* parammap)
 {
-    string label{};
-    if (!parammap->get_string("TEXT", label)) {
-        parammap->get_string("NAME", label);
-    }
-    string align{};
-    parammap->get_string("ALIGN", align);
-
     auto w = new Fl_Box(0, 0, 0, 0);
-    w->copy_label(label.c_str());
-    int lw{0}, lh;
-    w->measure_label(lw, lh);
-    //w->horizontal_label_margin(5);
-    w->size(lw + 20, Widget::line_height);
-    if (align == "LEFT") w->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT);
-    else if (align == "RIGHT") w->align(FL_ALIGN_INSIDE|FL_ALIGN_RIGHT);
-
     auto widget = new W_Label(parammap);
     widget->fl_widget = w;
     return widget;         
+}
+
+void W_Label::handle_method(std::string_view method, minion::MList* paramlist)
+{
+    string label;
+    if (method == "TEXT") {
+        if (paramlist->get_string(1, label)) {
+            fl_widget->copy_label(label.c_str());
+            int lw{0}, lh;
+            fl_widget->measure_label(lw, lh);
+            //w->horizontal_label_margin(5);
+            fl_widget->size(lw + 20, Widget::line_height);
+            string align;
+            property_string("LABEL_ALIGN", align);
+            if (align == "LEFT") fl_widget->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT);
+            else if (align == "RIGHT") fl_widget->align(FL_ALIGN_INSIDE|FL_ALIGN_RIGHT);
+        }
+    } else {
+        Widget::handle_method(method, paramlist);
+    }
 }
 
 //static

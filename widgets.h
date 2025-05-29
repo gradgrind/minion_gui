@@ -21,14 +21,14 @@ class W_Label : public Widget
 public:
     W_Label(minion::MMap* parammap) : Widget{parammap}
     {}
-
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Label* make(minion::MMap* parammap);
 };
 
-class W_PushButton : public Widget
+class W_PushButton : public W_Label
 {
 public:
-    W_PushButton(minion::MMap* parammap) : Widget{parammap}
+    W_PushButton(minion::MMap* parammap) : W_Label{parammap}
     {}
 
     static W_PushButton* make(minion::MMap* parammap);
