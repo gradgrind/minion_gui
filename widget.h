@@ -5,6 +5,7 @@
 #include <FL/Fl_Widget.H>
 #include <functional>
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -35,6 +36,8 @@ class Widget : public Fl_Callback_User_Data
     // Widget type, which can be used to access a type's member
     // functions, also the name of the type.
     //??? int wtype;
+
+    std::shared_ptr<minion::MMap> properties;
     
     // Substitute for Fl_Widget's user_data
     void *user_data = nullptr;
@@ -77,6 +80,16 @@ public:
     inline std::string_view widget_name() { return w_name; }
     //int widget_type();
     //std::string_view widget_type_name();
+
+    // properties access
+    bool property_int(std::string_view key, int& result)
+    {
+        return properties->get_int(key, result);
+    }
+    bool property_string(std::string_view key, std::string& result)
+    {
+        return properties->get_string(key, result);
+    }
 };
 
 using new_function = std::function<Widget* (minion::MMap*)>;

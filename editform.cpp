@@ -1,7 +1,5 @@
 #include "editform.h"
 #include "callback.h"
-#include "textline.h"
-#include "widgetdata.h"
 #include "widgets.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
@@ -20,13 +18,6 @@ using namespace minion;
 //  Entry_name + new_value (ENTRY)
 //  Entry_name + [new_value ...] (LIST)
 
-void editform_method(
-    Fl_Widget* w, string_view c, MinionList m)
-{
-    //auto efw = static_cast<EditForm*>(w);
-    widget_method(w, c, m);
-}
-
 EditForm::EditForm()
     : Fl_Grid(0, 0, 0, 0)
 {
@@ -36,9 +27,72 @@ EditForm::EditForm()
     margin(5, 5, 5, 5);
 }
 
-Fl_Widget* NEW_EditForm(
-    MinionMap param)
+// static
+W_EditForm* W_EditForm::make(minion::MMap* parammap)
 {
+    auto wlist0 = parammap->get("ITEMS");
+    if (auto wlist = wlist0.m_list()->get()) {
+        auto n = wlist->size();
+        if (n != 0) {
+            vector<Widget*> children;
+            for (size_t i = 0; i < n; ++i) {
+                string wname;
+                try {
+                    wlist->get_string(i, wname);
+                } catch (...) {
+                    string efname;
+                    parammap->get_string("NAME", efname);
+                    MValue m = *wlist;
+                    throw string{"Invalid ITEMS list for widget "}
+                        .append(efname)
+                        .append(": ")
+                        .append(dump_value(m));
+                }
+                children.emplace_back(Widget::get_widget(wname));
+            }
+            // Now create the EditForm widget
+            auto efw = new EditForm();
+            efw->layout(n, 2);
+            efw->col_weight(0, 0);
+            auto widget = new W_EditForm(parammap);
+            widget->fl_widget = efw;
+            efw->color(Widget::entry_bg);
+
+            //TODO
+            for (size_t i = 0; i < n; ++i) {
+                auto w = children.at(i);
+                int span = 1;
+                w->property_int("SPAN", span);
+                int grow = 0;
+                w->property_int("GROW", grow);
+                string label;
+                w->property_string("LABEL", label);
+
+                // ...
+
+                auto wx = w->fltk_widget();
+                efw->add(wx);
+                if (span == 2) {
+                    //TODO: If there is a label, it will need to come first
+
+                    efw->widget(wx, i, 0, 1, 2);
+                    efw->row_weight(i, grow);
+                } else {
+                    //TODO: If there is a label, make a labelled box for the
+                    // first column. Measure its width.
+                    efw->widget(wx, i, 1);
+                    efw->row_weight(i, 0);
+                }
+
+            }
+        }
+    }
+    string efname;
+    parammap->get_string("NAME", efname);
+    throw "EditForm missing ITEMS list: " + efname;
+    
+
+
     auto itemlist = param.get("ITEMS");
     if (holds_alternative<minion::MinionList>(itemlist)) {
         auto do_list = get<minion::MinionList>(itemlist);

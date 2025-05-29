@@ -25,7 +25,7 @@ W_Box* W_Box::make(minion::MMap* parammap)
 W_Label* W_Label::make(minion::MMap* parammap)
 {
     string label{};
-    if (!parammap->get_string("LABEL", label)) {
+    if (!parammap->get_string("TEXT", label)) {
         parammap->get_string("NAME", label);
     }
     string align{};
@@ -110,7 +110,7 @@ void W_Input::handle_method(string_view method, MList* paramlist)
 W_PushButton* W_PushButton::make(minion::MMap* parammap)
 {
     string label{};
-    if (!parammap->get_string("LABEL", label)) {
+    if (!parammap->get_string("TEXT", label)) {
         parammap->get_string("NAME", label);
     }
     auto w = new Fl_Button(0, 0, 0, 0);

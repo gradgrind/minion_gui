@@ -40,7 +40,7 @@ GUI: [
     NAME: P1,
     #PARENT: l_MainWindow,
     DO: [
-      [LABEL, "Panel 1"],
+      [TEXT, "Panel 1"],
       [BOXTYPE, FL_BORDER_FRAME],
       [HEIGHT, 100]
     ]
@@ -54,7 +54,7 @@ GUI: [
     NAME: todo,
     #PARENT: CoursePanel,
     DO: [
-      [LABEL, "Another Panel"],
+      [TEXT, "Another Panel"],
       [BOXTYPE, FL_FLAT_BOX],
       [HEIGHT, 50]
     ]
@@ -145,54 +145,76 @@ GUI: [
     NEW: PopupEditor,
     NAME: EF1,
     #PARENT: EditorForm,
-    LABEL: "EDITOR 1"
+    PROPERTIES: {
+      LABEL: "EDITOR 1"
+    }
   },
   {
     NEW: TextEditor,
     NAME: EF2,
     #PARENT: EditorForm,
-    LABEL: "TEXT 1"
+    PROPERTIES: {
+      LABEL: "TEXT 1"
+    }
   },
   {
     NEW: TextEditor,
     NAME: EF2X,
     #PARENT: EditorForm,
-    LABEL: "TEXT 2"
+    PROPERTIES: {
+      LABEL: "TEXT 2"
+    }
   },
   {
     NEW: Choice,
     NAME: EF3,
     #PARENT: EditorForm,
-    LABEL: "CHOICE 1"
+    PROPERTIES: {
+      LABEL: "CHOICE 1"
+    }
   },
   {
     NEW: Separator,
     NAME: Sep1,
     #PARENT: EditorForm
+    PROPERTIES: {
+      SPAN: 2
+    }
   },
   {
     NEW: PopupEditor,
     NAME: EF4,
     #PARENT: EditorForm,
-    LABEL: "ANOTHER EDITOR"
+    PROPERTIES: {
+      LABEL: "ANOTHER EDITOR"
+    }
   },
   {
     NEW: Checkbox,
     NAME: EF5,
     #PARENT: EditorForm,
-    LABEL: "CHECKBOX with a long label"
+    PROPERTIES: {
+      SPAN: 2
+    },
+    DO: [
+      [TEXT, "CHECKBOX with a long label"]
+    ]
   },
   {
     NEW: List,
     NAME: EF6,
     #PARENT: EditorForm,
-    LABEL: "List entry"
+    PROPERTIES: {
+      LABEL: "List entry",
+      SPAN: 2,
+      GROW: 1
+    }
   },
   {
     NEW: EditForm,
     NAME: EditorForm,
     #PARENT: Content,
-    ENTRIES: [
+    ITEMS: [
       EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6],
     DO: [
       [WIDTH, 300]

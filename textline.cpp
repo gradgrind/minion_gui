@@ -48,9 +48,8 @@ W_TextLine* W_TextLine::make(minion::MMap* parammap)
             // Don't leave all text selected when return is pressed
             ww->insert_position( ww->insert_position());
             string v = ww->value();
-            if (widget->set(v)) { 
-                string dw{widget->widget_name()};
-                Callback1(dw, new minion::MString{v});
+            if (widget->set(v)) {
+                Callback1(widget->widget_name(), v);
 
                 // This would remove keyboard focus from the widget
                 //Fl::focus(w->parent());

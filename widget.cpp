@@ -36,6 +36,11 @@ void Widget::new_widget(
     Widget* w = f(m);
     widget_map.at(name) = w;
     w->fltk_widget()->user_data(w, true); // auto-free = true
+    {
+        auto props = m->get("PROPERTIES");
+        if (props.type() == minion::T_Map)
+            w->properties = *props.m_map();
+    }
     // Add to parent, if specified
     string parent;
     if (m->get_string("PARENT", parent) && !parent.empty()) {
@@ -119,12 +124,14 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
             auto bxt = get_boxtype(btype);
             fl_widget->box(bxt);
         } else
-            throw "BOXTYPE value missing";
-
-        //} else if (method == "LABEL") {
-    //    //TODO: Do I really want this for all widgets?
-    //    auto lbl = get<string>(paramlist.at(1));
-    //    fl_widget->copy_label(lbl.c_str());
+            throw "BOXTYPE value missing for widget " + w_name;
+    } else if (method == "TEXT") {
+        //TODO: Do I really want this for all widgets?
+        string lbl;
+        if (paramlist->get_string(1, lbl)) {
+            fl_widget->copy_label(lbl.c_str());
+        } else
+            throw "TEXT value missing for widget " + w_name;
     //} else if (method == "CALLBACK") {
     //    auto cb = get<string>(paramlist.at(1));
     //    fl_widget->callback(do_callback);
