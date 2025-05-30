@@ -11,8 +11,10 @@
 /share/
 
 ### Other
+/build/
 /_lib/
 /.vscode/
+CMakeLists.txt.user
 
 # Prerequisites
 #*.d

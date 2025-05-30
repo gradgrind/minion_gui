@@ -114,19 +114,9 @@ void W_Input::handle_method(string_view method, MList* paramlist)
 //static
 W_PushButton* W_PushButton::make(minion::MMap* parammap)
 {
-    string label{};
-    if (!parammap->get_string("TEXT", label)) {
-        parammap->get_string("NAME", label);
-    }
     auto w = new Fl_Button(0, 0, 0, 0);
     auto widget = new W_PushButton(parammap);
     widget->fl_widget = w;
-
-    w->copy_label(label.c_str());
-    int lw{0}, lh;
-    w->measure_label(lw, lh);
-    //TODO: margins settable?
-    w->size(lw + 20, Widget::line_height);
     //TODO: "selection" colour
     w->color(Widget::entry_bg, 0xe0e0ff00);
     w->callback(

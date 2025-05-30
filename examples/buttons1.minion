@@ -1,22 +1,4 @@
-package main
-
-import (
-	"fmt"
-	"github.com/gradgrind/minion_gui"
-	"strings"
-)
-
-func main() {
-	minion_gui.MinionGui(guidata, callback)
-	//minion_gui.MinionGui("testA data", callback)
-}
-
-func callback(data string) string {
-	fmt.Printf("Go callback got '%s'\n", data)
-	return "GoCallbackResult:\"" + strings.ReplaceAll(data, "\"", "\\'") + "\""
-}
-
-var guidata string = `# buttons
+# buttons
 &APP_WIDTH: 600,
 &APP_HEIGHT: 400,
 &BACKGROUND: f0f0f0,
@@ -94,4 +76,3 @@ GUI: [
   },
   {FUNCTION: RUN} # Enter main event loop
 ]
-`
