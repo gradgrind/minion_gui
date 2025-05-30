@@ -8,10 +8,9 @@
 // stored there.
 extern minion::MValue input_value;
 
-// This is used for writing (serializing) MINION messages.
-extern minion::DumpBuffer dump_buffer;
-
+// Writing (serializing) MINION messages.
 const char* dump_value(minion::MValue m);
+void value_error(std::string msg, minion::MValue m);
 
 void Callback(minion::MValue m);
 void Callback1(std::string_view widget, minion::MValue data);
