@@ -1,25 +1,15 @@
-#include "minion.h"
+//#include "../minion.h"
+#include "../iofile.h"
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
 
 using namespace std;
-using namespace minion;
 
-bool readfile(
-    string &data, const string &filepath)
+string callback(
+    string data)
 {
-    std::ifstream file(filepath);
-    if (file) {
-        data.assign((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-        return true;
-    }
-    return false;
-}
-
-string callback(data string) string {
-	printf("callback got '%s'\n", data)
-	return "{callback_result: Value}"
+    printf("callback got '%s'\n", data.c_str());
+    return "{callback_result: Value}";
 }
 
 int main()

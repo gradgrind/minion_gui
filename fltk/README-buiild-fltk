@@ -1,0 +1,22 @@
+Unpack the FLTK source code here, to produce the directory  fltk-1.4.3 (or whatever the latest version is). Rename this directory to fltk-src.
+
+Build dependencies on Linux are probably something like:
+    - x11
+    - xrender?
+    - xcursor
+    - xfixes
+    - pango
+    - pangocairo
+    - gobject
+    - cairo
+    - wayland-client
+    - wayland-cursor
+    - xext?
+    - xinerama
+    - xkbcommon
+    - dbus
+    - opengl?
+
+To build:
+
+./fltkbuild.sh
