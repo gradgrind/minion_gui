@@ -15,7 +15,9 @@ string callback(
 int main()
 {
     auto fplist = {
-        "../examples/buttons1.minion"
+    	// These paths are realtive to the directory
+    	// in which the binary is built.
+        "../../../examples/buttons1.minion"
         //
     };
 
