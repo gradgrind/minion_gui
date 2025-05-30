@@ -179,7 +179,7 @@ void RowTable::_row_cb(
     void *table)
 {
     auto ww = static_cast<RowTable *>(table);
-    string dw{Widget::get_widget_name(ww)};
+    string* dw{Widget::get_widget_name(ww)};
     int i = ww->_current_row;
     //auto res = Callback1(dw, to_string(i));
     //cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
@@ -192,10 +192,7 @@ void RowTable::_row_cb(
     for (const auto & s : row) {
         ml.emplace_back(s);
     }
-    Callback2(
-        dw, 
-        to_string(i),
-        ml);
+    Callback2(*dw, to_string(i), ml);
     cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
 }
 
@@ -203,8 +200,9 @@ void RowTable::_row_cb(
 
 W_RowTable* W_RowTable::make(minion::MMap* parammap)
 {
+    (void) parammap;
     auto w = new RowTable();
-    auto widget = new W_RowTable(parammap);
+    auto widget = new W_RowTable();
     widget->fl_widget = w;
     w->color(w->bg);
     w->col_header_color(w->header_bg);
@@ -283,14 +281,14 @@ void W_RowTable::handle_method(std::string_view method, minion::MList* paramlist
         }
     } else if (method == "add_row") {
         auto n = paramlist->size() - 2;
-        if (n != t->cols()) {
+        if (n != static_cast<size_t>(t->cols())) {
             throw "RowTable: add_row with wrong length";
         }
         string hdr;
         paramlist->get_string(1, hdr);
         t->row_headers.emplace_back(hdr);
         vector<string> r(n);
-        for (int i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             paramlist->get_string(i + 2, hdr);
             r[i] = hdr;
         }

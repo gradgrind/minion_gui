@@ -46,8 +46,9 @@ class Widget : public Fl_Callback_User_Data
 protected:
     Fl_Widget* fl_widget;
 
+    Widget() = default;
+
 public:
-    Widget(minion::MMap* parammap);
     ~Widget() override;
 
     static void new_widget(std::string_view wtype, minion::MMap* m);
@@ -57,10 +58,11 @@ public:
         return get_widget(name)->fl_widget;
     }
     //TODO? static minion::MList list_widgets();
-    static std::string_view get_widget_name(Fl_Widget *w)
+    static std::string* get_widget_name(
+        Fl_Widget* w)
     { //TODO: is this needed?
         auto wd{static_cast<Widget*>(w->user_data())};
-        return wd->w_name;
+        return &wd->w_name;
     }
 
     inline static int line_height{LINE_HEIGHT};
@@ -77,7 +79,7 @@ public:
     // should it do?
     void remove_widget(std::string_view name);
 
-    inline std::string_view widget_name() { return w_name; }
+    inline std::string* widget_name() { return &w_name; }
     //int widget_type();
     //std::string_view widget_type_name();
 

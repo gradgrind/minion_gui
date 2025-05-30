@@ -82,7 +82,7 @@ void Widget::handle_methods(
     if (!dolist0.is_null()) {
         if (auto dolist = dolist0.m_list()) {
             auto len = (*dolist)->size();
-            for (int i = 0; i < len; ++i) {
+            for (size_t i = 0; i < len; ++i) {
                 auto n = (*dolist)->get(i);
                 auto mlist = n.m_list();
                 string c;

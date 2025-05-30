@@ -9,7 +9,6 @@
 class W_Group : public Widget
 {
 public:
-    W_Group(minion::MMap* parammap);
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     //static W_Group* make(minion::MMap* parammap);
 };
@@ -17,7 +16,6 @@ public:
 class W_Window : public W_Group
 {
 public:
-    W_Window(minion::MMap* parammap);
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Window* make(minion::MMap* parammap);
 };
@@ -28,7 +26,6 @@ protected:
     static W_Grid* new_hvgrid(minion::MMap* parammap, bool horizontal);
     
 public:
-    W_Grid(minion::MMap* parammap);
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Grid* make(minion::MMap* parammap);
     static W_Grid* make_hgrid(minion::MMap* parammap)

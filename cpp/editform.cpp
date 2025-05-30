@@ -56,7 +56,7 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
             auto efw = new EditForm();
             efw->layout(n, 2);
             efw->col_weight(0, 0);
-            auto widget = new W_EditForm(parammap);
+            auto widget = new W_EditForm();
             widget->fl_widget = efw;
             efw->color(Widget::entry_bg);
 
@@ -64,7 +64,7 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
             int label_width{0};
             Fl_Align align{FL_ALIGN_LEFT | FL_ALIGN_INSIDE};
             string algn;
-            auto a = parammap->get_string("LABEL_ALIGN", algn);
+            parammap->get_string("LABEL_ALIGN", algn);
             if (algn == "CENTRE") {
                 align = FL_ALIGN_CENTER;
             } else if (algn == "RIGHT") {

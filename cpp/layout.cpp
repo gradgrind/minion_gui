@@ -11,35 +11,34 @@
 using namespace std;
 using namespace minion;
 
-
-const map<string, Fl_Grid_Align>GRID_ALIGN{
-    /** Align the widget in the middle of the cell (default). */
-    {"CENTRE", FL_GRID_CENTER},
-    /** Align the widget at the top of the cell. */
-    {"TOP", FL_GRID_TOP},
-    /** Align the widget at the bottom of the cell. */
-    {"BOTTOM", FL_GRID_BOTTOM},
-    /** Align the widget at the left side of the cell. */
-    {"LEFT", FL_GRID_LEFT},
-    /** Align the widget at the right side of the cell. */
-    {"RIGHT", FL_GRID_RIGHT},
-    /** Stretch the widget horizontally to fill the cell. */
-    {"HORIZONTAL", FL_GRID_HORIZONTAL},
-    /** Stretch the widget vertically to fill the cell. */
-    {"VERTICAL", FL_GRID_VERTICAL},
-    /** Stretch the widget in both directions to fill the cell. */
-    {"FILL", FL_GRID_FILL},
-    /** Stretch the widget proportionally. */
-    {"PROPORTIONAL", FL_GRID_PROPORTIONAL},
-    {"TOP_LEFT", FL_GRID_TOP_LEFT},
-    {"TOP_RIGHT", FL_GRID_TOP_RIGHT},
-    {"BOTTOM_LEFT", FL_GRID_BOTTOM_LEFT},
-    {"BOTTOM_RIGHT", FL_GRID_BOTTOM_RIGHT}
-};
+inline const map<string, Fl_Grid_Align>
+    GRID_ALIGN{/** Align the widget in the middle of the cell (default). */
+               {"CENTRE", FL_GRID_CENTER},
+               /** Align the widget at the top of the cell. */
+               {"TOP", FL_GRID_TOP},
+               /** Align the widget at the bottom of the cell. */
+               {"BOTTOM", FL_GRID_BOTTOM},
+               /** Align the widget at the left side of the cell. */
+               {"LEFT", FL_GRID_LEFT},
+               /** Align the widget at the right side of the cell. */
+               {"RIGHT", FL_GRID_RIGHT},
+               /** Stretch the widget horizontally to fill the cell. */
+               {"HORIZONTAL", FL_GRID_HORIZONTAL},
+               /** Stretch the widget vertically to fill the cell. */
+               {"VERTICAL", FL_GRID_VERTICAL},
+               /** Stretch the widget in both directions to fill the cell. */
+               {"FILL", FL_GRID_FILL},
+               /** Stretch the widget proportionally. */
+               {"PROPORTIONAL", FL_GRID_PROPORTIONAL},
+               {"TOP_LEFT", FL_GRID_TOP_LEFT},
+               {"TOP_RIGHT", FL_GRID_TOP_RIGHT},
+               {"BOTTOM_LEFT", FL_GRID_BOTTOM_LEFT},
+               {"BOTTOM_RIGHT", FL_GRID_BOTTOM_RIGHT}};
 
 void callback_no_esc_closes(
     Fl_Widget *w, void *x)
 {
+    (void) x;
     if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
         return; // ignore Escape
     //TODO: message to backend?
@@ -51,9 +50,6 @@ void callback_no_esc_closes(
 // *** layout widgets – Fl_Group based
 
 // The Group widget is only needed for its `handle_method`.
-W_Group::W_Group(MMap* parammap) : Widget(parammap){}
-//W_Group* W_Group::make(MMap* &parammap){}
-
 void W_Group::handle_method(std::string_view method, minion::MList* paramlist)
 {
     if (method == "RESIZABLE") {
@@ -69,7 +65,7 @@ void W_Group::handle_method(std::string_view method, minion::MList* paramlist)
             fltk_widget()->resize(0, 0, parent->w(), parent->h());
             parent->resizable(fltk_widget());
         } else {
-            throw "Widget (" + string{widget_name()}  + ") method 'fit_to_parent': no parent";
+            throw "Widget (" + *widget_name() + ") method 'fit_to_parent': no parent";
         }
     } else {
         Widget::handle_method(method, paramlist);
@@ -77,7 +73,6 @@ void W_Group::handle_method(std::string_view method, minion::MList* paramlist)
 }
 
 
-W_Window::W_Window(MMap* parammap) : W_Group{parammap}{}
 W_Window* W_Window::make(MMap* parammap)
 {
     int ww = 800;
@@ -90,7 +85,7 @@ W_Window* W_Window::make(MMap* parammap)
     if (esc_closes != 0)
         w->callback(callback_no_esc_closes);
     Fl_Group::current(0); // disable "auto-grouping"
-    auto widget = new W_Window(parammap);
+    auto widget = new W_Window();
     widget->fl_widget = w;
     return widget;         
 }
@@ -98,13 +93,12 @@ W_Window* W_Window::make(MMap* parammap)
 // Inherit handle_method from W_Group
 //void W_Window::handle_method(std::string_view method, minion::MList* &paramlist);
 
-
-W_Grid::W_Grid(minion::MMap* parammap) : W_Group{parammap}{}
 W_Grid* W_Grid::make(minion::MMap* parammap)
 {
+    (void) parammap;
     auto w = new Fl_Grid(0, 0, 0, 0);
     Fl_Group::current(0); // disable "auto-grouping"
-    auto widget = new W_Grid(parammap);
+    auto widget = new W_Grid();
     widget->fl_widget = w;
 
 //TODO: adding widgets ...
@@ -134,8 +128,8 @@ void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
         return;
     }
     MValue m{*paramlist};
-    throw string{"Invalid command on grid '"}.append(widget_name())
-        .append("':\n  ").append(dump_value(m));
+    throw string{"Invalid command on grid '" + *widget_name()}.append("':\n  ").append(
+        dump_value(m));
 }
 
 //static
@@ -145,7 +139,7 @@ W_Grid* W_Grid::new_hvgrid(
 {
     auto w = new Fl_Grid(0, 0, 0, 0);
     Fl_Group::current(0); // disable "auto-grouping"
-    auto widget = new W_Grid(parammap);
+    auto widget = new W_Grid();
     widget->fl_widget = w;
 
     // Get contained widgets ...
@@ -167,7 +161,7 @@ W_Grid* W_Grid::new_hvgrid(
                         auto align = GRID_ALIGN.at(fill);
                         if (horizontal) w->widget(w_i, 0, i, align);
                         else w->widget(w_i, i, 0, align);
-                    } catch (out_of_range) {
+                    } catch (out_of_range& e) {
                         throw string{"Invalid Grid alignment (fill): "} + fill;
                     }
                     int weight = 1;

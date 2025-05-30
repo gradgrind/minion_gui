@@ -10,7 +10,7 @@
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <fmt/format.h>
-#include <functional>
+//#include <functional>
 #include <iostream>
 #include <map>
 #include <string_view>
@@ -82,7 +82,7 @@ MMap* message(
 void to_back_end(
     MMap* data)
 {
-    MMap* result = message(data);
+    //MMap* result = message(data);
     auto dolist0 = data->get("DO");
     if (MList* mlist = dolist0.m_list()->get()) {
         size_t n = mlist->size();
@@ -175,7 +175,7 @@ void tmp_run(
 minion::InputBuffer minion_input; // for parsing minion
 
 void Init(
-    char* data0)
+    const char* data0)
 {
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 

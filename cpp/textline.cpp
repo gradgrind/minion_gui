@@ -36,8 +36,9 @@ public:
 //static
 W_TextLine* W_TextLine::make(minion::MMap* parammap)
 {
+    (void) parammap;
     auto w = new TextLine();
-    auto widget = new W_TextLine(parammap);
+    auto widget = new W_TextLine();
     widget->fl_widget = w;
 
     w->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
@@ -49,7 +50,7 @@ W_TextLine* W_TextLine::make(minion::MMap* parammap)
             ww->insert_position( ww->insert_position());
             string v = ww->value();
             if (widget->set(v)) {
-                Callback1(widget->widget_name(), v);
+                Callback1(*widget->widget_name(), v);
 
                 // This would remove keyboard focus from the widget
                 //Fl::focus(w->parent());

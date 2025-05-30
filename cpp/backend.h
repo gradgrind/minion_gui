@@ -14,7 +14,7 @@ void SetCallbackFunction(
     backend = backend_pointer;
 }
 
-void Init(char* data0);
+void Init(const char* data0);
 
 #ifdef __cplusplus
 }

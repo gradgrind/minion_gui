@@ -18,9 +18,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 add_executable(minion_gui
-    main.cpp
+    test/main.cpp
     callback.h
-    dispatcher.cpp dispatcher.h
     editform.cpp editform.h
     functions.cpp functions.h
     iofile.cpp iofile.h
