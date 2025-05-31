@@ -49,6 +49,9 @@
   {
     NEW: Hgrid,
     NAME: l_output,
+    DO: [
+      # [HEIGHT, 80],
+    ],
     WIDGETS: [
       [Label_1, CENTRE, 0],
       [Output_1, HORIZONTAL, 1]
@@ -60,12 +63,13 @@
     PARENT: MainWindow,
     WIDGETS: [
       [PB1, CENTRE, 0],
-      [l_output, HORIZONTAL, 1],
+      [l_output, HORIZONTAL, 0],
       [PB2, CENTRE, 0],
     ],
     DO: [
       [fit_to_parent],
       [MARGIN, 5],
+      [GAP, 10]
       # [COLOUR, ff0000] # No effect (FL_NO_BOX)
     ]
   },

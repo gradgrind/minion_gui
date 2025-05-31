@@ -113,7 +113,7 @@ void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
             if (paramlist->size() > 2)
                 paramlist->get_int(2, colgap);
             static_cast<Fl_Grid *>(fl_widget)->gap(rowgap, colgap);
-            return;   
+            return;
         }
     } else if (method == "MARGIN") {
         int s;
@@ -147,6 +147,7 @@ W_Grid* W_Grid::new_hvgrid(
     auto n = wlist->size();
     if (horizontal) w->layout(1, n);
     else w->layout(n, 1);
+    int xsize = 0; // find transverse size
     for (size_t i = 0; i < n; ++i) {
         auto entry0 = wlist->get(i);
         auto entry = entry0.m_list()->get();
@@ -154,6 +155,9 @@ W_Grid* W_Grid::new_hvgrid(
         if (entry->get_string(0, wname)) {
             if (auto w_i = Widget::get_fltk_widget(wname)) {
                 w->add(w_i);
+                auto xs = horizontal ? w_i->h() : w_i->w();
+                if (xs > xsize)
+                    xsize = xs;
                 string fill;
                 if (entry->get_string(1, fill)) {
                     try {
@@ -173,5 +177,9 @@ W_Grid* W_Grid::new_hvgrid(
         }
         throw string{"Invalid ITEMS list: "} + dump_value(entry0);
     }
+    if (horizontal)
+        w->size(0, xsize);
+    else
+        w->size(xsize, 0);
     return widget;         
 }
