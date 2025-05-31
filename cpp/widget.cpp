@@ -11,7 +11,35 @@ using namespace std;
 using namespace minion;
 
 // static member
-std::unordered_map<std::string_view, Widget*> Widget::widget_map;
+unordered_map<std::string_view, Widget::flagged_widget> Widget::widget_map;
+
+// static
+// Free all widget memory, reporting any parentless widgets that were not
+// declared as "FLOATING:1".
+string Widget::clear()
+{
+    vector<string_view> to_report;
+    vector<Fl_Widget*> to_delete;
+    for (const auto& [wname, fw] : widget_map) {
+        auto w = fw.widget;
+        if (!w->fl_widget->parent()) {
+            if (!fw.floating)
+                to_report.emplace_back(wname);
+            to_delete.emplace_back(w->fl_widget);
+        }
+    }
+    string wlist{"Widgets have no parents:"};
+    for (const auto& w : to_report) {
+        wlist.append("\n  - ").append(w);
+    }
+    widget_map.clear();
+    for (const auto& w : to_delete) {
+        delete w;
+    }
+    if (to_report.empty())
+        return "";
+    return wlist;
+}
 
 // static
 void Widget::new_widget(
@@ -38,7 +66,9 @@ void Widget::new_widget(
     // Create widget
     Widget* w = f(m);
     w->w_name = std::move(name);
-    widget_map.emplace(w->w_name, w);
+    int fwidget = 0;
+    m->get_int("FLOATING", fwidget);
+    widget_map.emplace(w->w_name, flagged_widget{w, fwidget != 0});
     w->fltk_widget()->user_data(w, true); // auto-free = true
     {
         auto props = m->get("PROPERTIES");
@@ -62,7 +92,7 @@ Widget* Widget::get_widget(
     string_view name)
 {
     try {
-        return widget_map.at(name);
+        return widget_map.at(name).widget;
     } catch (const out_of_range& e) {
         throw string{"Unknown widget: "}.append(name);
     }

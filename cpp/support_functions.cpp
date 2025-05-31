@@ -1,5 +1,6 @@
 #include "support_functions.h"
 #include <map>
+#include <stdexcept>
 using namespace std;
 
 // Read a string with 6 characters as a hex integer, returning the value
@@ -51,5 +52,9 @@ const map<string_view, Fl_Boxtype> boxtypes{
 Fl_Boxtype get_boxtype(
     const string& boxtype)
 {
-    return boxtypes.at(boxtype);
+    try {
+        return boxtypes.at(boxtype);
+    } catch (out_of_range& e) {
+        throw "Unknown BOXTYPE: " + boxtype;
+    }
 }

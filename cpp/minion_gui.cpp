@@ -211,6 +211,9 @@ void Init(
     } catch (char const* e) {
         cerr << "THROWN: " << e << endl;
     }
+    auto e = Widget::clear();
+    if (!e.empty())
+        cerr << e << endl;
     return;
 
     /* *** This would handle a file path instead of the actual data ***
