@@ -29,6 +29,7 @@ const char* callback1(
     return cbr;
 }
 
+//TODO
 const char* callback2(
     const char* data)
 {
@@ -37,7 +38,8 @@ const char* callback2(
     string wname;
     (*mm)->get_string("CALLBACK", wname);
     printf("callback got '%s'\n", dump(m));
-    minion::MMap mp({{"WIDGET", "Output_1"}, {"DO", {{"VALUE", wname}}}});
+    //minion::MMap mp({{"WIDGET", "Output_1"}, {"DO", {{"VALUE", wname}}}});
+    minion::MMap mp{{{"TEST", "Value"}}};
     auto cbr = dump(mp);
     //printf("??? %s\n", cbr);
     //fflush(stdout);
@@ -49,14 +51,14 @@ int main()
     auto fplist = {
         // These paths are realtive to the directory
         // in which the binary is built.
-        //"../../../examples/buttons1.minion",
+        "../../../examples/buttons1.minion",
         "../../../examples/various1.minion"
         //
     };
 
     auto flist = {
         //
-        //callback1,
+        callback1,
         callback2
         //
     };

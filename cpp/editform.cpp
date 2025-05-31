@@ -60,7 +60,6 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
             widget->fl_widget = efw;
             efw->color(Widget::entry_bg);
 
-            //TODO
             int label_width{0};
             Fl_Align align{FL_ALIGN_LEFT | FL_ALIGN_INSIDE};
             string algn;
@@ -123,6 +122,8 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
                     efw->row_weight(i, 0);
                 }
             }
+            efw->col_width(0, label_width);
+            return widget;
         }
     }
     string efname;

@@ -11,6 +11,7 @@
     NAME: MainWindow,
     WIDTH: &APP_WIDTH,
     HEIGHT: &APP_HEIGHT,
+    FLOATING: 1,
     #ESC_CLOSES: 1,
     DO: [
       [COLOUR, &BACKGROUND]
@@ -58,9 +59,8 @@
     NEW: Label,
     NAME: TableRowLabel,
     #PARENT: ViewSelect,
-    PADDING: {
-    	LEFT: 10,
-    	RIGHT: 5
+    PROPERTIES: {
+      LABEL_ALIGN: RIGHT
     },
     DO: [
       [TEXT, "X X X X X X:"],
@@ -83,9 +83,8 @@
     NEW: Label,
     NAME: TableTotalsLabel,
     #PARENT: ViewSelect,
-    PADDING: {
-    	LEFT: 20,
-    	RIGHT: 5
+    PROPERTIES: {
+      LABEL_ALIGN: RIGHT
     },
     DO: [
       [TEXT, "Total lessons:"],
@@ -198,7 +197,8 @@
     NAME: EditorForm,
     #PARENT: Content,
     ITEMS: [
-      EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6],
+      EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6
+    ],
     DO: [
       [WIDTH, 300]
     ]
@@ -218,7 +218,7 @@
     ],
     DO: [
       [MARGIN, 5],
-      [GAP, 10],
+      [GAP, 5],
       [HEIGHT, 60]
     ]
   },
