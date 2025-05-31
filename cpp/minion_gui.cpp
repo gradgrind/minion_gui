@@ -25,22 +25,21 @@ void SetCallbackFunction(
     backend = backend_pointer;
 }
 
-const map<string, new_function> new_function_map{
-    {"Window", W_Window::make},
-    {"Grid", W_Grid::make},
-    {"Hgrid", W_Grid::make_hgrid},
-    {"Vgrid", W_Grid::make_vgrid},
-    {"PushButton", W_PushButton::make},
-    {"Box", W_Box::make},
-    {"Label", W_Label::make},
-    {"Choice", W_Choice::make},
-    {"Output", W_Output::make},
-    {"Checkbox", W_Checkbox::make},
-    {"List", W_List::make},
-    {"TextLine", W_TextLine::make},
-    {"RowTable", W_RowTable::make},
-    {"EditForm", W_EditForm::make}
-};
+const map<string, new_function> new_function_map{{"Window", W_Window::make},
+                                                 {"Grid", W_Grid::make},
+                                                 {"Hgrid", W_Grid::make_hgrid},
+                                                 {"Vgrid", W_Grid::make_vgrid},
+                                                 {"PushButton", W_PushButton::make},
+                                                 {"Box", W_Box::make},
+                                                 {"Label", W_Label::make},
+                                                 {"Choice", W_Choice::make},
+                                                 {"Output", W_Output::make},
+                                                 {"PopupEditor", W_PopupEditor::make},
+                                                 {"Checkbox", W_Checkbox::make},
+                                                 {"List", W_List::make},
+                                                 {"TextLine", W_TextLine::make},
+                                                 {"RowTable", W_RowTable::make},
+                                                 {"EditForm", W_EditForm::make}};
 
 void GUI(
     MMap* mmap)

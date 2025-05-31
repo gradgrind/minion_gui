@@ -109,8 +109,28 @@ void W_Output::handle_method(
     }
 }
 
+// static
+W_PopupEditor* W_PopupEditor::make(
+    minion::MMap* parammap)
+{
+    (void) parammap;
+    auto w = new Fl_Output(0, 0, 0, Widget::line_height);
+    auto widget = new W_PopupEditor();
+    widget->fl_widget = w;
+    w->color(Widget::entry_bg);
+    w->callback([](Fl_Widget* w, void* ud) {
+        (void) ud;
+        string* dw{Widget::get_widget_name(w)};
+        // or string dw{static_cast<Widget*>(ud)->widget_name()};
+        Callback1(*dw, static_cast<Fl_Output*>(w)->value());
+        cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
+    });
+    return widget;
+}
+
 //static
-W_PushButton* W_PushButton::make(minion::MMap* parammap)
+W_PushButton* W_PushButton::make(
+    minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Button(0, 0, 0, 0);
@@ -126,11 +146,12 @@ W_PushButton* W_PushButton::make(minion::MMap* parammap)
         Callback0(*dw);
         cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
     });
-    return widget;         
+    return widget;
 }
 
 //static
-W_Checkbox* W_Checkbox::make(minion::MMap* parammap)
+W_Checkbox* W_Checkbox::make(
+    minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Round_Button(0, 0, 0, Widget::line_height);
@@ -151,7 +172,8 @@ W_Checkbox* W_Checkbox::make(minion::MMap* parammap)
 }
 
 //static
-W_List* W_List::make(minion::MMap* parammap)
+W_List* W_List::make(
+    minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Select_Browser(0, 0, 0, 0);
@@ -170,10 +192,11 @@ W_List* W_List::make(minion::MMap* parammap)
             cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
         }
     });
-    return widget;         
+    return widget;
 }
 
-void W_List::handle_method(string_view method, MList* paramlist)
+void W_List::handle_method(
+    string_view method, MList* paramlist)
 {
     string item;
     if (method == "SET") {

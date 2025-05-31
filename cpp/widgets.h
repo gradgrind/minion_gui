@@ -43,8 +43,14 @@ class W_Output : public Widget
 {
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
-    // TODO: I need something with a callback as part of an EditForm
     static W_Output* make(minion::MMap* parammap);
+};
+
+class W_PopupEditor : public W_Output
+{
+public:
+    //void handle_method(std::string_view method, minion::MList* paramlist) override;
+    static W_PopupEditor* make(minion::MMap* parammap);
 };
 
 class W_List : public Widget
