@@ -13,26 +13,40 @@ using namespace minion;
 // *** Non-layout widgets ***
 
 //static
-W_Box* W_Box::make(minion::MMap* parammap)
+W_Box* W_Box::make(
+    minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Box(0, 0, 0, 0);
     auto widget = new W_Box();
     widget->fl_widget = w;
-    return widget;         
+    return widget;
 }
 
 //static
-W_Label* W_Label::make(minion::MMap* parammap)
+W_VSep* W_VSep::make(
+    minion::MMap* parammap)
+{
+    (void) parammap;
+    auto w = new Fl_Box(FL_BORDER_FRAME, 0, 0, 0, 1, "");
+    auto widget = new W_VSep();
+    widget->fl_widget = w;
+    return widget;
+}
+
+//static
+W_Label* W_Label::make(
+    minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Box(0, 0, 0, 0);
     auto widget = new W_Label();
     widget->fl_widget = w;
-    return widget;         
+    return widget;
 }
 
-void W_Label::handle_method(std::string_view method, minion::MList* paramlist)
+void W_Label::handle_method(
+    std::string_view method, minion::MList* paramlist)
 {
     string label;
     if (method == "TEXT") {
@@ -44,8 +58,10 @@ void W_Label::handle_method(std::string_view method, minion::MList* paramlist)
             fl_widget->size(lw + 20, Widget::line_height);
             string align;
             property_string("LABEL_ALIGN", align);
-            if (align == "LEFT") fl_widget->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT);
-            else if (align == "RIGHT") fl_widget->align(FL_ALIGN_INSIDE|FL_ALIGN_RIGHT);
+            if (align == "LEFT")
+                fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+            else if (align == "RIGHT")
+                fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
         }
     } else {
         Widget::handle_method(method, paramlist);
@@ -53,7 +69,8 @@ void W_Label::handle_method(std::string_view method, minion::MList* paramlist)
 }
 
 //static
-W_Choice* W_Choice::make(minion::MMap* parammap)
+W_Choice* W_Choice::make(
+    minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Choice(0, 0, 0, Widget::line_height);
@@ -66,10 +83,11 @@ W_Choice* W_Choice::make(minion::MMap* parammap)
     });
     auto widget = new W_Choice();
     widget->fl_widget = w;
-    return widget;         
+    return widget;
 }
 
-void W_Choice::handle_method(string_view method, MList* paramlist)
+void W_Choice::handle_method(
+    string_view method, MList* paramlist)
 {
     string item;
     if (method == "ADD") {
@@ -84,14 +102,15 @@ void W_Choice::handle_method(string_view method, MList* paramlist)
 }
 
 //static
-W_Output* W_Output::make(minion::MMap* parammap)
+W_Output* W_Output::make(
+    minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Output(0, 0, 0, Widget::line_height);
     auto widget = new W_Output();
     widget->fl_widget = w;
     w->color(Widget::entry_bg);
-    return widget;         
+    return widget;
 }
 
 void W_Output::handle_method(

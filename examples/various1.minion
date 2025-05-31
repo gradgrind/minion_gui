@@ -133,7 +133,7 @@
     }
   },
   {
-    NEW: TextEditor,
+    NEW: TextLine,
     NAME: EF2,
     #PARENT: EditorForm,
     PROPERTIES: {
@@ -141,7 +141,7 @@
     }
   },
   {
-    NEW: TextEditor,
+    NEW: TextLine,
     NAME: EF2X,
     #PARENT: EditorForm,
     PROPERTIES: {
@@ -157,7 +157,7 @@
     }
   },
   {
-    NEW: Separator,
+    NEW: VSep,
     NAME: Sep1,
     #PARENT: EditorForm
     PROPERTIES: {
