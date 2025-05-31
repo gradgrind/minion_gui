@@ -3,7 +3,7 @@
 &APP_HEIGHT: 400,
 &BACKGROUND: f0f0f0,
 
-GUI: [
+{GUI: [
   {
     NEW: Window,
     NAME: MainWindow,
@@ -22,10 +22,12 @@ GUI: [
       [TEXT, "PushButton 1"]
     ]
   },
-  TODO: Need a sepaate label:
   {
     NEW: Label,
     NAME: Label_1,
+    PROPERTIES: {
+      LABEL_ALIGN: LEFT
+    },
     DO: [
       [TEXT, "Pushed"]
     ]
@@ -41,7 +43,15 @@ GUI: [
     NEW: PushButton,
     NAME: PB2,
     DO: [
-      TEXT: "PushButton 2"
+      [TEXT, "PushButton 2"]
+    ]
+  },
+  {
+    NEW: Hgrid,
+    NAME: l_output,
+    WIDGETS: [
+      [Label_1, CENTRE, 0],
+      [Output_1, HORIZONTAL, 1]
     ]
   },
   {
@@ -50,13 +60,13 @@ GUI: [
     PARENT: MainWindow,
     WIDGETS: [
       [PB1, CENTRE, 0],
-      [Label_1 RIGHT, 0],
-      [Output_1, CENTRE, 0],
+      [l_output, HORIZONTAL, 1],
       [PB2, CENTRE, 0],
     ],
     DO: [
       [fit_to_parent],
-      [MARGIN, 0]
+      [MARGIN, 5],
+      # [COLOUR, ff0000] # No effect (FL_NO_BOX)
     ]
   },
   
@@ -76,3 +86,4 @@ GUI: [
   },
   {FUNCTION: RUN} # Enter main event loop
 ]
+}

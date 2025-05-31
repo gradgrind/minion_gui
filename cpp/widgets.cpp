@@ -123,7 +123,7 @@ W_PushButton* W_PushButton::make(minion::MMap* parammap)
         string* dw{Widget::get_widget_name(w)};
         // or string dw{static_cast<Widget*>(ud)->widget_name()};
         //auto ww = static_cast<Fl_Button*>(w);
-        Callback(*dw);
+        Callback0(*dw);
         cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
     });
     return widget;         

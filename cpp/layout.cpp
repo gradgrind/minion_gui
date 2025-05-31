@@ -94,6 +94,7 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Grid(0, 0, 0, 0);
+    w->box(FL_NO_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Grid();
     widget->fl_widget = w;
@@ -135,6 +136,7 @@ W_Grid* W_Grid::new_hvgrid(
     bool horizontal)
 {
     auto w = new Fl_Grid(0, 0, 0, 0);
+    w->box(FL_NO_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Grid();
     widget->fl_widget = w;

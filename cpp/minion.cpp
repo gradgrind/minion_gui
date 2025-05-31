@@ -790,7 +790,7 @@ void DumpBuffer::dump_value(
         dump_map(**source.m_map());
         break;
     default:
-        throw "[BUG] MINION dump: bad MValue type";
+        throw "[BUG] MINION dump: bad MValue type: " + std::to_string(source.type());
     }
 }
 
@@ -867,6 +867,16 @@ bool MMap::get_int(
     std::string msg{"Map, seeking integer value at key: "};
     i = string2int(s, msg.append(key));
     return true;
+}
+
+MValue::MValue(
+    std::initializer_list<MValue> items)
+    : _MV{std::make_shared<MList>()}
+{
+    auto p = std::get_if<std::shared_ptr<MList>>(this)->get();
+    for (const auto& item : items) {
+        p->emplace_back(item);
+    }
 }
 
 } // End of namespace minion

@@ -11,7 +11,7 @@ using namespace std;
 using namespace minion;
 
 // static member
-std::unordered_map<std::string, Widget*> Widget::widget_map;
+std::unordered_map<std::string_view, Widget*> Widget::widget_map;
 
 // static
 void Widget::new_widget(
@@ -37,7 +37,8 @@ void Widget::new_widget(
     }
     // Create widget
     Widget* w = f(m);
-    widget_map.at(name) = w;
+    w->w_name = std::move(name);
+    widget_map.emplace(w->w_name, w);
     w->fltk_widget()->user_data(w, true); // auto-free = true
     {
         auto props = m->get("PROPERTIES");
@@ -58,7 +59,7 @@ void Widget::new_widget(
 
 // static
 Widget* Widget::get_widget(
-    string& name)
+    string_view name)
 {
     try {
         return widget_map.at(name);
@@ -119,7 +120,8 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
     } else if (method == "COLOUR") {
         string clr;
         if (paramlist->get_string(1, clr)) {
-            fl_widget->color(get_colour(clr));
+            auto c = get_colour(clr);
+            fl_widget->color(c);
         }
     } else if (method == "BOXTYPE") {
         string btype;
@@ -140,7 +142,7 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
     //    fl_widget->callback(do_callback);
     } else if (method == "SHOW") {
         fl_widget->show();
-    } else if (method == "ClearVisibleFocus") {
+    } else if (method == "clear_visible_focus") {
         fl_widget->clear_visible_focus();
     } else if (method == "MeasureLabel") {
         int wl, hl;
@@ -149,6 +151,6 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
         cout << "Measure " << widget_name() << " label: " << wl << ", " << hl
              << endl;
     } else {
-        throw string{"Unknown widget method: "}.append(method);
+        throw string{"Unknown method on widget " + w_name + ": "}.append(method);
     }
 }

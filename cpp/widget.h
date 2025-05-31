@@ -28,7 +28,7 @@ const Fl_Color PENDING_BG = 0xffe0e000;
 // widget (which is sometimes necessary for callbacks, etc.).
 class Widget : public Fl_Callback_User_Data
 {
-    static std::unordered_map<std::string, Widget*> widget_map;
+    static std::unordered_map<std::string_view, Widget*> widget_map;
 
     // Widget name, used for look-up, etc.
     std::string w_name;
@@ -52,9 +52,9 @@ public:
     ~Widget() override;
 
     static void new_widget(std::string_view wtype, minion::MMap* m);
-    static Widget* get_widget(std::string& name);
+    static Widget* get_widget(std::string_view name);
     static Fl_Widget* get_fltk_widget(
-        std::string& name)
+        std::string_view name)
     {
         return get_widget(name)->fl_widget;
     }
@@ -87,11 +87,15 @@ public:
     // properties access
     bool property_int(std::string_view key, int& result)
     {
-        return properties->get_int(key, result);
+        if (properties)
+            return properties->get_int(key, result);
+        return false;
     }
     bool property_string(std::string_view key, std::string& result)
     {
-        return properties->get_string(key, result);
+        if (properties)
+            return properties->get_string(key, result);
+        return false;
     }
 };
 

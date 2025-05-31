@@ -136,9 +136,22 @@ void Callback(MValue m)
     input_value = input_buffer.read(cbresult);
     if (const char* e = input_value.error_message())
         throw e;
+    if (auto mm = input_value.m_map()) {
+        GUI(mm->get());
+    } else {
+        throw string{"Invalid callback result: "}.append(cbresult);
+    }
 }
 
-void Callback1(string& widget, MValue data)
+void Callback0(
+    string& widget)
+{
+    MMap m{{{"CALLBACK", widget}}};
+    Callback(m);
+}
+
+void Callback1(
+    string& widget, MValue data)
 {
     MMap m{{{"CALLBACK", widget}, {"DATA", data}}};
     Callback(m);
@@ -179,6 +192,7 @@ void tmp_run(
 
 minion::InputBuffer minion_input; // for parsing minion
 
+//TODO
 void Init(
     const char* data0)
 {
@@ -190,7 +204,13 @@ void Init(
         cerr << e << endl;
         return;
     }
-    tmp_run(guidata);
+    try {
+        tmp_run(guidata);
+    } catch (string& e) {
+        cerr << "THROWN: " << e << endl;
+    } catch (char const* e) {
+        cerr << "THROWN: " << e << endl;
+    }
     return;
 
     /* *** This would handle a file path instead of the actual data ***
