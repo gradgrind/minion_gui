@@ -49,7 +49,7 @@ const map<string_view, Fl_Boxtype> boxtypes{
 };
 
 Fl_Boxtype get_boxtype(
-    string_view boxtype)
+    const string& boxtype)
 {
     return boxtypes.at(boxtype);
 }

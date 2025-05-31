@@ -1,7 +1,6 @@
 #include "rowtable.h"
 #include "callback.h"
 #include "support_functions.h"
-//#include "widget.h"
 #include "widgets.h"
 #include <FL/fl_draw.H>
 #include <iostream>

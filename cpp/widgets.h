@@ -39,17 +39,11 @@ public:
     static W_Choice* make(minion::MMap* parammap);
 };
 
-class W_Input : public Widget
+class W_Output : public Widget
 {
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
-    static W_Input* make(minion::MMap* parammap);
-};
-
-class W_Output : public W_Input
-{
-public:
-    // handle_method inherited from W_Input?
+    // TODO: I need something with a callback as part of an EditForm
     static W_Output* make(minion::MMap* parammap);
 };
 
@@ -63,7 +57,7 @@ public:
 class W_TextLine : public Widget
 {
 public:
-    virtual void handle_method(std::string_view method, minion::MList* paramlist);
+    //? void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_TextLine* make(minion::MMap* parammap);
 
     bool set(std::string_view newtext);
@@ -72,7 +66,7 @@ public:
 class W_RowTable : public Widget
 {
 public:
-    virtual void handle_method(std::string_view method, minion::MList* paramlist);
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_RowTable* make(minion::MMap* parammap);
 };
 

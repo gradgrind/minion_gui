@@ -16,7 +16,7 @@ public:
 class W_Window : public W_Group
 {
 public:
-    void handle_method(std::string_view method, minion::MList* paramlist) override;
+    // Inherit handle_method from W_Group
     static W_Window* make(minion::MMap* parammap);
 };
 

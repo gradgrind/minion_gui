@@ -10,6 +10,9 @@
 using namespace std;
 using namespace minion;
 
+// static member
+std::unordered_map<std::string, Widget*> Widget::widget_map;
+
 // static
 void Widget::new_widget(
     string_view wtype, MMap* m)
@@ -29,7 +32,7 @@ void Widget::new_widget(
     new_function f;
     try {
         f = new_function_map.at(string{wtype});
-    } catch (std::out_of_range) {
+    } catch (std::out_of_range& e) {
         throw string{"Unknown widget type: "}.append(wtype);
     }
     // Create widget
@@ -55,11 +58,11 @@ void Widget::new_widget(
 
 // static
 Widget* Widget::get_widget(
-    string_view name)
+    string& name)
 {
     try {
         return widget_map.at(name);
-    } catch (const out_of_range) {
+    } catch (const out_of_range& e) {
         throw string{"Unknown widget: "}.append(name);
     }
 }

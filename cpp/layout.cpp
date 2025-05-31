@@ -90,9 +90,6 @@ W_Window* W_Window::make(MMap* parammap)
     return widget;         
 }
 
-// Inherit handle_method from W_Group
-//void W_Window::handle_method(std::string_view method, minion::MList* &paramlist);
-
 W_Grid* W_Grid::make(minion::MMap* parammap)
 {
     (void) parammap;

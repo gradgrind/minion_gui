@@ -94,19 +94,16 @@ W_Output* W_Output::make(minion::MMap* parammap)
     return widget;         
 }
 
-//static
-//TODO: W_Input* W_Input::make(minion::MMap* parammap)
-// This will need a callback ...
-
-void W_Input::handle_method(string_view method, MList* paramlist)
+void W_Output::handle_method(
+    string_view method, MList* paramlist)
 {
     string item;
     if (method == "VALUE") {
         string val;
         if (paramlist->get_string(1, val)) {
-            static_cast<Fl_Input*>(fl_widget)->value(val.c_str());
+            static_cast<Fl_Output*>(fl_widget)->value(val.c_str());
         } else
-            throw "Input/Output widget VALUE method: value missing";
+            throw "Output widget VALUE method: value missing";
     } else {
         Widget::handle_method(method, paramlist);
     }
@@ -126,7 +123,7 @@ W_PushButton* W_PushButton::make(minion::MMap* parammap)
         string* dw{Widget::get_widget_name(w)};
         // or string dw{static_cast<Widget*>(ud)->widget_name()};
         //auto ww = static_cast<Fl_Button*>(w);
-        Callback1(*dw, MValue{});
+        Callback(*dw);
         cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
     });
     return widget;         

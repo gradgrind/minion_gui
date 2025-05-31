@@ -17,6 +17,14 @@
 using namespace std;
 using namespace minion;
 
+const char* (*backend)(const char*);
+
+void SetCallbackFunction(
+    const char* (*backend_pointer)(const char*) )
+{
+    backend = backend_pointer;
+}
+
 const map<string, new_function> new_function_map{
     {"Window", W_Window::make},
     {"Grid", W_Grid::make},
@@ -27,7 +35,6 @@ const map<string, new_function> new_function_map{
     {"Label", W_Label::make},
     {"Choice", W_Choice::make},
     {"Output", W_Output::make},
-    {"Input", W_Input::make},
     {"Checkbox", W_Checkbox::make},
     {"List", W_List::make},
     {"TextLine", W_TextLine::make},
@@ -119,8 +126,6 @@ void value_error(
 {
     throw msg + dump_value(m);
 }
-
-const char* (*backend)(const char*);
 
 void Callback(MValue m)
 {

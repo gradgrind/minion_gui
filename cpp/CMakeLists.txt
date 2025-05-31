@@ -19,6 +19,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 add_executable(minion_gui
     test/main.cpp
+    backend.h
     callback.h
     editform.cpp editform.h
     functions.cpp functions.h
@@ -31,7 +32,6 @@ add_executable(minion_gui
     textline.cpp
     widget.cpp widget.h
     widgets.cpp widgets.h
-    backend.h
     )
 
 set_property(TARGET minion_gui PROPERTY CXX_STANDARD 20)
