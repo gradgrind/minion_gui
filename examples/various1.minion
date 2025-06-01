@@ -1,0 +1,314 @@
+# Various widgets
+&APP_WIDTH: 1000,
+&APP_HEIGHT: 700,
+&BACKGROUND: f0f0f0,
+&OUTPUT_COLOUR: ffc8ff,
+
+{GUI: [
+  # *** The main window
+  {
+    NEW: Window,
+    NAME: MainWindow,
+    WIDTH: &APP_WIDTH,
+    HEIGHT: &APP_HEIGHT,
+    FLOATING: 1,
+    #ESC_CLOSES: 1,
+    DO: [
+      [COLOUR, &BACKGROUND]
+    ]
+  },
+  
+  # +++ l_MainWindow: top-level layout
+  {
+    NEW: Box,
+    NAME: P1,
+    PROPERTIES: {
+      GRID_ALIGN: HORIZONTAL
+    },
+    #PARENT: l_MainWindow,
+    DO: [
+      [TEXT, "Panel 1"],
+      [BOXTYPE, BORDER_FRAME],
+      [HEIGHT, 100]
+    ]
+  },
+  
+  # +++ CoursePanel: vertical layout
+  
+  # * Top Panel
+  {
+    NEW: Box,
+    NAME: todo,
+    PROPERTIES: {
+      GRID_ALIGN: HORIZONTAL
+    },
+    #PARENT: CoursePanel,
+    DO: [
+      [TEXT, "Another Panel"],
+      [BOXTYPE, FLAT_BOX],
+      [HEIGHT, 50]
+    ]
+  },
+  
+  # +++ ViewSelect: horizontal layout
+  {
+    NEW: Choice,
+    NAME: TableType,
+    #PARENT: ViewSelect,
+    DO: [
+      [clear_visible_focus],
+      [WIDTH, 100],
+      [ADD, "Type 1", "Type 2"]
+    ]
+  },
+  {
+    NEW: Label,
+    NAME: TableRowLabel,
+    #PARENT: ViewSelect,
+    PROPERTIES: {
+      LABEL_ALIGN: RIGHT
+    },
+    DO: [
+      [TEXT, "X X X X X X:"],
+    ]
+  },
+  {
+    NEW: Choice,
+    NAME: TableRow,
+    #PARENT: ViewSelect,
+    DO: [
+      [clear_visible_focus],
+      [WIDTH, 150],
+      [ADD, "FB: Fritz Jolander Jeremias Braun",
+            "DG: Diego Garcia",
+            "PM: Pamela Masterson"
+      ]
+    ]
+  },
+  {
+    NEW: Label,
+    NAME: TableTotalsLabel,
+    #PARENT: ViewSelect,
+    PROPERTIES: {
+      LABEL_ALIGN: RIGHT
+    },
+    DO: [
+      [TEXT, "Total lessons:"],
+    ]
+  },
+  {
+    NEW: Output,
+    NAME: TableTotals,
+    #PARENT: ViewSelect,
+    PROPERTIES: {
+      GRID_ALIGN: HORIZONTAL,
+      GRID_GROW: 1
+    },
+    DO: [
+      # [COLOUR, &OUTPUT_COLOUR],
+      [VALUE, "Read only ˝Öößŋħĸ€"],
+      [clear_visible_focus]
+    ]
+  },
+  # --- ViewSelect: end Top Panel
+
+  # +++ Content: horizontal layout, table and editor form
+  {
+    NEW: RowTable,
+    NAME: T1,
+    PROPERTIES: {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    #PARENT: Content,
+    DO: [
+      # [COLOUR, ffffe0],
+      [col_headers, "Col 1", "Column 2", "Col 3", "Col 4"],
+      [col_header_height, 30],
+      # [row_headers, "Row 1", "Long row 2", "Row 3"],
+      [row_header_width, 80],
+      [row_height_all, 30],
+      # [col_header_color, ffe8e8],
+      [row_header_color, ffe8e8],
+      [add_row, "Row 1", A, B, C, D],
+      [add_row, "Long Row 2", a, b, c, d],
+      [add_row, "Row 3", "", "", "A very long table entry", last]
+    ]
+  },
+  
+  # +++ EditorForm: EditForm layout
+  {
+    NEW: PopupEditor,
+    NAME: EF1,
+    #PARENT: EditorForm,
+    PROPERTIES: {
+      LABEL: "EDITOR 1"
+    }
+  },
+  {
+    NEW: TextLine,
+    NAME: EF2,
+    #PARENT: EditorForm,
+    PROPERTIES: {
+      LABEL: "TEXT 1"
+    }
+  },
+  {
+    NEW: TextLine,
+    NAME: EF2X,
+    #PARENT: EditorForm,
+    PROPERTIES: {
+      LABEL: "TEXT 2"
+    }
+  },
+  {
+    NEW: Choice,
+    NAME: EF3,
+    #PARENT: EditorForm,
+    PROPERTIES: {
+      LABEL: "CHOICE 1"
+    }
+  },
+  {
+    NEW: Hline,
+    NAME: Sep1,
+    #PARENT: EditorForm
+    PROPERTIES: {
+      SPAN: 2
+    }
+  },
+  {
+    NEW: PopupEditor,
+    NAME: EF4,
+    #PARENT: EditorForm,
+    PROPERTIES: {
+      LABEL: "ANOTHER EDITOR"
+    }
+  },
+  {
+    NEW: Checkbox,
+    NAME: EF5,
+    #PARENT: EditorForm,
+    PROPERTIES: {
+      SPAN: 2
+    },
+    DO: [
+      [TEXT, "CHECKBOX with a long label"]
+    ]
+  },
+  {
+    NEW: List,
+    NAME: EF6,
+    #PARENT: EditorForm,
+    PROPERTIES: {
+      LABEL: "List entry",
+      SPAN: 2,
+      GROW: 1
+    }
+  },
+  {
+    NEW: EditForm,
+    NAME: EditorForm,
+    #PARENT: Content,
+    PROPERTIES: {
+      GRID_ALIGN: VERTICAL
+    },
+    WIDGETS: [
+      EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6
+    ],
+    DO: [
+      [WIDTH, 300]
+    ]
+  },
+  # --- EditorForm
+  
+  {
+    NEW: Hlayout,
+    NAME: ViewSelect,
+    PROPERTIES: {
+      GRID_ALIGN: HORIZONTAL
+    },
+    #PARENT: CoursePanel,
+    WIDGETS: [
+      TableType, TableRowLabel, TableRow, TableTotalsLabel, TableTotals
+    ],
+    DO: [
+      [MARGIN, 5],
+      [GAP, 5],
+      [HEIGHT, 60]
+    ]
+  },
+  {
+    NEW: Hlayout,
+    NAME: Content,
+    PROPERTIES: {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    #PARENT: CoursePanel,
+    WIDGETS: [
+      T1, EditorForm
+    ],
+    DO: [
+      [GAP, 3]
+    ]
+  },
+  # --- Content
+  {
+    NEW: Vlayout,
+    NAME: CoursePanel,
+    PROPERTIES: {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    #PARENT: l_MainWindow,
+    WIDGETS: [    
+      todo, ViewSelect, Content
+    ]
+  },
+  # --- CoursePanel
+  
+  {
+    NEW: Vlayout,
+    NAME: l_MainWindow,
+    PARENT: MainWindow,
+    WIDGETS: [
+      P1, CoursePanel
+    ],
+    DO: [
+      [fit_to_parent],
+      # [MARGIN, 5]
+    ]
+  },
+  # --- l_MainWindow
+  
+  {
+    WIDGET: EF1,
+    DO: [
+      [VALUE, "Changed First"]
+    ]
+  },
+  {
+    WIDGET: EF3,
+    DO: [
+      [ADD, Item1, Item2]
+    ]
+  },
+  {
+    WIDGET: EF6,
+    DO: [
+      [SET, "New list 1", "New list 2"]
+    ]
+  },
+  
+  # Starting up the main window
+  {
+    WIDGET: MainWindow,
+    DO: [
+      # [RESIZABLE, l_MainWindow],
+      [SHOW]
+    ]
+  },
+  {FUNCTION: RUN} # Enter main event loop
+]
+}
