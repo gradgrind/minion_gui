@@ -90,6 +90,16 @@ W_Window* W_Window::make(MMap* parammap)
     return widget;         
 }
 
+struct grid_item
+{
+    Fl_Widget* widget;
+    int row = 0;
+    int col = 0;
+    int rspan = 1;
+    int cspan = 1;
+    Fl_Grid_Align align = FL_GRID_CENTER;
+};
+
 W_Grid* W_Grid::make(minion::MMap* parammap)
 {
     (void) parammap;
@@ -99,9 +109,64 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
     auto widget = new W_Grid();
     widget->fl_widget = w;
 
-//TODO: adding widgets ...
+    //TODO: adding widgets ...
+    // Get contained widgets ...
+    auto wlist0 = parammap->get("WIDGETS");
+    if (!wlist0.is_null()) {
+        auto wlist = wlist0.m_list()->get();
+        auto n = wlist->size();
+        if (n != 0) {
+            // Need to determine the dimensions
+            int maxrow = 0, maxcol = 0;
+            string wname;
+            string fill;
+            vector<grid_item> items;
+            for (size_t i = 0; i < n; ++i) {
+                auto witem = wlist->get(i);
+                if (!witem.is_null()) {
+                    auto wl_i = witem.m_list();
+                    if (wl_i) {
+                        auto list_i = wl_i->get();
+                        if (list_i->get_string(0, wname)) {
+                            if (auto w_i = Widget::get_widget(wname)) {
+                                auto wfltk = w_i->fltk_widget();
+                                w->add(wfltk);
+                                grid_item item{wfltk};
+                                list_i->get_int(1, item.row);
+                                if (item.row > maxrow)
+                                    maxrow = item.row;
+                                list_i->get_int(2, item.col);
+                                if (item.col > maxcol)
+                                    maxcol = item.col;
+                                list_i->get_int(3, item.rspan);
+                                list_i->get_int(4, item.cspan);
+                                if (w_i->property_string("GRID_ALIGN", fill)) {
+                                    try {
+                                        item.align = GRID_ALIGN.at(fill);
+                                    } catch (out_of_range& e) {
+                                        throw string{"Invalid GRID_ALIGN: "} + fill;
+                                    }
+                                }
+                                items.emplace_back(item);
+                                continue;
+                            }
+                        }
+                    }
+                }
+                throw "Layout with invalid WIDGETS list: " + *widget->widget_name();
+            }
+            // Place the widgets in the grid
+            w->layout(maxrow + 1, maxcol + 1);
+            for (const auto& item : items) {
+                w->widget(item.widget, item.row, item.col, item.rspan, item.cspan, item.align);
+            }
 
-    return widget;         
+            //TODO: row and column weights ...
+
+            return widget;
+        }
+    }
+    throw "Layout with no WIDGETS list: " + *widget->widget_name();
 }
 
 void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
@@ -146,49 +211,51 @@ W_Grid* W_Grid::new_hvgrid(
     if (!wlist0.is_null()) {
         auto wlist = wlist0.m_list()->get();
         auto n = wlist->size();
-        if (horizontal)
-            w->layout(1, n);
-        else
-            w->layout(n, 1);
-        int xsize = 0; // find transverse size
-        for (size_t i = 0; i < n; ++i) {
-            string wname;
-            if (wlist->get_string(i, wname)) {
-                if (auto w_i = Widget::get_widget(wname)) {
-                    auto wfltk = w_i->fltk_widget();
-                    w->add(wfltk);
-                    auto xs = horizontal ? wfltk->h() : wfltk->w();
-                    if (xs > xsize)
-                        xsize = xs;
-                    Fl_Grid_Align align = FL_GRID_CENTER;
-                    string fill;
-                    if (w_i->property_string("GRID_ALIGN", fill)) {
-                        try {
-                            align = GRID_ALIGN.at(fill);
-                        } catch (out_of_range& e) {
-                            throw string{"Invalid GRID_ALIGN: "} + fill;
+        if (n != 0) {
+            if (horizontal)
+                w->layout(1, n);
+            else
+                w->layout(n, 1);
+            int xsize = 0; // find transverse size
+            for (size_t i = 0; i < n; ++i) {
+                string wname;
+                if (wlist->get_string(i, wname)) {
+                    if (auto w_i = Widget::get_widget(wname)) {
+                        auto wfltk = w_i->fltk_widget();
+                        w->add(wfltk);
+                        auto xs = horizontal ? wfltk->h() : wfltk->w();
+                        if (xs > xsize)
+                            xsize = xs;
+                        Fl_Grid_Align align = FL_GRID_CENTER;
+                        string fill;
+                        if (w_i->property_string("GRID_ALIGN", fill)) {
+                            try {
+                                align = GRID_ALIGN.at(fill);
+                            } catch (out_of_range& e) {
+                                throw string{"Invalid GRID_ALIGN: "} + fill;
+                            }
                         }
+                        if (horizontal)
+                            w->widget(wfltk, 0, i, align);
+                        else
+                            w->widget(wfltk, i, 0, align);
+                        int weight = 0;
+                        w_i->property_int("GRID_GROW", weight);
+                        if (horizontal)
+                            w->col_weight(i, weight);
+                        else
+                            w->row_weight(i, weight);
+                        continue;
                     }
-                    if (horizontal)
-                        w->widget(wfltk, 0, i, align);
-                    else
-                        w->widget(wfltk, i, 0, align);
-                    int weight = 0;
-                    w_i->property_int("GRID_GROW", weight);
-                    if (horizontal)
-                        w->col_weight(i, weight);
-                    else
-                        w->row_weight(i, weight);
-                    continue;
                 }
+                throw "Layout with invalid WIDGETS list: " + *widget->widget_name();
             }
-            throw "Layout with invalid WIDGETS list: " + *widget->widget_name();
+            if (horizontal)
+                w->size(0, xsize);
+            else
+                w->size(xsize, 0);
+            return widget;
         }
-        if (horizontal)
-            w->size(0, xsize);
-        else
-            w->size(xsize, 0);
-        return widget;
     }
     throw "Layout with no WIDGETS list: " + *widget->widget_name();
 }

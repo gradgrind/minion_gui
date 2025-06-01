@@ -50,6 +50,7 @@ int main()
         // These paths are realtive to the directory
         // in which the binary is built.
         "../../../examples/buttons1.minion",
+        "../../../examples/grid1.minion",
         "../../../examples/various1.minion"
         //
     };
@@ -57,6 +58,7 @@ int main()
     auto flist = {
         //
         callback1,
+        callback1, // actually, there are no callbacks
         callback2
         //
     };
