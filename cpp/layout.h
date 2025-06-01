@@ -28,11 +28,13 @@ protected:
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Grid* make(minion::MMap* parammap);
-    static W_Grid* make_hgrid(minion::MMap* parammap)
+    static W_Grid* make_hlayout(
+        minion::MMap* parammap)
     {
         return new_hvgrid(parammap, true);
     }
-    static W_Grid* make_vgrid(minion::MMap* parammap)
+    static W_Grid* make_vlayout(
+        minion::MMap* parammap)
     {
         return new_hvgrid(parammap, false);
     }

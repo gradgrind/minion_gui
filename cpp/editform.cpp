@@ -31,7 +31,7 @@ EditForm::EditForm()
 // static
 W_EditForm* W_EditForm::make(minion::MMap* parammap)
 {
-    auto wlist0 = parammap->get("ITEMS");
+    auto wlist0 = parammap->get("WIDGETS");
     if (auto wlist = wlist0.m_list()) {
         auto mlist = wlist->get();
         auto n = mlist->size();
@@ -45,7 +45,7 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
                     string efname;
                     parammap->get_string("NAME", efname);
                     MValue m = *mlist;
-                    throw string{"Invalid ITEMS list for widget "}
+                    throw string{"Invalid WIDGETS list for widget "}
                         .append(efname)
                         .append(": ")
                         .append(dump_value(m));
@@ -128,5 +128,5 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
     }
     string efname;
     parammap->get_string("NAME", efname);
-    throw "EditForm missing ITEMS list: " + efname;
+    throw "EditForm missing WIDGETS list: " + efname;
 }

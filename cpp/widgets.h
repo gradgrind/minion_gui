@@ -13,10 +13,16 @@ public:
     static W_Box* make(minion::MMap* parammap);
 };
 
-class W_VSep : public W_Box
+class W_Hline : public W_Box
 {
 public:
-    static W_VSep* make(minion::MMap* parammap);
+    static W_Hline* make(minion::MMap* parammap);
+};
+
+class W_Vline : public W_Box
+{
+public:
+    static W_Vline* make(minion::MMap* parammap);
 };
 
 class W_Label : public Widget

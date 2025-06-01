@@ -27,11 +27,12 @@ void SetCallbackFunction(
 
 const map<string, new_function> new_function_map{{"Window", W_Window::make},
                                                  {"Grid", W_Grid::make},
-                                                 {"Hgrid", W_Grid::make_hgrid},
-                                                 {"Vgrid", W_Grid::make_vgrid},
+                                                 {"Hlayout", W_Grid::make_hlayout},
+                                                 {"Vlayout", W_Grid::make_vlayout},
                                                  {"PushButton", W_PushButton::make},
                                                  {"Box", W_Box::make},
-                                                 {"VSep", W_VSep::make},
+                                                 {"Hline", W_Hline::make},
+                                                 {"Vline", W_Vline::make},
                                                  {"Label", W_Label::make},
                                                  {"Choice", W_Choice::make},
                                                  {"Output", W_Output::make},
@@ -131,7 +132,7 @@ void Callback(MValue m)
 {
     input_value = {}; // clear the result
     const char* cbdata;
-    cbdata = dump_value(m);
+    cbdata = dump_buffer.dump(m); // compact form
     const char* cbresult = backend(cbdata);
     input_value = input_buffer.read(cbresult);
     if (const char* e = input_value.error_message())

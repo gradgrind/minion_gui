@@ -24,12 +24,23 @@ W_Box* W_Box::make(
 }
 
 //static
-W_VSep* W_VSep::make(
+W_Hline* W_Hline::make(
     minion::MMap* parammap)
 {
     (void) parammap;
     auto w = new Fl_Box(FL_BORDER_FRAME, 0, 0, 0, 1, "");
-    auto widget = new W_VSep();
+    auto widget = new W_Hline();
+    widget->fl_widget = w;
+    return widget;
+}
+
+//static
+W_Vline* W_Vline::make(
+    minion::MMap* parammap)
+{
+    (void) parammap;
+    auto w = new Fl_Box(FL_BORDER_FRAME, 0, 0, 1, 0, "");
+    auto widget = new W_Vline();
     widget->fl_widget = w;
     return widget;
 }

@@ -36,6 +36,10 @@
   {
     NEW: Output,
     NAME: Output_1,
+    PROPERTIES: {
+      GRID_ALIGN: HORIZONTAL,
+      GRID_GROW: 1
+    },
     DO: [
       [clear_visible_focus]
     ]
@@ -48,24 +52,24 @@
     ]
   },
   {
-    NEW: Hgrid,
+    NEW: Hlayout,
     NAME: l_output,
+    PROPERTIES: {
+      GRID_ALIGN: HORIZONTAL
+    },
     DO: [
       # [HEIGHT, 80],
     ],
     WIDGETS: [
-      [Label_1, CENTRE, 0],
-      [Output_1, HORIZONTAL, 1]
+      Label_1, Output_1
     ]
   },
   {
-    NEW: Vgrid,
+    NEW: Vlayout,
     NAME: l_MainWindow,
     PARENT: MainWindow,
     WIDGETS: [
-      [PB1, CENTRE, 0],
-      [l_output, HORIZONTAL, 0],
-      [PB2, CENTRE, 0],
+      PB1, l_output, PB2
     ],
     DO: [
       [fit_to_parent],

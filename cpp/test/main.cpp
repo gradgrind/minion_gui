@@ -29,7 +29,6 @@ const char* callback1(
     return cbr;
 }
 
-//TODO
 const char* callback2(
     const char* data)
 {
@@ -38,8 +37,7 @@ const char* callback2(
     string wname;
     (*mm)->get_string("CALLBACK", wname);
     printf("callback got '%s'\n", dump(m));
-    //minion::MMap mp({{"WIDGET", "Output_1"}, {"DO", {{"VALUE", wname}}}});
-    minion::MMap mp{{{"TEST", "Value"}}};
+    minion::MMap mp({{"WIDGET", "TableTotals"}, {"DO", {{"VALUE", data}}}});
     auto cbr = dump(mp);
     //printf("??? %s\n", cbr);
     //fflush(stdout);
