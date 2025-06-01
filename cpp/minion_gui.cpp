@@ -232,15 +232,3 @@ void Init(
     }
     */
 }
-
-//TODO: Window might get a special callback ... what to do with this?
-void main_callback(
-    Fl_Widget *, void *)
-{
-    if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
-        return; // ignore Escape
-
-    //TODO: If changed data, ask about closing
-    if (fl_choice("Are you sure you want to quit?", "continue", "quit", NULL))
-        exit(0);
-}

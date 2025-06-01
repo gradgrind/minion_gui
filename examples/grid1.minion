@@ -10,7 +10,11 @@
     FLOATING: 1,
     WIDTH: &APP_WIDTH,
     HEIGHT: &APP_HEIGHT,
-    ESC_CLOSES: 1,
+    MIN_WIDTH: 250,
+    MIN_HEIGHT: 120,
+    PROPERTIES: {
+      ESC_CLOSES: 1
+    },
     DO: [
       [COLOUR, &BACKGROUND]
     ]
@@ -76,10 +80,13 @@
       [b3, 2, 0],
       [b4, 2, 2]
     ],
+    ROW_WEIGHTS: [[1, 1]], # 0 is the default value
+    COL_WEIGHTS: [[0, 1]], # 0 is the default value
     DO: [
       [fit_to_parent],
       [MARGIN, 3],
-      [GAP, 10]
+      [GAP, 10],
+      [SHOW_GRID, 1]
     ]
   },
   # Starting up the main window
@@ -92,7 +99,3 @@
   {FUNCTION: RUN} # Enter main event loop
 ]
 }
-
-# TODO?
-#  grid->show_grid(0); // 1 to display grid helper lines
-#  win->size_range(300, 100);

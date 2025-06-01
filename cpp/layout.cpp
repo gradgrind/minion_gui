@@ -35,16 +35,31 @@ inline const map<string, Fl_Grid_Align>
                {"BOTTOM_LEFT", FL_GRID_BOTTOM_LEFT},
                {"BOTTOM_RIGHT", FL_GRID_BOTTOM_RIGHT}};
 
-void callback_no_esc_closes(
-    Fl_Widget *w, void *x)
+void callback_close_window(
+    Fl_Widget* w, void* ud)
 {
-    (void) x;
-    if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
-        return; // ignore Escape
+    //(void) ud;
+    if (Fl::callback_reason() == FL_REASON_CANCELLED) {
+        // escape key pressed
+        //TODO--
+        cout << "Escape key pressed" << endl;
+
+        int esc_quit = 0;
+        static_cast<Widget*>(ud)->property_int("ESC_CLOSES", esc_quit);
+        if (esc_quit == 0)
+            return;
+    }
+
     //TODO: message to backend?
-    cout << "Closing " << Widget::get_widget_name(w) << endl;
+
+    //TODO: If changed data, ask about closing
+    //if (!fl_choice("Are you sure you want to quit?", "continue", "quit", NULL)) {
+    //    return;
+    //}
+
     //TODO--
-    exit(0);
+    cout << "Closing " << *Widget::get_widget_name(w) << endl;
+    w->hide();
 }
 
 // *** layout widgets – Fl_Group based
@@ -80,14 +95,14 @@ W_Window* W_Window::make(MMap* parammap)
     parammap->get_int("WIDTH", ww);
     parammap->get_int("HEIGHT", wh);
     auto w = new Fl_Double_Window(ww, wh);
-    int esc_closes{0};
-    parammap->get_int("ESC_CLOSES", esc_closes);
-    if (esc_closes != 0)
-        w->callback(callback_no_esc_closes);
+    w->callback(callback_close_window);
     Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Window();
     widget->fl_widget = w;
-    return widget;         
+    parammap->get_int("MIN_WIDTH", ww);
+    parammap->get_int("MIN_HEIGHT", wh);
+    w->size_range(ww, wh);
+    return widget;
 }
 
 struct grid_item
@@ -109,7 +124,6 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
     auto widget = new W_Grid();
     widget->fl_widget = w;
 
-    //TODO: adding widgets ...
     // Get contained widgets ...
     auto wlist0 = parammap->get("WIDGETS");
     if (!wlist0.is_null()) {
@@ -155,13 +169,59 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
                 }
                 throw "Layout with invalid WIDGETS list: " + *widget->widget_name();
             }
+
             // Place the widgets in the grid
             w->layout(maxrow + 1, maxcol + 1);
             for (const auto& item : items) {
                 w->widget(item.widget, item.row, item.col, item.rspan, item.cspan, item.align);
             }
 
-            //TODO: row and column weights ...
+            // Row and column weights ...
+            auto wmap0 = parammap->get("ROW_WEIGHTS");
+            if (!wmap0.is_null()) {
+                if (auto wmap = wmap0.m_list()) {
+                    auto wl = wmap->get();
+                    auto n = wl->size();
+                    for (size_t i = 0; i < n; ++i) {
+                        auto witem = wl->get(i);
+                        if (auto wil0 = witem.m_list()) {
+                            auto wil = wil0->get();
+                            int ix = -1;
+                            wil->get_int(0, ix);
+                            if (ix >= 0 && ix <= maxrow) {
+                                int weight = -1;
+                                wil->get_int(1, weight);
+                                if (weight >= 0) {
+                                    w->row_weight(ix, weight);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            wmap0 = parammap->get("COL_WEIGHTS");
+            if (!wmap0.is_null()) {
+                if (auto wmap = wmap0.m_list()) {
+                    auto wl = wmap->get();
+                    auto n = wl->size();
+                    for (size_t i = 0; i < n; ++i) {
+                        auto witem = wl->get(i);
+                        if (auto wil0 = witem.m_list()) {
+                            auto wil = wil0->get();
+                            int ix = -1;
+                            wil->get_int(0, ix);
+                            if (ix >= 0 && ix <= maxcol) {
+                                int weight = -1;
+                                wil->get_int(1, weight);
+                                if (weight >= 0) {
+                                    w->col_weight(ix, weight);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             return widget;
         }
@@ -186,6 +246,11 @@ void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
             static_cast<Fl_Grid *>(fl_widget)->margin(s, s, s, s);
             return;
         }
+    } else if (method == "SHOW_GRID") {
+        int show_grid = 0;
+        paramlist->get_int(1, show_grid);
+        static_cast<Fl_Grid*>(fl_widget)->show_grid(show_grid);
+        return;
     } else {
         W_Group::handle_method(method, paramlist);
         return;
