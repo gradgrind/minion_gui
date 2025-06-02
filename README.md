@@ -14,21 +14,7 @@ For running programs built using minion_gui you will need some system libs which
 
 - Windows: no external dependencies
 - MacOS: no external dependencies
-- Linux (and other Unix systems): something like this ...
-    - x11
-    - xinerama
-    - xfixes
-    - xcursor
-    - xkbcommon
-    - pango
-    - pangocairo
-    - gobject
-    - cairo
-    - wayland-client
-    - wayland-cursor
-    - dbus
-    - OpenGL?
-
+- Linux (and other Unix systems): on a fresh Linux Mint (22.1) installation no additional libraries were required.
 
 *Tip*: The [rust-fltk project](https://github.com/fltk-rs/fltk-rs) may be helpful in determining dependencies, both for building and for running. Note, however, that the fltk configuration will affect this.
 
