@@ -8,7 +8,7 @@ See [the instructions in the `fltk` directory](fltk/README-build-fltk) FLTK has 
 
 ### Requirements
 
-For building minion_gui you need a C++20 compiler, such as GCC or Clang on Linux, MinGW on Windows or XCode on MacOS.
+For building minion_gui you need cmake and a C++20 compiler, such as GCC or Clang on Linux, MinGW on Windows or XCode on MacOS. On Ubuntu (24.04) this should be covered by `sudo apt install build-essential cmake`.
 
 For running programs built using minion_gui you will need some system libs which are normally available on operating systems with a graphical user interfaces:
 
