@@ -9,8 +9,6 @@
 #include <FL/Fl_Flex.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
-#include <fmt/format.h>
-//#include <functional>
 #include <iostream>
 #include <map>
 #include <string_view>
