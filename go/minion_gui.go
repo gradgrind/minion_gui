@@ -5,8 +5,15 @@ import (
 	"unsafe"
 )
 
-// #include <stdlib.h>
-// #include "connector.h"
+/*
+
+#cgo CFLAGS: -I.
+#cgo LDFLAGS: -L./lib -lminion_gui -Wl,-rpath=./lib
+#include <stdlib.h>
+#include <stdio.h>
+#include "connector.h"
+
+*/
 import "C"
 
 var result string
@@ -19,7 +26,7 @@ var do_callback func(string) string
 // simplifies the freeing.
 
 //export goCallback
-func goCallback(callback *C.cchar_t) *C.char {
+func goCallback(callback *C.cchar_t) *C.cchar_t {
 	// The C-string `callback` is managed on the C++ side
 	cb := C.GoString(callback)
 	fmt.Printf("goCallback got '%s'\n", cb)

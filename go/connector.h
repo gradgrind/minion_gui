@@ -6,7 +6,8 @@ extern "C" {
 #endif
 
 typedef const char cchar_t;
-void init(char* data0);
+
+void init(cchar_t* data0);
 
 #ifdef __cplusplus
 }

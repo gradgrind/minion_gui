@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/gradgrind/minion_gui"
+	//"github.com/gradgrind/minion_gui"
+	"minion_gui"
 	"strings"
 )
 
@@ -21,14 +22,16 @@ var guidata string = `# buttons
 &APP_HEIGHT: 400,
 &BACKGROUND: f0f0f0,
 
-GUI: [
+{GUI: [
   {
     NEW: Window,
     NAME: MainWindow,
+    FLOATING: 1,
     WIDTH: &APP_WIDTH,
     HEIGHT: &APP_HEIGHT,
     #ESC_CLOSES: 1,
     DO: [
+      [TEXT, "Buttons Test"],
       [COLOUR, &BACKGROUND]
     ]
   },
@@ -40,10 +43,12 @@ GUI: [
       [TEXT, "PushButton 1"]
     ]
   },
-  TODO: Need a sepaate label:
   {
     NEW: Label,
     NAME: Label_1,
+    PROPERTIES: {
+      LABEL_ALIGN: LEFT
+    },
     DO: [
       [TEXT, "Pushed"]
     ]
@@ -51,6 +56,10 @@ GUI: [
   {
     NEW: Output,
     NAME: Output_1,
+    PROPERTIES: {
+      GRID_ALIGN: HORIZONTAL,
+      GRID_GROW: 1
+    },
     DO: [
       [clear_visible_focus]
     ]
@@ -59,22 +68,34 @@ GUI: [
     NEW: PushButton,
     NAME: PB2,
     DO: [
-      TEXT: "PushButton 2"
+      [TEXT, "PushButton 2"]
     ]
   },
   {
-    NEW: Vgrid,
+    NEW: Hlayout,
+    NAME: l_output,
+    PROPERTIES: {
+      GRID_ALIGN: HORIZONTAL
+    },
+    DO: [
+      # [HEIGHT, 80],
+    ],
+    WIDGETS: [
+      Label_1, Output_1
+    ]
+  },
+  {
+    NEW: Vlayout,
     NAME: l_MainWindow,
     PARENT: MainWindow,
     WIDGETS: [
-      [PB1, CENTRE, 0],
-      [Label_1 RIGHT, 0],
-      [Output_1, CENTRE, 0],
-      [PB2, CENTRE, 0],
+      PB1, l_output, PB2
     ],
     DO: [
       [fit_to_parent],
-      [MARGIN, 0]
+      [MARGIN, 5],
+      [GAP, 10]
+      # [COLOUR, ff0000] # No effect (FL_NO_BOX)
     ]
   },
   
@@ -94,4 +115,5 @@ GUI: [
   },
   {FUNCTION: RUN} # Enter main event loop
 ]
+}
 `
