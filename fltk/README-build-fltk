@@ -17,3 +17,5 @@ libdbus-1-dev
 To build:
 
 ./fltkbuild.sh
+
+Note that FLTK needs to be built with the additional option -DCMAKE_POSITION_INDEPENDENT_CODE=ON because it is to be incorporated into a dynamic library.
