@@ -8,7 +8,7 @@ import (
 /*
 
 #cgo CFLAGS: -I.
-#cgo LDFLAGS: -L./lib -lminion_gui -Wl,-rpath=./lib
+#cgo LDFLAGS: -L./lib -lminion_gui -Wl,-rpath=$ORIGIN/lib
 #include <stdlib.h>
 #include <stdio.h>
 #include "connector.h"

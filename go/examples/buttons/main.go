@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	//"github.com/gradgrind/minion_gui"
-	"minion_gui"
+	"github.com/gradgrind/minion_gui/go"
+	//"minion_gui"
 	"strings"
 )
 
