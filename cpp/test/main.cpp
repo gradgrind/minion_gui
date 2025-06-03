@@ -1,6 +1,6 @@
-#include "../backend.h"
-#include "../iofile.h"
-#include "../minion.h"
+#include "backend.h"
+#include "iofile.h"
+#include "minion.h"
 #include <cstdio>
 #include <cstdlib>
 
@@ -49,9 +49,9 @@ int main()
     auto fplist = {
         // These paths are realtive to the directory
         // in which the binary is built.
-        "../../../examples/buttons1.minion",
-        "../../../examples/grid1.minion",
-        "../../../examples/various1.minion"
+        "../../examples/buttons1.minion",
+        "../../examples/grid1.minion",
+        "../../examples/various1.minion"
         //
     };
 

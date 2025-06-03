@@ -16,6 +16,7 @@
       ESC_CLOSES: 1
     },
     DO: [
+      [TEXT, "Grid Test"],
       [COLOUR, &BACKGROUND]
     ]
   },

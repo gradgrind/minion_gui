@@ -4,9 +4,9 @@ rm -rf build/release
 
 mkdir -p build/release
 
-#if [ ! -d build/data ]; then
-#    ln -s ../../data build/data
-#fi
+if [ ! -d build/examples ]; then
+    ln -s ../../examples build/examples
+fi
 
 cd build/release
 

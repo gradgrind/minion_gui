@@ -12,6 +12,7 @@
     HEIGHT: &APP_HEIGHT,
     #ESC_CLOSES: 1,
     DO: [
+      [TEXT, "Buttons Test"],
       [COLOUR, &BACKGROUND]
     ]
   },

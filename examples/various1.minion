@@ -14,6 +14,7 @@
     FLOATING: 1,
     #ESC_CLOSES: 1,
     DO: [
+      [TEXT, "Complex Window Test"],
       [COLOUR, &BACKGROUND]
     ]
   },

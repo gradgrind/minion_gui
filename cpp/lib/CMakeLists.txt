@@ -3,12 +3,8 @@ set(FLTK_DIR "../../fltk/build"
 
 find_package(FLTK 1.4 CONFIG REQUIRED)
 
-#if(NOT CMAKE_BUILD_TYPE)
-#  set(CMAKE_BUILD_TYPE Release)
-#endif()
-
 add_library(minion_gui SHARED
-  ../include/backend.h
+#  ../include/backend.h
   callback.h
   editform.cpp editform.h
   functions.cpp functions.h
@@ -27,6 +23,8 @@ target_include_directories(minion_gui PUBLIC ../include)
 
 set_property(TARGET minion_gui PROPERTY CXX_STANDARD 20)
 set_property(TARGET minion_gui PROPERTY POSITION_INDEPENDENT_CODE ON)
+#set_property(TARGET minion_gui PROPERTY CXX_VISIBILITY_PRESET hidden)
+
 
 include(GNUInstallDirs)
 install(TARGETS minion_gui
