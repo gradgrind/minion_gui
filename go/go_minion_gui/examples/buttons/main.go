@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/gradgrind/minion_gui/go/minion_gui"
+	"github.com/gradgrind/minion_gui/go/go_minion_gui"
 	"strings"
 )
 
 func main() {
-	minion_gui.MinionGui(guidata, callback)
-	//minion_gui.MinionGui("testA data", callback)
+	go_minion_gui.MinionGui(guidata, callback)
 }
 
 func callback(data string) string {

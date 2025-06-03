@@ -1,4 +1,4 @@
-package minion_gui
+package go_minion_gui
 
 import (
 	"fmt"
