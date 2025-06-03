@@ -24,9 +24,9 @@ CMakeLists.txt.user
 *.pch
 
 # Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+#*.so
+#*.dylib
+#*.dll
 
 # Compiled Static libraries
 *.lai
