@@ -2,117 +2,49 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/gradgrind/minion_gui/go/mugui"
 )
 
 func main() {
-	mugui.MinionGui(guidata, callback)
+	fp := filepath.Join("..", "..", "..", "..", "examples", "buttons1.minion")
+	content, err := os.ReadFile(fp)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		guidata := string(content)
+		mugui.MinionGui(guidata, callback)
+	}
 }
 
 func callback(data string) string {
 	fmt.Printf("Go callback got '%s'\n", data)
+
+	doc, e := MinionRead(data)
+	if len(e) == 0 {
+		fmt.Println("  -->")
+		fmt.Println(MinionDump(doc.Item, -1))
+	} else {
+		fmt.Println(" *** Error ***")
+		fmt.Println(e)
+	}
+
 	return "GoCallbackResult:\"" + strings.ReplaceAll(data, "\"", "\\'") + "\""
 }
 
-var guidata string = `# buttons
-&APP_WIDTH: 600,
-&APP_HEIGHT: 400,
-&BACKGROUND: f0f0f0,
+/*
+   auto m = minion_ibuffer.read(data);
+   auto mm = m.m_map();
+   string wname;
+   (*mm)->get_string("CALLBACK", wname);
+   printf("callback got '%s'\n", dump(m));
+   minion::MMap mp({{"WIDGET", "Output_1"}, {"DO", {{"VALUE", wname}}}});
+   auto cbr = dump(mp);
+   //printf("??? %s\n", cbr);
+   //fflush(stdout);
+   return cbr;
 
-{GUI: [
-  {
-    NEW: Window,
-    NAME: MainWindow,
-    FLOATING: 1,
-    WIDTH: &APP_WIDTH,
-    HEIGHT: &APP_HEIGHT,
-    #ESC_CLOSES: 1,
-    DO: [
-      [TEXT, "Buttons Test"],
-      [COLOUR, &BACKGROUND]
-    ]
-  },
-  # Top-level contents
-  {
-    NEW: PushButton,
-    NAME: PB1,
-    DO: [
-      [TEXT, "PushButton 1"]
-    ]
-  },
-  {
-    NEW: Label,
-    NAME: Label_1,
-    PROPERTIES: {
-      LABEL_ALIGN: LEFT
-    },
-    DO: [
-      [TEXT, "Pushed"]
-    ]
-  },
-  {
-    NEW: Output,
-    NAME: Output_1,
-    PROPERTIES: {
-      GRID_ALIGN: HORIZONTAL,
-      GRID_GROW: 1
-    },
-    DO: [
-      [clear_visible_focus]
-    ]
-  },
-  {
-    NEW: PushButton,
-    NAME: PB2,
-    DO: [
-      [TEXT, "PushButton 2"]
-    ]
-  },
-  {
-    NEW: Hlayout,
-    NAME: l_output,
-    PROPERTIES: {
-      GRID_ALIGN: HORIZONTAL
-    },
-    DO: [
-      # [HEIGHT, 80],
-    ],
-    WIDGETS: [
-      Label_1, Output_1
-    ]
-  },
-  {
-    NEW: Vlayout,
-    NAME: l_MainWindow,
-    PARENT: MainWindow,
-    WIDGETS: [
-      PB1, l_output, PB2
-    ],
-    DO: [
-      [fit_to_parent],
-      [MARGIN, 5],
-      [GAP, 10]
-      # [COLOUR, ff0000] # No effect (FL_NO_BOX)
-    ]
-  },
-  
-  {
-    WIDGET: PB1,
-    DO: [
-      [SIZE, 200, 60]
-    ]
-  },
-
-  # Starting up the main window
-  {
-    WIDGET: MainWindow,
-    DO: [
-      [SHOW]
-    ]
-  },
-  {FUNCTION: RUN} # Enter main event loop
-]
-}
-`
+*/
