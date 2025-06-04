@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gradgrind/minion_gui/go/go_minion_gui"
 	"strings"
+
+	"github.com/gradgrind/minion_gui/go/mugui"
 )
 
 func main() {
-	go_minion_gui.MinionGui(guidata, callback)
+	mugui.MinionGui(guidata, callback)
 }
 
 func callback(data string) string {

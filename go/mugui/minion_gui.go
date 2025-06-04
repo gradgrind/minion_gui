@@ -1,4 +1,4 @@
-package go_minion_gui
+package mugui
 
 import (
 	"fmt"
@@ -8,6 +8,8 @@ import (
 /*
 #cgo CFLAGS: -I.
 #cgo LDFLAGS: -L./lib -lminion_gui -Wl,-rpath=${SRCDIR}/lib
+// Or this for a "standalone" app with the library relative to the executable:
+//#cgo LDFLAGS: -L./lib -lminion_gui -Wl,-rpath=$ORIGIN/lib
 #include <stdlib.h>
 #include "connector.h"
 */
