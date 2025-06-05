@@ -39,8 +39,6 @@ func callback(data string) string {
 
 	mp := MMap{
 		{"WIDGET", MString("Output_1")},
-		//TODO: segfault ...
-		//{"DO", MList{MMap{{"VALUE", MString(wname)}}}}}
 		{"DO", MList{MList{MString("VALUE"), MString(wname)}}}}
 	cbr := dump(mp, -1)
 	fmt.Println("CB: " + cbr)

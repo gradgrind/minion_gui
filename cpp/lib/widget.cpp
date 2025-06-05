@@ -119,12 +119,14 @@ void Widget::handle_methods(
             for (size_t i = 0; i < len; ++i) {
                 auto n = (*dolist)->get(i);
                 auto mlist = n.m_list();
-                string c;
-                if ((*mlist)->get_string(0, c)) {
-                    handle_method(c, mlist->get());
-                } else {
-                    throw string{"Invalid DO method on widget "} + w_name + ": " + dump_value(n);
+                if (mlist) {
+                    string c;
+                    if ((*mlist)->get_string(0, c)) {
+                        handle_method(c, mlist->get());
+                        continue;
+                    }
                 }
+                throw string{"Invalid DO method on widget "} + w_name + ": " + dump_value(n);
             }
             return;
         }
