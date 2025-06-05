@@ -9,10 +9,12 @@ import (
 
 func TestM1(t *testing.T) {
 	fmt.Println("\n +++ TestM1:\n ==============")
-	doc, e := MinionRead("{A: 1 :}")
+	ib := InputBuffer{}
+	doc, e := ib.Read("{A: 1 :}")
 	if len(e) == 0 {
 		fmt.Println("  -->")
-		fmt.Println(MinionDump(doc.Item, -1))
+		dump := Dumper()
+		fmt.Println(dump(doc, -1))
 	} else {
 		fmt.Println(" *** Error ***")
 		fmt.Println(e)
@@ -27,19 +29,22 @@ func TestM2(t *testing.T) {
 		return
 	}
 	input := string(content)
+	ib := InputBuffer{}
 
 	for range 10 {
 		t0 := time.Now()
-		MinionRead(input)
+		ib.Read(input)
 		t1 := time.Now()
 		fmt.Println(t1.Sub(t0))
 	}
 	fmt.Println("  ---------------------------------- ")
 
-	doc, e := MinionRead(input)
+	doc, e := ib.Read(input)
+
 	if len(e) == 0 {
 		fmt.Println("  -->")
-		fmt.Println(MinionDump(doc.Item, 0))
+		dump := Dumper()
+		fmt.Println(dump(doc, 0))
 	} else {
 		fmt.Println(" *** Error ***")
 		fmt.Println(e)

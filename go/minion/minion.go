@@ -626,17 +626,24 @@ func (ib *InputBuffer) read_val() MValue {
 	return m
 }
 
-type DumpBuffer struct {
+// *******************************
+// *** dump functions (serializing)
+
+type dumpBuffer struct {
 	indent int // = 2;
 	depth  int
 	buffer []byte
 }
 
-// *******************************
+// Return a new dumper function with its own buffer
+func Dumper() func(MValue, int) string {
+	var dbuf = dumpBuffer{indent: 2}
+	return func(m MValue, pretty int) string {
+		return dbuf.dump(m, pretty)
+	}
+}
 
-// *** dump functions (serializing)
-
-func (db *DumpBuffer) dump_string(source string) {
+func (db *dumpBuffer) dump_string(source string) {
 	db.buffer = append(db.buffer, '"')
 	var ch byte
 	for _, ch = range []byte(source) {
@@ -688,10 +695,10 @@ func (db *DumpBuffer) dump_string(source string) {
 	db.buffer = append(db.buffer, '"')
 }
 
-func (db *DumpBuffer) dump_pad(n int) {
-	if n >= 0 {
+func (db *dumpBuffer) dump_pad() {
+	if db.depth >= 0 {
 		db.buffer = append(db.buffer, '\n')
-		n *= indentation
+		n := db.depth * db.indent
 		for n > 0 {
 			db.buffer = append(db.buffer, ' ')
 			n--
@@ -699,79 +706,75 @@ func (db *DumpBuffer) dump_pad(n int) {
 	}
 }
 
-func dump_list(source MinionValue, indent int) bool {
+func (db *dumpBuffer) dump_list(source MList) {
 	db.buffer = append(db.buffer, '[')
-	a := source.Data.(MinionArray)
-	if len(a) != 0 {
-		var new_depth int = -1
-		if indent >= 0 {
-			new_depth = indent + 1
+	if source.Size() != 0 {
+		var d = db.depth
+		if d >= 0 {
+			db.depth++
 		}
-		for _, m := range a {
-			dump_pad(new_depth)
-			if !dump_value(m, new_depth) {
-				return false
-			}
+		for _, m := range source {
+			db.dump_pad()
+			db.dump_value(m)
 			db.buffer = append(db.buffer, ',')
 		}
+		db.depth = d
 		db.buffer = db.buffer[:len(db.buffer)-1] // remove last ','
-		dump_pad(indent)
+		db.dump_pad()
 	}
 	db.buffer = append(db.buffer, ']')
-	return true
 }
 
-func dump_map(source MinionValue, indent int) bool {
+func (db *dumpBuffer) dump_map(source MMap) {
 	db.buffer = append(db.buffer, '{')
-	a := source.Data.(MinionPairArray)
-	if len(a) != 0 {
-		var new_depth int = -1
-		if indent >= 0 {
-			new_depth = indent + 1
+	if source.Size() != 0 {
+		var d = db.depth
+		if d >= 0 {
+			db.depth++
 		}
-		for _, m := range a {
-			dump_pad(new_depth)
-			dump_string(string(m.Key))
+		for _, m := range source {
+			db.dump_pad()
+			db.dump_string(m.Key)
 			db.buffer = append(db.buffer, ':')
-			if indent >= 0 {
+			if d >= 0 {
 				db.buffer = append(db.buffer, ' ')
 			}
-			if !dump_value(m.Value, new_depth) {
-				return false
-			}
+			db.dump_value(m.Value)
 			db.buffer = append(db.buffer, ',')
 		}
+		db.depth = d
 		db.buffer = db.buffer[:len(db.buffer)-1] // remove last ','
-		dump_pad(indent)
+		db.dump_pad()
 	}
 	db.buffer = append(db.buffer, '}')
-	return true
 }
 
-func dump_value(source MinionValue, indent int) bool {
-	var ok bool = true
-	switch source.Type {
-	case T_String:
+func (db *dumpBuffer) dump_value(source MValue) {
+	switch source := source.(type) {
+	case MString:
 		// Strings don't receive any extra formatting
-		s := source.Data.(MinionString)
-		dump_string(string(s))
+		db.dump_string(string(source))
 		//break
-	case T_Array:
-		ok = dump_list(source, indent)
+	case MList:
+		db.dump_list(source)
 		//break
-	case T_PairArray:
-		ok = dump_map(source, indent)
+	case MMap:
+		db.dump_map(source)
 		//break
 	default:
-		ok = false
+		panic(fmt.Sprintf("[BUG] MINION dump: bad MValue type: %#v", source))
 	}
-	return ok
 }
 
-func MinionDump(source MinionValue, indent int) (string, bool) {
-	db.buffer = db.buffer[:0] // reset db.buffer
-	if dump_value(source, indent) {
-		return string(db.buffer), true
+func (db *dumpBuffer) dump(source MValue, pretty int) string {
+	db.depth = -1
+	if pretty >= 0 {
+		db.depth = 0
+		if pretty != 0 {
+			db.indent = pretty
+		}
 	}
-	return "", false
+	db.buffer = db.buffer[:0] // reset db.buffer
+	db.dump_value(source)
+	return string(db.buffer)
 }
