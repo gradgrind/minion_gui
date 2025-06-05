@@ -3,6 +3,7 @@ package minion
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 )
@@ -21,21 +22,43 @@ func TestM1(t *testing.T) {
 	}
 }
 
+var infiles = []string{
+	"../data/test1.minion",
+	//"../data/test1a.minion",
+	"../data/test2.minion",
+	//"../data/test2a.minion",
+	//"../data/test2e.minion",
+	"../data/test3.minion",
+	"../data/test4.minion",
+	//"../data/test4e.minion",
+	//
+}
+
 func TestM2(t *testing.T) {
 	fmt.Println("\n +++ TestM2:\n ==============")
-	content, err := os.ReadFile("../data/test4.minion")
-	if err != nil {
-		fmt.Println("$ File Error: " + err.Error())
-		return
-	}
-	input := string(content)
-	ib := InputBuffer{}
-
+	var (
+		input   string
+		ib      InputBuffer
+		t0      time.Time
+		t1      time.Time
+		content []byte
+		err     error
+	)
 	for range 10 {
-		t0 := time.Now()
-		ib.Read(input)
-		t1 := time.Now()
-		fmt.Println(t1.Sub(t0))
+		for _, fin := range infiles {
+			content, err = os.ReadFile(fin)
+			if err != nil {
+				fmt.Println("$ File Error: " + err.Error())
+				return
+			}
+			input = string(content)
+			t0 = time.Now()
+			ib = InputBuffer{}
+			ib.Read(input)
+			t1 = time.Now()
+			fmt.Printf("== %s: %s\n", filepath.Base(fin), t1.Sub(t0))
+		}
+		fmt.Println("  ---")
 	}
 	fmt.Println("  ---------------------------------- ")
 
