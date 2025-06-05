@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/gradgrind/minion_gui/go/mugui"
 )
@@ -23,28 +22,27 @@ func main() {
 func callback(data string) string {
 	fmt.Printf("Go callback got '%s'\n", data)
 
-	doc, e := MinionRead(data)
+	ib := InputBuffer{}
+	dump := Dumper()
+	doc, e := ib.Read(data)
 	if len(e) == 0 {
 		fmt.Println("  -->")
-		fmt.Println(MinionDump(doc.Item, -1))
+		fmt.Println(dump(doc, -1))
 	} else {
 		fmt.Println(" *** Error ***")
 		fmt.Println(e)
 	}
 
-	return "GoCallbackResult:\"" + strings.ReplaceAll(data, "\"", "\\'") + "\""
+	mm := doc.(MMap)
+	var wname string
+	mm.GetString("CALLBACK", &wname)
+
+	mp := MMap{
+		{"WIDGET", MString("Output_1")},
+		//TODO: segfault ...
+		//{"DO", MList{MMap{{"VALUE", MString(wname)}}}}}
+		{"DO", MList{MList{MString("VALUE"), MString(wname)}}}}
+	cbr := dump(mp, -1)
+	fmt.Println("CB: " + cbr)
+	return cbr
 }
-
-/*
-   auto m = minion_ibuffer.read(data);
-   auto mm = m.m_map();
-   string wname;
-   (*mm)->get_string("CALLBACK", wname);
-   printf("callback got '%s'\n", dump(m));
-   minion::MMap mp({{"WIDGET", "Output_1"}, {"DO", {{"VALUE", wname}}}});
-   auto cbr = dump(mp);
-   //printf("??? %s\n", cbr);
-   //fflush(stdout);
-   return cbr;
-
-*/

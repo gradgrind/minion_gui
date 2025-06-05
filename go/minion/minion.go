@@ -388,7 +388,7 @@ func (ib *InputBuffer) get_bare_string(ch byte) {
 	ib.ch_buffer = ib.ch_buffer[:0]
 	for {
 		ib.ch_buffer = append(ib.ch_buffer, ch)
-		ch = ib.read_ch(true)
+		ch = ib.read_ch(false)
 		switch ch {
 		case ':', ',', ']', '}':
 			ib.unread_ch()
@@ -404,23 +404,26 @@ func (ib *InputBuffer) get_bare_string(ch byte) {
 	}
 }
 
-func (ib *InputBuffer) error(msg string) {
-	// Add most recently read characters
+func (ib *InputBuffer) last_n_chars(n int) string {
 	ch_start := 0
 	recent := ib.ch_index
-	if recent > 80 {
-		ch_start = ib.ch_index - 80
+	if recent > n {
+		ch_start = ib.ch_index - n
 		// Find start of utf-8 sequence
 		for {
-			var ch byte = ib.ch_input[ch_start]
+			ch := ib.ch_input[ch_start]
 			if ch < 0x80 || (ch >= 0xC0 && ch < 0xF8) {
 				break
 			}
 			ch_start++
 		}
-		recent = ib.ch_index - ch_start
 	}
-	panic(msg + "\n ... " + ib.ch_input[ch_start:recent])
+	return ib.ch_input[ch_start:ib.ch_index]
+}
+
+func (ib *InputBuffer) error(msg string) {
+	// Add most recently read characters
+	panic(msg + "\n ... " + ib.last_n_chars(80))
 }
 
 func (ib *InputBuffer) get_list() MValue {
@@ -516,7 +519,7 @@ func (ib *InputBuffer) get_map() MValue {
 func (ib *InputBuffer) add_unicode_to_ch_buffer(l int) {
 	buf := make([]byte, l)
 	for i := range l {
-		buf[i] = ib.read_ch(false)
+		buf[i] = ib.read_ch(true)
 	}
 	number, err := strconv.ParseUint(string(buf), 16, 0) // Parse as base 16
 	if err == nil {
