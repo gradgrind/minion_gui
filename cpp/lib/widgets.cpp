@@ -3,6 +3,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Flex.H>
+#include <FL/Fl_Grid.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Select_Browser.H>
@@ -73,6 +74,9 @@ void W_Label::handle_method(
                 fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
             else if (align == "RIGHT")
                 fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
+            if (auto g = dynamic_cast<Fl_Grid*>(fl_widget->parent())) {
+                g->layout();
+            }
         }
     } else {
         Widget::handle_method(method, paramlist);
