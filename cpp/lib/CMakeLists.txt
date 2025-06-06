@@ -17,6 +17,8 @@ add_library(minion_gui SHARED
   textline.cpp
   widget.cpp widget.h
   widgets.cpp widgets.h
+  dialogs.cpp
+  dialogs.h
 )
 
 target_include_directories(minion_gui PUBLIC ../include)

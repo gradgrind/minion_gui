@@ -1,5 +1,6 @@
 #include "backend.h"
 #include "callback.h"
+#include "dialogs.h"
 #include "functions.h"
 #include "layout.h"
 #include "widget.h"
@@ -39,7 +40,8 @@ const map<string, new_function> new_function_map{{"Window", W_Window::make},
                                                  {"List", W_List::make},
                                                  {"TextLine", W_TextLine::make},
                                                  {"RowTable", W_RowTable::make},
-                                                 {"EditForm", W_EditForm::make}};
+                                                 {"EditForm", W_EditForm::make},
+                                                 {"Dialog", W_Dialog::make}};
 
 void GUI(
     MMap* mmap)

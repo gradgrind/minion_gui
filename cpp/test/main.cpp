@@ -37,7 +37,28 @@ const char* callback2(
     string wname;
     (*mm)->get_string("CALLBACK", wname);
     printf("callback got '%s'\n", dump(m));
-    minion::MMap mp({{"WIDGET", "TableTotals"}, {"DO", {{"VALUE", data}}}});
+    minion::MMap mp({{"WIDGET", wname}, {"DO", {{"TEXT", wname}}}});
+    auto cbr = dump(mp);
+    //printf("??? %s\n", cbr);
+    //fflush(stdout);
+    return cbr;
+}
+
+const char* callback3(
+    const char* data)
+{
+    auto m = minion_ibuffer.read(data);
+    auto mm = m.m_map();
+    string wname;
+    (*mm)->get_string("CALLBACK", wname);
+    printf("callback got '%s'\n", dump(m));
+
+    minion::MMap mp;
+    if (wname == "EF1") {
+        mp = minion::MMap({{"WIDGET", "popup"}, {"DO", {{"SHOW", wname}}}});
+    } else {
+        mp = minion::MMap({{"WIDGET", "TableTotals"}, {"DO", {{"VALUE", data}}}});
+    }
     auto cbr = dump(mp);
     //printf("??? %s\n", cbr);
     //fflush(stdout);
@@ -58,8 +79,8 @@ int main()
     auto flist = {
         //
         callback1,
-        callback1, // actually, there are no callbacks
-        callback2
+        callback2,
+        callback3
         //
     };
 

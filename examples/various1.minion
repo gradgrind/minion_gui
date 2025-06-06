@@ -302,6 +302,17 @@
     ]
   },
   
+  {
+    NEW: Dialog,
+    NAME: popup,
+    #PARENT: MainWindow,
+    FLOATING: 1,
+    DO: [
+      # [fit_to_parent],
+      # [MARGIN, 5]
+    ]
+  },
+
   # Starting up the main window
   {
     WIDGET: MainWindow,
