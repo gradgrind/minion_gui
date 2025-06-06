@@ -128,7 +128,31 @@ void value_error(
     throw msg + dump_value(m);
 }
 
-void Callback(MValue m)
+bool has_GUI(
+    MMap* m0)
+{
+    MValue dolist0 = m0->get("GUI");
+    if (!dolist0.is_null()) {
+        auto lp = dolist0.m_list();
+        if (lp) {
+            MList* dolist = lp->get();
+            auto len = dolist->size();
+            for (size_t i = 0; i < len; ++i) {
+                if (auto mm = dolist->get(i).m_map())
+                    GUI(mm->get());
+                else {
+                    value_error("Invalid GUI command: ", **mm);
+                }
+            }
+            return true;
+        }
+        value_error("GUI expects a list of commands: ", *m0);
+    }
+    return false;
+}
+
+void Callback(
+    MValue m)
 {
     input_value = {}; // clear the result
     const char* cbdata;
@@ -138,7 +162,9 @@ void Callback(MValue m)
     if (const char* e = input_value.error_message())
         throw e;
     if (auto mm = input_value.m_map()) {
-        GUI(mm->get());
+        auto mmap = mm->get();
+        if (!has_GUI(mmap))
+            GUI(mmap);
     } else {
         throw string{"Invalid callback result: "}.append(cbresult);
     }
@@ -171,22 +197,8 @@ void tmp_run(
     auto mp = data.m_map();
     if (mp) {
         MMap* m0 = mp->get();
-        MValue dolist0 = m0->get("GUI");
-        if (!dolist0.is_null()) {
-            auto lp = dolist0.m_list();
-            if (lp) {
-                MList* dolist =lp->get();
-                auto len = dolist->size();
-                for (size_t i = 0; i < len; ++i) {
-                    if (auto mm = dolist->get(i).m_map())
-                        GUI(mm->get());
-                    else {
-                        value_error("Invalid GUI command: ", **mm);
-                    }
-                }
-                return;
-            }
-        }
+        if (has_GUI(m0))
+            return;
     }
     value_error("Input data not a GUI command list: ", data);
 }
@@ -198,6 +210,8 @@ void Init(
     const char* data0)
 {
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
+
+    //TODO?: something like: Fl::background(250, 250, 200);
 
     string initgui{data0};
     minion::MValue guidata = minion_input.read(initgui);
