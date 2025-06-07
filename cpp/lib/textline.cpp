@@ -40,6 +40,7 @@ W_TextLine* W_TextLine::make(minion::MMap* parammap)
     auto w = new TextLine();
     auto widget = new W_TextLine();
     widget->fl_widget = w;
+    w->selection_color(Widget::selection_bg);
 
     w->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     w->callback(

@@ -124,7 +124,7 @@ W_Output* W_Output::make(
     auto w = new Fl_Output(0, 0, 0, Widget::line_height);
     auto widget = new W_Output();
     widget->fl_widget = w;
-    w->color(Widget::entry_bg);
+    w->selection_color(Widget::selection_bg);
     return widget;
 }
 
@@ -171,7 +171,7 @@ W_PushButton* W_PushButton::make(
     auto widget = new W_PushButton();
     widget->fl_widget = w;
     //TODO: "selection" colour
-    w->color(Widget::entry_bg, 0xe0e0ff00);
+    w->color(Widget::entry_bg, Widget::selection_bg);
     w->callback([](Fl_Widget* w, void* ud) {
         (void) ud;
         string* dw{Widget::get_widget_name(w)};

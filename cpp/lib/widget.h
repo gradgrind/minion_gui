@@ -14,8 +14,11 @@
 // static variables in `Widget`, which can be changed before creating
 // widgets to make global changes.
 const int LINE_HEIGHT = 30;
+const Fl_Color NORMAL_FG = 0x40404000;
+const Fl_Color NORMAL_BG = 0xf0f0f000;
 const Fl_Color ENTRY_BG = 0xffffc800;
 const Fl_Color PENDING_BG = 0xffe0e000;
+const Fl_Color SELECTION_BG = 0x4c64ff00;
 
 /// Each widget needs additional data, including its name. To make the
 // widget accessible to the text-based (MINION) interface, a map is
@@ -73,10 +76,18 @@ public:
         return &wd->w_name;
     }
 
-    inline static int line_height{LINE_HEIGHT};
-    inline static Fl_Color entry_bg{ENTRY_BG};
-    inline static Fl_Color pending_bg{PENDING_BG};
-    
+    inline static int line_height;
+    inline static Fl_Color normal_fg;
+    inline static Fl_Color normal_bg;
+    inline static Fl_Color entry_bg;
+    inline static Fl_Color pending_bg;
+    inline static Fl_Color selection_bg;
+
+    static void init_settings();
+    static void init_foreground(Fl_Color colour);
+    static void init_background(Fl_Color colour);
+    static void init_background2(Fl_Color colour);
+
     Fl_Widget* fltk_widget() { return fl_widget; }
 
     virtual void handle_method(std::string_view method, minion::MList* mlist);

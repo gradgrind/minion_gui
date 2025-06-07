@@ -1,9 +1,17 @@
 # buttons
 &APP_WIDTH: 600,
 &APP_HEIGHT: 400,
-&BACKGROUND: f0f0f0,
 
 {GUI: [
+  {
+    FUNCTION: SETUP,
+    DO: [
+      [BACKGROUND, f0f0f0],
+      [BACKGROUND2, ffff80],
+      [FOREGROUND, 404040]
+    ],
+  },
+  
   {
     NEW: Window,
     NAME: MainWindow,
@@ -12,8 +20,7 @@
     HEIGHT: &APP_HEIGHT,
     #ESC_CLOSES: 1,
     DO: [
-      [TEXT, "Buttons Test"],
-      [COLOUR, &BACKGROUND]
+      [TEXT, "Buttons Test"]
     ]
   },
   # Top-level contents

@@ -24,24 +24,28 @@ void SetCallbackFunction(
     backend = backend_pointer;
 }
 
-const map<string, new_function> new_function_map{{"Window", W_Window::make},
-                                                 {"Grid", W_Grid::make},
-                                                 {"Hlayout", W_Grid::make_hlayout},
-                                                 {"Vlayout", W_Grid::make_vlayout},
-                                                 {"PushButton", W_PushButton::make},
-                                                 {"Box", W_Box::make},
-                                                 {"Hline", W_Hline::make},
-                                                 {"Vline", W_Vline::make},
-                                                 {"Label", W_Label::make},
-                                                 {"Choice", W_Choice::make},
-                                                 {"Output", W_Output::make},
-                                                 {"PopupEditor", W_PopupEditor::make},
-                                                 {"Checkbox", W_Checkbox::make},
-                                                 {"List", W_List::make},
-                                                 {"TextLine", W_TextLine::make},
-                                                 {"RowTable", W_RowTable::make},
-                                                 {"EditForm", W_EditForm::make},
-                                                 {"Dialog", W_Dialog::make}};
+const map<string, new_function> new_function_map{
+    //
+    {"Window", W_Window::make},
+    {"Grid", W_Grid::make},
+    {"Hlayout", W_Grid::make_hlayout},
+    {"Vlayout", W_Grid::make_vlayout},
+    {"PushButton", W_PushButton::make},
+    {"Box", W_Box::make},
+    {"Hline", W_Hline::make},
+    {"Vline", W_Vline::make},
+    {"Label", W_Label::make},
+    {"Choice", W_Choice::make},
+    {"Output", W_Output::make},
+    {"PopupEditor", W_PopupEditor::make},
+    {"Checkbox", W_Checkbox::make},
+    {"List", W_List::make},
+    {"TextLine", W_TextLine::make},
+    {"RowTable", W_RowTable::make},
+    {"EditForm", W_EditForm::make},
+    {"Dialog", W_Dialog::make}
+    //
+};
 
 void GUI(
     MMap* mmap)
@@ -209,6 +213,7 @@ minion::InputBuffer minion_input; // for parsing minion
 void Init(
     const char* data0)
 {
+    Widget::init_settings();
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
     //TODO?: something like: Fl::background(250, 250, 200);

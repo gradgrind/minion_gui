@@ -13,6 +13,50 @@ using namespace minion;
 // static member
 unordered_map<std::string_view, Widget::flagged_widget> Widget::widget_map;
 
+// static member
+void Widget::init_foreground(
+    Fl_Color colour)
+{
+    normal_fg = colour;
+    Fl::foreground( //
+        (colour >> 24) & 0xFF,
+        (colour >> 16) & 0xFF,
+        (colour >> 8) & 0xFF);
+}
+
+// static member
+void Widget::init_background(
+    Fl_Color colour)
+{
+    normal_bg = colour;
+    Fl::background( //
+        (colour >> 24) & 0xFF,
+        (colour >> 16) & 0xFF,
+        (colour >> 8) & 0xFF);
+}
+
+// static member
+void Widget::init_background2(
+    Fl_Color colour)
+{
+    entry_bg = colour;
+    Fl::background2( //
+        (colour >> 24) & 0xFF,
+        (colour >> 16) & 0xFF,
+        (colour >> 8) & 0xFF);
+}
+
+// static member
+void Widget::init_settings()
+{
+    line_height = LINE_HEIGHT;
+    init_foreground(NORMAL_FG);
+    init_background(NORMAL_BG);
+    init_background2(ENTRY_BG);
+    pending_bg = PENDING_BG;
+    selection_bg = SELECTION_BG;
+}
+
 // static
 // Free all widget memory, reporting any parentless widgets that were not
 // declared as "FLOATING:1".

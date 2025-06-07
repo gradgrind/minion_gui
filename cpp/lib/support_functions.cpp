@@ -21,7 +21,7 @@ Fl_Color get_colour(
 }
 
 // Not all box types supported by FLTK are included here
-const map<string_view, Fl_Boxtype> boxtypes{
+inline const map<string_view, Fl_Boxtype> boxtypes{
     {"NO_BOX", FL_NO_BOX},
     {"FLAT_BOX", FL_FLAT_BOX},
     {"UP_BOX", FL_UP_BOX},
@@ -37,7 +37,7 @@ const map<string_view, Fl_Boxtype> boxtypes{
     {"SHADOW_BOX", FL_SHADOW_BOX},
     {"RSHADOW_BOX", FL_RSHADOW_BOX},
     {"RFLAT_BOX", FL_RFLAT_BOX},
-// frames (no background)
+    // frames (no background)
     {"UP_FRAME", FL_UP_FRAME},
     {"DOWN_FRAME", FL_DOWN_FRAME},
     {"BORDER_FRAME", FL_BORDER_FRAME},
