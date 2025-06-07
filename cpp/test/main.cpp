@@ -28,26 +28,27 @@ const char* callback1(
     throw "Invalid callback";
 }
 
-/*TODO
 const char* callback2(
     const char* data)
 {
     auto m = minion::Reader::read(data);
-    auto mm = m.m_map();
-    string wname;
-    (*mm)->get_string("CALLBACK", wname);
-    {
-        minion::Writer writer(m, 0);
-        printf("callback got '%s'\n", writer.dump_c());
+    printf("callback got '%s'\n", data);
+    if (auto mm = m.m_list()) {
+        string wname;
+        if ((*mm)->get_string(0, wname)) {
+            minion::MList mlist({"WIDGET", wname, {"TEXT", wname}});
+            minion::MValue val{mlist};
+            minion::Writer writer(val, -1);
+            callback_data = writer.dump_c();
+            printf("??? %s\n", callback_data.c_str());
+            fflush(stdout);
+            return callback_data.c_str();
+        }
     }
-    
-    minion::MMap mp({{"WIDGET", wname}, {"DO", {{"TEXT", wname}}}});
-    auto cbr = dump(mp);
-    //printf("??? %s\n", cbr);
-    //fflush(stdout);
-    return cbr;
+    throw "Invalid callback";
 }
 
+/*TODO
 const char* callback3(
     const char* data)
 {
@@ -78,16 +79,16 @@ int main()
     auto fplist = {
         // These paths are realtive to the directory
         // in which the binary is built.
-        "../../examples/buttons1.minion",
-        //"../../examples/grid1.minion",
+        //"../../examples/buttons1.minion",
+        "../../examples/grid1.minion",
         //"../../examples/various1.minion"
         //
     };
 
     auto flist = {
         //
-        callback1,
-        //callback2,
+        //callback1,
+        callback2,
         //callback3
         //
     };
