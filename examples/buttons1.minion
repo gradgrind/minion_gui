@@ -8,8 +8,7 @@
     [FOREGROUND, 804040]
   ],
   
-  [NEW, Window, {
-      NAME: MainWindow,
+  [NEW, Window, MainWindow, {
       FLOATING: 1,
       WIDTH: &APP_WIDTH,
       HEIGHT: &APP_HEIGHT,
@@ -18,31 +17,26 @@
     [TEXT, "Buttons Test"]
   ],
   # Top-level contents
-  [NEW, PushButton, {
-      NAME: PB1,
+  [NEW, PushButton, PB1, {
     },
     [TEXT, "PushButton 1"]
   ],
-  [NEW, Label, {
-      NAME: Label_1,
+  [NEW, Label, Label_1, {
       LABEL_ALIGN: LEFT
     },
     [TEXT, "Pushed"]
   ],
-  [NEW, Output, {
-      NAME: Output_1,
-      HORIZONTAL,
+  [NEW, Output, Output_1, {
+      GRID_ALIGN: HORIZONTAL,
       GRID_GROW: 1
     },
     [clear_visible_focus]
   ],
-  [NEW, PushButton, {
-      NAME: PB2,
+  [NEW, PushButton, PB2, {
     },
     [TEXT, "PushButton 2"]
   ],
-  [NEW, Hlayout, {
-      NAME: l_output,
+  [NEW, Hlayout, l_output, {
       GRID_ALIGN: HORIZONTAL,
       WIDGETS: [
         Label_1, Output_1
@@ -50,8 +44,7 @@
     },
     # [HEIGHT, 80],
   ],
-  [NEW, Vlayout, {
-      NAME: l_MainWindow,
+  [NEW, Vlayout, l_MainWindow, {
       PARENT: MainWindow,
       WIDGETS: [
         PB1, l_output, PB2

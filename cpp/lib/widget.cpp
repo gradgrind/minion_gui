@@ -87,11 +87,15 @@ string Widget::clear()
 
 // static
 void Widget::new_widget(
-    string_view wtype, MMap* m)
+    MList* m)
 {
+    string wtype;
     string name;
     // Check new widget name
-    if (!m->get_string("NAME", name)) {
+    if ( //
+        m->size() < 4 || !m->get_string(1, wtype) || !m->get_string(2, name)
+        //
+    ) {
         MValue m0{*m};
         throw string{"Bad NEW command: "} + dump_value(m0);
     }
@@ -107,28 +111,31 @@ void Widget::new_widget(
     } catch (std::out_of_range& e) {
         throw string{"Unknown widget type: "}.append(wtype);
     }
+    auto props = m->get(3).m_map();
+    if (!props) {
+        MValue m0{*m};
+        throw string{"NEW command has no properties: "} + dump_value(m0);
+    }
+
     // Create widget
-    Widget* w = f(m);
+    Widget* w = f(props->get());
     w->w_name = std::move(name);
     int fwidget = 0;
-    m->get_int("FLOATING", fwidget);
+    (*props)->get_int("FLOATING", fwidget);
     widget_map.emplace(w->w_name, flagged_widget{w, fwidget != 0});
     w->fltk_widget()->user_data(w, true); // auto-free = true
-    {
-        auto props = m->get("PROPERTIES");
-        if (props.type() == minion::T_Map)
-            w->properties = *props.m_map();
-    }
+    w->properties = *props;
+
     // Add to parent, if specified
     string parent;
-    if (m->get_string("PARENT", parent) && !parent.empty()) {
+    if ((*props)->get_string("PARENT", parent) && !parent.empty()) {
         auto p = Widget::get_fltk_widget(parent)->as_group();
         if (!p)
             throw string{"Invalid parent widget: "} + parent;
         p->add(w->fltk_widget());
     }
      // Handle method calls supplied with the widget creation
-    w->handle_methods(m);
+    w->handle_methods(m, 4);
 }
 
 // static
@@ -154,28 +161,20 @@ Widget::~Widget() {
 }
 
 void Widget::handle_methods(
-    MMap* m)
+    MList* dolist, size_t start)
 {
-    auto dolist0 = m->get("DO");
-    if (!dolist0.is_null()) {
-        if (auto dolist = dolist0.m_list()) {
-            auto len = (*dolist)->size();
-            for (size_t i = 0; i < len; ++i) {
-                auto n = (*dolist)->get(i);
-                auto mlist = n.m_list();
-                if (mlist) {
-                    string c;
-                    if ((*mlist)->get_string(0, c)) {
-                        handle_method(c, mlist->get());
-                        continue;
-                    }
-                }
-                throw string{"Invalid DO method on widget "} + w_name + ": " + dump_value(n);
+    auto len = dolist->size();
+    for (size_t i = start; i < len; ++i) {
+        auto n = dolist->get(i);
+        auto mlist = n.m_list();
+        if (mlist) {
+            string c;
+            if ((*mlist)->get_string(0, c)) {
+                handle_method(c, mlist->get());
+                continue;
             }
-            return;
         }
-        MValue m0{*m};
-        throw string{"Invalid DO list on widget "} + w_name + ": " + dump_value(m0);
+        throw string{"Invalid DO method on widget "} + w_name + ": " + dump_value(n);
     }
 }
 

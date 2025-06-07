@@ -48,70 +48,29 @@ const map<string, new_function> new_function_map{
 };
 
 void GUI(
-    MMap* mmap)
+    MList* cmd)
 {
     string s;
-    if (mmap->get_string("NEW", s)) {
-        // Make a new widget
-        Widget::new_widget(s, mmap);
-    } else if (mmap->get_string("WIDGET", s)) {
+    if (!cmd->get_string(0, s)) {
+        value_error("Invalid GUI command: ", *cmd);
+    }
+    if (s == "WIDGET") {
         // Handle widget methods
-        auto w = Widget::get_widget(s);
-        w->handle_methods(mmap);
-    } else if (mmap->get_string("FUNCTION", s)) {
-        // Some other function
-        auto f = function_map.at(s);
-        f(mmap);
-    } else {
-        value_error("Invalid GUI parameters: ", *mmap);
-    }
-}
-
-// Pass a message to the back-end. This can be an event/callback, the
-// reponse to a query, or whatever.
-
-// There need to be two kinds of "message":
-// 1) Let's call this a virtual override. It is a call to the back-end,
-//    perhaps with a result (like 0 or 1 for event handlers), and is
-//    blocking – so it should execute quickly. Unfortunately this seems
-//    very difficult to implement, because it might also need to query
-//    the front-end or perform other gui operations. Thus it entails
-//    a calling back and forth between back-end and front-end.
-// 2) Let's call this a trigger. It sets an operation in the back-end
-//    going, but doesn't wait for it to finish. Any resulting calls to
-//    the front-end could be picked up by an idle function.
-// For the moment I would like to implement just normal callbacks, i.e.
-// asynchronous calls. Where event handlers are necessary, I would first
-// consider extending the C++ widgets.
-
-//TODO
-MMap* message(
-    MMap* data)
-{
-    return data;
-}
-
-void to_back_end(
-    MMap* data)
-{
-    //MMap* result = message(data);
-    auto dolist0 = data->get("DO");
-    if (MList* mlist = dolist0.m_list()->get()) {
-        size_t n = mlist->size();
-        for (size_t i = 0; i < n; ++i) {
-            MValue cmd = mlist->get(i);
-            if (MMap* mmap = cmd.m_map()->get())
-                GUI(mmap);
+        string w;
+        if (cmd->get_string(1, w)) {
+            Widget::get_widget(w)->handle_methods(cmd, 2);
+            return;
         }
+        value_error("Invalid WIDGET command: ", *cmd);
     }
-    // Any back-end function which can take more than about 100ms should
-    // initiate a timeout leading to a modal "progress" dialog.
-    // Any data generated while such a callback is operating (i.e. before
-    // it returns a completion code) should be fetched and run by an idle
-    // handler. Any data generated outside of this period is probably an
-    // error – the back-end should not be doing anything then!
+    if (s == "NEW") {
+        // Make a new widget
+        Widget::new_widget(cmd);
+        return;
+    }
+    auto f = function_map.at(s);
+    f(cmd);
 }
-
 
 // This is used to manage the memory of a result from minion_read. It is
 // freed before a call to backend(), whose result is then parsed and
@@ -132,27 +91,17 @@ void value_error(
     throw msg + dump_value(m);
 }
 
-bool has_GUI(
-    MMap* m0)
+void do_commands(
+    MList* dolist)
 {
-    MValue dolist0 = m0->get("GUI");
-    if (!dolist0.is_null()) {
-        auto lp = dolist0.m_list();
-        if (lp) {
-            MList* dolist = lp->get();
-            auto len = dolist->size();
-            for (size_t i = 0; i < len; ++i) {
-                if (auto mm = dolist->get(i).m_map())
-                    GUI(mm->get());
-                else {
-                    value_error("Invalid GUI command: ", **mm);
-                }
-            }
-            return true;
+    auto len = dolist->size();
+    for (size_t i = 0; i < len; ++i) {
+        if (auto command = dolist->get(i).m_list())
+            GUI(command->get());
+        else {
+            value_error("Invalid GUI command: ", **command);
         }
-        value_error("GUI expects a list of commands: ", *m0);
     }
-    return false;
 }
 
 void Callback(
@@ -160,18 +109,15 @@ void Callback(
 {
     input_value = {}; // clear the result
     const char* cbdata;
-    cbdata = dump_buffer.dump(m); // compact form
+    cbdata = dump_buffer.dump(m, -1); // compact form
     const char* cbresult = backend(cbdata);
     input_value = input_buffer.read(cbresult);
-    if (const char* e = input_value.error_message())
+    if (auto dolist0 = input_value.m_list())
+        do_commands(dolist0->get());
+    else if (const char* e = input_value.error_message())
         throw e;
-    if (auto mm = input_value.m_map()) {
-        auto mmap = mm->get();
-        if (!has_GUI(mmap))
-            GUI(mmap);
-    } else {
+    else
         throw string{"Invalid callback result: "}.append(cbresult);
-    }
 }
 
 void Callback0(
@@ -194,19 +140,6 @@ void Callback2(string& widget, MValue data, MValue data2)
     Callback(m);
 }
 
-//TODO ... What should the final form be?
-void tmp_run(
-    MValue data)
-{
-    auto mp = data.m_map();
-    if (mp) {
-        MMap* m0 = mp->get();
-        if (has_GUI(m0))
-            return;
-    }
-    value_error("Input data not a GUI command list: ", data);
-}
-
 minion::InputBuffer minion_input; // for parsing minion
 
 //TODO
@@ -216,8 +149,6 @@ void Init(
     Widget::init_settings();
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
-    //TODO?: something like: Fl::background(250, 250, 200);
-
     string initgui{data0};
     minion::MValue guidata = minion_input.read(initgui);
     if (auto e = guidata.error_message()) {
@@ -225,7 +156,11 @@ void Init(
         return;
     }
     try {
-        tmp_run(guidata);
+        auto dolist0 = guidata.m_list();
+        if (dolist0)
+            do_commands(dolist0->get());
+        else
+            value_error("Input data not a GUI command list: ", guidata);
     } catch (string& e) {
         cerr << "THROWN: " << e << endl;
     } catch (char const* e) {

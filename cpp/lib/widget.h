@@ -61,7 +61,7 @@ public:
     ~Widget() override;
 
     static std::string clear();
-    static void new_widget(std::string_view wtype, minion::MMap* m);
+    static void new_widget(minion::MList* m);
     static Widget* get_widget(std::string_view name);
     static Fl_Widget* get_fltk_widget(
         std::string_view name)
@@ -92,7 +92,7 @@ public:
 
     virtual void handle_method(std::string_view method, minion::MList* mlist);
 
-    void handle_methods(minion::MMap* m); // handle the calls in a DO-list
+    void handle_methods(minion::MList* m, size_t start); // handle the calls in a command list
 
     //TODO: Should this be static? Do I need this at all? What exactly
     // should it do?

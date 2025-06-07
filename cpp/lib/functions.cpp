@@ -7,7 +7,7 @@
 using namespace std;
 
 void f_RUN(
-    minion::MMap* m)
+    minion::MList* m)
 {
     (void) m;
     //auto cc = Fl::run();
@@ -51,29 +51,21 @@ void setup_method(
 }
 
 void f_SETUP(
-    minion::MMap* m)
+    minion::MList* m)
 {
-    auto dolist0 = m->get("DO");
-    if (!dolist0.is_null()) {
-        if (auto dolist = dolist0.m_list()) {
-            auto len = (*dolist)->size();
-            for (size_t i = 0; i < len; ++i) {
-                auto n = (*dolist)->get(i);
-                auto mlist = n.m_list();
-                if (mlist) {
-                    string c;
-                    if ((*mlist)->get_string(0, c)) {
-                        setup_method(c, mlist->get());
-                        continue;
-                    }
-                }
-                throw string{"SETUP function, expected method (list): "} + dump_value(n);
+    auto len = m->size();
+    for (size_t i = 1; i < len; ++i) {
+        auto n = m->get(i);
+        auto mlist = n.m_list();
+        if (mlist) {
+            string c;
+            if ((*mlist)->get_string(0, c)) {
+                setup_method(c, mlist->get());
+                continue;
             }
-            return;
         }
+        throw string{"SETUP function, expected method (list): "} + dump_value(n);
     }
-    minion::MValue m0{*m};
-    throw string{"Invalid SETUP function: "} + dump_value(*m);
 }
 
 std::unordered_map<std::string, function_handler> function_map{

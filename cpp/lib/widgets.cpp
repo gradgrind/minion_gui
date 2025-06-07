@@ -15,9 +15,9 @@ using namespace minion;
 
 //static
 W_Box* W_Box::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Box(0, 0, 0, 0);
     auto widget = new W_Box();
     widget->fl_widget = w;
@@ -26,9 +26,9 @@ W_Box* W_Box::make(
 
 //static
 W_Hline* W_Hline::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Box(FL_BORDER_FRAME, 0, 0, 0, 1, "");
     auto widget = new W_Hline();
     widget->fl_widget = w;
@@ -37,9 +37,9 @@ W_Hline* W_Hline::make(
 
 //static
 W_Vline* W_Vline::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Box(FL_BORDER_FRAME, 0, 0, 1, 0, "");
     auto widget = new W_Vline();
     widget->fl_widget = w;
@@ -48,9 +48,9 @@ W_Vline* W_Vline::make(
 
 //static
 W_Label* W_Label::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Box(0, 0, 0, 0);
     auto widget = new W_Label();
     widget->fl_widget = w;
@@ -58,7 +58,7 @@ W_Label* W_Label::make(
 }
 
 void W_Label::handle_method(
-    std::string_view method, minion::MList* paramlist)
+    string_view method, MList* paramlist)
 {
     string label;
     if (method == "TEXT") {
@@ -85,9 +85,9 @@ void W_Label::handle_method(
 
 //static
 W_Choice* W_Choice::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Choice(0, 0, 0, Widget::line_height);
     w->callback([](Fl_Widget* w, void* ud) {
         (void) ud;
@@ -118,9 +118,9 @@ void W_Choice::handle_method(
 
 //static
 W_Output* W_Output::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Output(0, 0, 0, Widget::line_height);
     auto widget = new W_Output();
     widget->fl_widget = w;
@@ -145,9 +145,9 @@ void W_Output::handle_method(
 
 // static
 W_PopupEditor* W_PopupEditor::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Output(0, 0, 0, Widget::line_height);
     auto widget = new W_PopupEditor();
     widget->fl_widget = w;
@@ -164,9 +164,9 @@ W_PopupEditor* W_PopupEditor::make(
 
 //static
 W_PushButton* W_PushButton::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Button(0, 0, 0, 0);
     auto widget = new W_PushButton();
     widget->fl_widget = w;
@@ -185,9 +185,9 @@ W_PushButton* W_PushButton::make(
 
 //static
 W_Checkbox* W_Checkbox::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Round_Button(0, 0, 0, Widget::line_height);
     auto widget = new W_Checkbox();
     widget->fl_widget = w;
@@ -207,9 +207,9 @@ W_Checkbox* W_Checkbox::make(
 
 //static
 W_List* W_List::make(
-    minion::MMap* parammap)
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Select_Browser(0, 0, 0, 0);
     auto widget = new W_List();
     widget->fl_widget = w;

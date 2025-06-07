@@ -22,10 +22,10 @@ const char* callback1(
     string wname;
     (*mm)->get_string("CALLBACK", wname);
     printf("callback got '%s'\n", dump(m));
-    minion::MMap mp({{"WIDGET", "Output_1"}, {"DO", {{"VALUE", wname}}}});
-    auto cbr = dump(mp);
-    //printf("??? %s\n", cbr);
-    //fflush(stdout);
+    minion::MList mlist({"WIDGET", "Output_1", {"VALUE", wname}});
+    auto cbr = dump(mlist);
+    printf("??? %s\n", cbr);
+    fflush(stdout);
     return cbr;
 }
 
@@ -71,8 +71,8 @@ int main()
         // These paths are realtive to the directory
         // in which the binary is built.
         "../../examples/buttons1.minion",
-        "../../examples/grid1.minion",
-        "../../examples/various1.minion"
+        //"../../examples/grid1.minion",
+        //"../../examples/various1.minion"
         //
     };
 

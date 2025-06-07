@@ -64,10 +64,11 @@ void callback_close_window(
 // *** layout widgets – Fl_Group based
 
 // The Group widget is only needed for its `handle_method`.
-void W_Group::handle_method(std::string_view method, minion::MList* paramlist)
+void W_Group::handle_method(
+    string_view method, MList* paramlist)
 {
     if (method == "RESIZABLE") {
-        std::string wname;
+        string wname;
         if (paramlist->get_string(1, wname)) {
             auto rsw = Widget::get_fltk_widget(wname);
             fl_widget->as_group()->resizable(rsw);
@@ -86,20 +87,20 @@ void W_Group::handle_method(std::string_view method, minion::MList* paramlist)
     }
 }
 
-
-W_Window* W_Window::make(MMap* parammap)
+W_Window* W_Window::make(
+    MMap* props)
 {
     int ww = 800;
     int wh = 600;
-    parammap->get_int("WIDTH", ww);
-    parammap->get_int("HEIGHT", wh);
+    props->get_int("WIDTH", ww);
+    props->get_int("HEIGHT", wh);
     auto w = new Fl_Double_Window(ww, wh);
     w->callback(callback_close_window);
     Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Window();
     widget->fl_widget = w;
-    parammap->get_int("MIN_WIDTH", ww);
-    parammap->get_int("MIN_HEIGHT", wh);
+    props->get_int("MIN_WIDTH", ww);
+    props->get_int("MIN_HEIGHT", wh);
     w->size_range(ww, wh);
     return widget;
 }
@@ -114,9 +115,10 @@ struct grid_item
     Fl_Grid_Align align = FL_GRID_CENTER;
 };
 
-W_Grid* W_Grid::make(minion::MMap* parammap)
+W_Grid* W_Grid::make(
+    MMap* props)
 {
-    (void) parammap;
+    (void) props;
     auto w = new Fl_Grid(0, 0, 0, 0);
     w->box(FL_NO_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
@@ -124,7 +126,7 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
     widget->fl_widget = w;
 
     // Get contained widgets ...
-    auto wlist0 = parammap->get("WIDGETS");
+    auto wlist0 = props->get("WIDGETS");
     if (!wlist0.is_null()) {
         auto wlist = wlist0.m_list()->get();
         auto n = wlist->size();
@@ -176,7 +178,7 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
             }
 
             // Row and column weights ...
-            auto wmap0 = parammap->get("ROW_WEIGHTS");
+            auto wmap0 = props->get("ROW_WEIGHTS");
             if (!wmap0.is_null()) {
                 if (auto wmap = wmap0.m_list()) {
                     auto wl = wmap->get();
@@ -199,7 +201,7 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
                 }
             }
 
-            wmap0 = parammap->get("COL_WEIGHTS");
+            wmap0 = props->get("COL_WEIGHTS");
             if (!wmap0.is_null()) {
                 if (auto wmap = wmap0.m_list()) {
                     auto wl = wmap->get();
@@ -228,7 +230,8 @@ W_Grid* W_Grid::make(minion::MMap* parammap)
     throw "Layout with no WIDGETS list: " + *widget->widget_name();
 }
 
-void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
+void W_Grid::handle_method(
+    string_view method, MList* paramlist)
 {
     if (method == "GAP") {
         int rowgap;
@@ -261,8 +264,7 @@ void W_Grid::handle_method(std::string_view method, minion::MList* paramlist)
 
 //static
 W_Grid* W_Grid::new_hvgrid(
-    MMap* parammap,
-    bool horizontal)
+    MMap* props, bool horizontal)
 {
     auto w = new Fl_Grid(0, 0, 0, 0);
     w->box(FL_NO_BOX);
@@ -271,7 +273,7 @@ W_Grid* W_Grid::new_hvgrid(
     widget->fl_widget = w;
 
     // Get contained widgets ...
-    auto wlist0 = parammap->get("WIDGETS");
+    auto wlist0 = props->get("WIDGETS");
     if (!wlist0.is_null()) {
         auto wlist = wlist0.m_list()->get();
         auto n = wlist->size();
