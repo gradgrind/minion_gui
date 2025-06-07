@@ -75,16 +75,16 @@ void GUI(
 // This is used to manage the memory of a result from minion_read. It is
 // freed before a call to backend(), whose result is then parsed and
 // stored there.
+//TODO: What about recursive calls? ...
 MValue input_value;
 
-// This is used for reading (deserializing) MINION messages.
-InputBuffer input_buffer;
-
-// This is used for writing (serializing) MINION messages.
-DumpBuffer dump_buffer;
-const char* dump_value(MValue m) {
-    return dump_buffer.dump(m, 0);
+string dump_value(
+    MValue m)
+{
+    minion::Writer writer(m, 0);
+    return string{writer.dump()};
 }
+
 void value_error(
     string msg, MValue m)
 {
@@ -108,10 +108,20 @@ void Callback(
     MValue m)
 {
     input_value = {}; // clear the result
-    const char* cbdata;
-    cbdata = dump_buffer.dump(m, -1); // compact form
-    const char* cbresult = backend(cbdata);
-    input_value = input_buffer.read(cbresult);
+    //const char* cbdata;
+    const char* cbresult;
+    {
+        minion::Writer writer(m, -1);
+        //printf("callback got '%s'\n", writer.dump_c());
+        auto cbdata = writer.dump_c();
+        cbresult = backend(cbdata);
+    }
+
+    input_value = minion::Reader::read(cbresult);
+
+    //cbdata = dump_buffer.dump(m, -1); // compact form
+    //const char* cbresult = backend(cbdata);
+    //input_value = input_buffer.read(cbresult);
     if (auto dolist0 = input_value.m_list())
         do_commands(dolist0->get());
     else if (const char* e = input_value.error_message())
@@ -140,8 +150,6 @@ void Callback2(string& widget, MValue data, MValue data2)
     Callback(m);
 }
 
-minion::InputBuffer minion_input; // for parsing minion
-
 //TODO
 void Init(
     const char* data0)
@@ -149,22 +157,24 @@ void Init(
     Widget::init_settings();
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
-    string initgui{data0};
-    minion::MValue guidata = minion_input.read(initgui);
+    //string initgui{data0};
+    auto guidata = minion::Reader::read(data0);
+    //minion::MValue guidata = minion_input.read(initgui);
     if (auto e = guidata.error_message()) {
         cerr << e << endl;
         return;
     }
-    try {
+    //    try {
+    {
         auto dolist0 = guidata.m_list();
         if (dolist0)
             do_commands(dolist0->get());
         else
             value_error("Input data not a GUI command list: ", guidata);
-    } catch (string& e) {
-        cerr << "THROWN: " << e << endl;
-    } catch (char const* e) {
-        cerr << "THROWN: " << e << endl;
+        //    } catch (string& e) {
+        //        cerr << "THROWN 1: " << e << endl;
+        //    } catch (char const* e) {
+        //        cerr << "THROWN 2: " << e << endl;
     }
     auto e = Widget::clear();
     if (!e.empty())

@@ -6,37 +6,40 @@
 
 using namespace std;
 
-minion::InputBuffer minion_ibuffer;
-minion::DumpBuffer minion_obuffer;
-const char* dump(
-    minion::MValue m)
-{
-    return minion_obuffer.dump(m, 0);
-}
+string callback_data;
 
 const char* callback1(
     const char* data)
 {
-    auto m = minion_ibuffer.read(data);
+    auto m = minion::Reader::read(data);
     auto mm = m.m_map();
     string wname;
     (*mm)->get_string("CALLBACK", wname);
-    printf("callback got '%s'\n", dump(m));
+    {
+        minion::Writer writer(m, 0);
+        printf("callback got '%s'\n", writer.dump_c());
+    }
     minion::MList mlist({"WIDGET", "Output_1", {"VALUE", wname}});
-    auto cbr = dump(mlist);
-    printf("??? %s\n", cbr);
+    minion::MValue val{mlist};
+    minion::Writer writer(val, -1);
+    callback_data = writer.dump_c();
+    printf("??? %s\n", callback_data.c_str());
     fflush(stdout);
-    return cbr;
+    return callback_data.c_str();
 }
-
+/*TODO
 const char* callback2(
     const char* data)
 {
-    auto m = minion_ibuffer.read(data);
+    auto m = minion::Reader::read(data);
     auto mm = m.m_map();
     string wname;
     (*mm)->get_string("CALLBACK", wname);
-    printf("callback got '%s'\n", dump(m));
+    {
+        minion::Writer writer(m, 0);
+        printf("callback got '%s'\n", writer.dump_c());
+    }
+    
     minion::MMap mp({{"WIDGET", wname}, {"DO", {{"TEXT", wname}}}});
     auto cbr = dump(mp);
     //printf("??? %s\n", cbr);
@@ -47,11 +50,14 @@ const char* callback2(
 const char* callback3(
     const char* data)
 {
-    auto m = minion_ibuffer.read(data);
+    auto m = minion::Reader::read(data);
     auto mm = m.m_map();
     string wname;
     (*mm)->get_string("CALLBACK", wname);
-    printf("callback got '%s'\n", dump(m));
+    {
+        minion::Writer writer(m, 0);
+        printf("callback got '%s'\n", writer.dump_c());
+    }
 
     minion::MMap mp;
     if (wname == "EF1") {
@@ -64,6 +70,7 @@ const char* callback3(
     //fflush(stdout);
     return cbr;
 }
+*/
 
 int main()
 {
@@ -79,8 +86,8 @@ int main()
     auto flist = {
         //
         callback1,
-        callback2,
-        callback3
+        //callback2,
+        //callback3
         //
     };
 

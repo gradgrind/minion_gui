@@ -87,6 +87,8 @@ public:
     static void init_foreground(Fl_Color colour);
     static void init_background(Fl_Color colour);
     static void init_background2(Fl_Color colour);
+    static void init_selection_background(Fl_Color colour);
+    static void init_pending_background(Fl_Color colour);
 
     Fl_Widget* fltk_widget() { return fl_widget; }
 

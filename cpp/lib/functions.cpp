@@ -42,6 +42,22 @@ void setup_method(
         }
         throw string{"Invalid SETUP method, colour expected: "} + dump_value(*paramlist);
     }
+    if (method == "SELECTION_BACKGROUND") {
+        std::string colour;
+        if (paramlist->get_string(1, colour)) {
+            Widget::init_selection_background(get_colour(colour));
+            return;
+        }
+        throw string{"Invalid SETUP method, colour expected: "} + dump_value(*paramlist);
+    }
+    if (method == "PENDING_BACKGROUND") {
+        std::string colour;
+        if (paramlist->get_string(1, colour)) {
+            Widget::init_pending_background(get_colour(colour));
+            return;
+        }
+        throw string{"Invalid SETUP method, colour expected: "} + dump_value(*paramlist);
+    }
     throw string{"Invalid SETUP method: "} + dump_value(*paramlist);
     //TODO?
     //Fl::box_border_radius_max 	( 	int 	R	);

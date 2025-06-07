@@ -47,14 +47,28 @@ void Widget::init_background2(
 }
 
 // static member
+void Widget::init_selection_background(
+    Fl_Color colour)
+{
+    selection_bg = colour;
+}
+
+// static member
+void Widget::init_pending_background(
+    Fl_Color colour)
+{
+    pending_bg = colour;
+}
+
+// static member
 void Widget::init_settings()
 {
     line_height = LINE_HEIGHT;
     init_foreground(NORMAL_FG);
     init_background(NORMAL_BG);
     init_background2(ENTRY_BG);
-    pending_bg = PENDING_BG;
-    selection_bg = SELECTION_BG;
+    init_pending_background(PENDING_BG);
+    init_selection_background(SELECTION_BG);
 }
 
 // static

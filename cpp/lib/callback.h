@@ -9,7 +9,7 @@
 extern minion::MValue input_value;
 
 // Writing (serializing) MINION messages.
-const char* dump_value(minion::MValue m);
+std::string dump_value(minion::MValue m);
 void value_error(std::string msg, minion::MValue m);
 
 void Callback(minion::MValue m);

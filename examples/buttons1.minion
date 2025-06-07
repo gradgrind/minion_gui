@@ -3,9 +3,13 @@
 &APP_HEIGHT: 400,
 [
   [SETUP,      
-    [BACKGROUND, 000000],
-    [BACKGROUND2, c8ffff],
-    [FOREGROUND, 804040]
+    # [BACKGROUND, ffffff],
+    # [BACKGROUND2, c8ffff],
+    # [FOREGROUND, 804040]
+    [BACKGROUND, 202020],
+    [BACKGROUND2, 404040],
+    [FOREGROUND, f0f0f0],
+    [SELECTION_BACKGROUND, a0a0f0],
   ],
   
   [NEW, Window, MainWindow, {
