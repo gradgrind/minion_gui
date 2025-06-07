@@ -12,21 +12,22 @@ const char* callback1(
     const char* data)
 {
     auto m = minion::Reader::read(data);
-    auto mm = m.m_map();
-    string wname;
-    (*mm)->get_string("CALLBACK", wname);
-    {
-        minion::Writer writer(m, 0);
-        printf("callback got '%s'\n", writer.dump_c());
+    printf("callback got '%s'\n", data);
+    if (auto mm = m.m_list()) {
+        string wname;
+        if ((*mm)->get_string(0, wname)) {
+            minion::MList mlist({"WIDGET", "Output_1", {"VALUE", wname}});
+            minion::MValue val{mlist};
+            minion::Writer writer(val, -1);
+            callback_data = writer.dump_c();
+            printf("??? %s\n", callback_data.c_str());
+            fflush(stdout);
+            return callback_data.c_str();
+        }
     }
-    minion::MList mlist({"WIDGET", "Output_1", {"VALUE", wname}});
-    minion::MValue val{mlist};
-    minion::Writer writer(val, -1);
-    callback_data = writer.dump_c();
-    printf("??? %s\n", callback_data.c_str());
-    fflush(stdout);
-    return callback_data.c_str();
+    throw "Invalid callback";
 }
+
 /*TODO
 const char* callback2(
     const char* data)

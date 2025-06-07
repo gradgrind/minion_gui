@@ -133,20 +133,20 @@ void Callback(
 void Callback0(
     string& widget)
 {
-    MMap m{{{"CALLBACK", widget}}};
+    MList m({widget});
     Callback(m);
 }
 
 void Callback1(
     string& widget, MValue data)
 {
-    MMap m{{{"CALLBACK", widget}, {"DATA", data}}};
+    MList m({widget, data});
     Callback(m);
 }
 
 void Callback2(string& widget, MValue data, MValue data2)
 {
-    MMap m{{{"CALLBACK", widget}, {"DATA", data}, {"DATA2", data2}}};
+    MList m({widget, data, data2});
     Callback(m);
 }
 
