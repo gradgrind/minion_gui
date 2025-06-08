@@ -40,9 +40,6 @@ void callback_close_window(
     //(void) ud;
     if (Fl::callback_reason() == FL_REASON_CANCELLED) {
         // escape key pressed
-        //TODO--
-        cout << "Escape key pressed" << endl;
-
         int esc_quit = 0;
         static_cast<Widget*>(ud)->property_int("ESC_CLOSES", esc_quit);
         if (esc_quit == 0)
@@ -56,8 +53,6 @@ void callback_close_window(
     //    return;
     //}
 
-    //TODO--
-    cout << "Closing " << *Widget::get_widget_name(w) << endl;
     w->hide();
 }
 

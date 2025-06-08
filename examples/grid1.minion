@@ -76,10 +76,5 @@
     [ MARGIN, 3 ],
     [ GAP, 10 ],
     [ SHOW_GRID, 1 ]
-  ],
-  [
-    WIDGET, MainWindow,
-    [ SHOW ]
-  ],
-  [ RUN ]
+  ]
 ]

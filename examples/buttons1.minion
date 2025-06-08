@@ -63,10 +63,4 @@
   [WIDGET, PB1,
     [SIZE, 200, 60]
   ],
-
-  # Starting up the main window
-  [WIDGET, MainWindow,
-    [SHOW]
-  ],
-  [RUN] # Enter main event loop
 ]

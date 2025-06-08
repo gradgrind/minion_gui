@@ -50,21 +50,23 @@ void f_MINION_FILE(
     MList* m)
 {
     string f;
-    if (m->get_string(0, f)) {
+    if (m->get_string(1, f)) {
         string data0 = readfile(f);
         if (data0.empty()) {
-            throw "Error opening file:/n " + f;
+            throw "Error opening file:\n " + f;
         }
         auto guidata = Reader::read(data0);
         if (auto e = guidata.error_message()) {
             throw e;
         }
         auto dolist0 = guidata.m_list();
-        if (dolist0)
+        if (dolist0) {
             do_commands(dolist0->get());
-        else
-            value_error("Input data not a GUI command list: ", guidata);
+            return;
+        } else
+            value_error("Input data not a GUI command list:\n ", guidata);
     }
+    value_error("Invalid command:\n ", *m);
 }
 
 void f_RUN(

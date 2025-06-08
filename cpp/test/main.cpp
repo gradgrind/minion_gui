@@ -1,9 +1,7 @@
 #include "backend.h"
-#include "iofile.h"
 #include "minion.h"
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 
 using namespace std;
 
@@ -99,20 +97,21 @@ int main()
     for (int count = 0; count < 2; ++count) {
         int i = 0;
         for (const auto& fp : fplist) {
+            /*
             guidata = readfile(fp);
             if (guidata.empty()) {
                 cerr << "Read file failed: " << fp << endl;
                 exit(1);
             }
+            */
 
             SetCallbackFunction(flist.begin()[i]);
             ++i;
 
-            //TODO: something like ...
-            //string fpm = string{"[[MINION_FILE,"} + fp + "]]";
-            //Init(fpm.c_str());
-
-            Init(guidata.c_str());
+            string fpm = string{"[[MINION_FILE,"}.append(fp).append(
+                "],[WIDGET,MainWindow,[SHOW]],[RUN]]");
+            Init(fpm.c_str());
+            //Init(guidata.c_str());
         }
     }
 

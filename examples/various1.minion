@@ -301,15 +301,5 @@
     {
       "FLOATING": "1"
     }
-  ],
-  [
-    "WIDGET",
-    "MainWindow",
-    [
-      "SHOW"
-    ]
-  ],
-  [
-    "RUN"
   ]
 ]
