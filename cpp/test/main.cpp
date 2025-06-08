@@ -55,15 +55,15 @@ const char* callback3(
     if (auto mm = m.m_list()) {
         string wname;
         if ((*mm)->get_string(0, wname)) {
-            minion::MList mlist;
+            minion::MValue mlist0({"WIDGET", "TableTotals", {"VALUE", data}});
+            minion::MValue mlist;
             if (wname == "EF1") {
-                mlist = minion::MList({"WIDGET", "popup", {"SHOW", wname}});
+                minion::MValue mlist1({"WIDGET", "popup", {"SHOW", wname}});
+                mlist = minion::MValue({mlist0, mlist1});
             } else {
-                mlist = minion::MList({"WIDGET", "TableTotals", {"VALUE", data}});
+                mlist = minion::MValue({mlist0});
             }
-
-            minion::MValue val{mlist};
-            minion::Writer writer(val, -1);
+            minion::Writer writer(mlist, 0);
             callback_data = writer.dump_c();
             printf("??? %s\n", callback_data.c_str());
             fflush(stdout);
