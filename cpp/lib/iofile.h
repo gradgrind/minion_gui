@@ -3,7 +3,7 @@
 
 #include <string>
 
-bool readfile(std::string &data, const std::string &filepath);
+std::string readfile(const std::string &filepath);
 bool writefile(const std::string &data, const std::string &filepath);
 
 #endif // IOFILE_H

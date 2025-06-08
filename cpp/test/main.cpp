@@ -3,6 +3,7 @@
 #include "minion.h"
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
@@ -79,16 +80,16 @@ int main()
     auto fplist = {
         // These paths are realtive to the directory
         // in which the binary is built.
-        //"../../examples/buttons1.minion",
-        //"../../examples/grid1.minion",
+        "../../examples/buttons1.minion",
+        "../../examples/grid1.minion",
         "../../examples/various1.minion"
         //
     };
 
     auto flist = {
         //
-        //callback1,
-        //callback2,
+        callback1,
+        callback2,
         callback3
         //
     };
@@ -98,12 +99,18 @@ int main()
     for (int count = 0; count < 2; ++count) {
         int i = 0;
         for (const auto& fp : fplist) {
-            if (!readfile(guidata, fp)) {
-                printf("File not found: %s\n", fp);
+            guidata = readfile(fp);
+            if (guidata.empty()) {
+                cerr << "Read file failed: " << fp << endl;
                 exit(1);
             }
+
             SetCallbackFunction(flist.begin()[i]);
             ++i;
+
+            //TODO: something like ...
+            //string fpm = string{"[[MINION_FILE,"} + fp + "]]";
+            //Init(fpm.c_str());
 
             Init(guidata.c_str());
         }

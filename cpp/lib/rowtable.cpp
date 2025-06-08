@@ -181,7 +181,6 @@ void RowTable::_row_cb(
     string* dw{Widget::get_widget_name(ww)};
     int i = ww->_current_row;
     //auto res = Callback1(dw, to_string(i));
-    //cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
 
     //TODO: Do I want the row data?
     auto rowheader = ww->row_headers.at(i);
@@ -192,7 +191,6 @@ void RowTable::_row_cb(
         ml.emplace_back(s);
     }
     Callback2(*dw, to_string(i), ml);
-    cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

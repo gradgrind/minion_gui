@@ -5,156 +5,81 @@
 
 [
   [
-    "NEW",
-    "Window",
-    "MainWindow",
+    NEW, Window, MainWindow,
     {
-      "FLOATING": "1",
-      "WIDTH": &APP_WIDTH,
-      "HEIGHT": &APP_HEIGHT,
-      "MIN_WIDTH": "250",
-      "MIN_HEIGHT": "120",
-      "ESC_CLOSES": "1"
+      FLOATING: 1,
+      WIDTH: &APP_WIDTH,
+      HEIGHT: &APP_HEIGHT,
+      MIN_WIDTH: 250,
+      MIN_HEIGHT: 120,
+      ESC_CLOSES: 1
     },
-    [
-      "TEXT",
-      "Grid Test"
-    ],
-    [
-      "COLOUR",
-      &BACKGROUND
-    ]
+    [ TEXT, "Grid Test" ],
+    [ COLOUR, &BACKGROUND ]
   ],
   [
-    "NEW",
-    "PushButton",
-    "b0",
+    NEW, PushButton, b0,
     {
-      "GRID_ALIGN": "FILL"
+      GRID_ALIGN: FILL
     },
-    [
-      "TEXT",
-      "New"
-    ]
+    [ TEXT, "New" ]
   ],
   [
-    "NEW",
-    "PushButton",
-    "b1",
+    NEW, PushButton, b1,
     {
-      "GRID_ALIGN": "FILL"
+      GRID_ALIGN: FILL
     },
-    [
-      "TEXT",
-      "Options"
-    ]
+    [ TEXT, "Options" ]
   ],
   [
-    "NEW",
-    "PushButton",
-    "b2",
+    NEW, PushButton, b2,
     {
-      "GRID_ALIGN": "FILL"
+      GRID_ALIGN: FILL
     },
-    [
-      "TEXT",
-      "About"
-    ]
+    [ TEXT, "About" ]
   ],
   [
-    "NEW",
-    "PushButton",
-    "b3",
+    NEW, PushButton, b3,
     {
-      "GRID_ALIGN": "FILL"
+      GRID_ALIGN: FILL
     },
-    [
-      "TEXT",
-      "Help"
-    ]
+    [ TEXT, "Help" ]
   ],
   [
-    "NEW",
-    "PushButton",
-    "b4",
+    NEW, PushButton, b4,
     {
-      "GRID_ALIGN": "FILL"
+      GRID_ALIGN: FILL
     },
-    [
-      "TEXT",
-      "Quit"
-    ]
+    [ TEXT, "Quit" ]
   ],
   [
-    "NEW",
-    "Grid",
-    "l_MainWindow",
+    NEW, Grid, l_MainWindow,
     {
-      "PARENT": "MainWindow",
-      "WIDGETS": [
-        [
-          "b0",
-          "0",
-          "0"
-        ],
-        [
-          "b1",
-          "0",
-          "2"
-        ],
-        [
-          "b2",
-          "1",
-          "1"
-        ],
-        [
-          "b3",
-          "2",
-          "0"
-        ],
-        [
-          "b4",
-          "2",
-          "2"
-        ]
+      PARENT: MainWindow,
+      WIDGETS: [
+        [ b0, 0, 0 ],
+        [ b1, 0, 2 ],
+        [ b2, 1, 1 ],
+        [ b3, 2, 0 ],
+        [ b4, 2, 2 ]
       ],
-      "ROW_WEIGHTS": [
-        [
-          "1",
-          "1"
-        ]
+      ROW_WEIGHTS: [
+        [1, 1]
       ],
-      "COL_WEIGHTS": [
-        [
-          "0",
-          "1"
-        ]
+      COL_WEIGHTS: [
+        [0, 1]
       ]
     },
     [
-      "fit_to_parent"
+      fit_to_parent
     ],
-    [
-      "MARGIN",
-      "3"
-    ],
-    [
-      "GAP",
-      "10"
-    ],
-    [
-      "SHOW_GRID",
-      "1"
-    ]
+    [ MARGIN, 3 ],
+    [ GAP, 10 ],
+    [ SHOW_GRID, 1 ]
   ],
   [
-    "WIDGET",
-    "MainWindow",
-    [
-      "SHOW"
-    ]
+    WIDGET, MainWindow,
+    [ SHOW ]
   ],
-  [
-    "RUN"
-  ]
+  [ RUN ]
 ]

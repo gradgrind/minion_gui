@@ -16,7 +16,7 @@ Fl_Color get_colour(
             if (index == colour.size()) return i * 0x100;
         } catch (...) {}
     }
-    string msg{"Invalid FLTK colour: '" + colour + "'"};
+    string msg{"Invalid colour: '" + colour + "'"};
     throw msg; 
 }
 

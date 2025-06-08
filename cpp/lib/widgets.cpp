@@ -7,7 +7,6 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Select_Browser.H>
-#include <iostream>
 using namespace std;
 using namespace minion;
 
@@ -94,7 +93,6 @@ W_Choice* W_Choice::make(
         string* dw{Widget::get_widget_name(w)};
         auto ww = static_cast<Fl_Choice*>(w);
         Callback2(*dw, to_string(ww->value()), ww->text());
-        cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
     });
     auto widget = new W_Choice();
     widget->fl_widget = w;
@@ -157,7 +155,6 @@ W_PopupEditor* W_PopupEditor::make(
         string* dw{Widget::get_widget_name(w)};
         // or string dw{static_cast<Widget*>(ud)->widget_name()};
         Callback1(*dw, static_cast<Fl_Output*>(w)->value());
-        cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
     });
     return widget;
 }
@@ -178,7 +175,6 @@ W_PushButton* W_PushButton::make(
         // or string dw{static_cast<Widget*>(ud)->widget_name()};
         //auto ww = static_cast<Fl_Button*>(w);
         Callback0(*dw);
-        cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
     });
     return widget;
 }
@@ -200,7 +196,6 @@ W_Checkbox* W_Checkbox::make(
         if (ww->value() != 0)
             val = "1";
         Callback1(*dw, val);
-        cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
     });
     return widget;
 }
@@ -223,7 +218,6 @@ W_List* W_List::make(
         // Callback only for actual items (1-based indexing)
         if (i > 0) {
             Callback2(*dw, to_string(i - 1), ww->text(i));
-            cout << "CALLBACK RETURNED: " << dump_value(input_value) << endl;
         }
     });
     return widget;

@@ -3,15 +3,14 @@
 
 using namespace std;
 
-bool readfile(
-    string &data, const string &filepath)
+// Returns an empty string if read failed
+string readfile(
+    const string &filepath)
 {
-    std::ifstream file(filepath);
-    if (file) {
-        data.assign((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-        return true;
-    }
-    return false;
+    string data;
+    ifstream in(filepath.c_str());
+    getline(in, data, string::traits_type::to_char_type(string::traits_type::eof()));
+    return data;
 }
 
 bool writefile(

@@ -4,172 +4,80 @@
 &BACKGROUND: fffff0,
 
 [
-  [
-    "NEW",
-    "Window",
-    "MainWindow",
+  [ NEW, Window, MainWindow,
     {
-      "WIDTH": &APP_WIDTH,
-      "HEIGHT": &APP_HEIGHT,
-      "FLOATING": "1"
+      WIDTH: &APP_WIDTH,
+      HEIGHT: &APP_HEIGHT,
+      FLOATING: 1
     },
-    [
-      "TEXT",
-      "Complex Window Test"
-    ],
-    [
-      "COLOUR",
-      &BACKGROUND
-    ]
+    [ TEXT, "Complex Window Test" ],
+    [ COLOUR, &BACKGROUND ]
   ],
   [
-    "NEW",
-    "Box",
-    "P1",
+    NEW, Box, P1,
     {
-      "GRID_ALIGN": "HORIZONTAL"
+      GRID_ALIGN: HORIZONTAL
     },
-    [
-      "TEXT",
-      "Panel 1"
-    ],
-    [
-      "BOXTYPE",
-      "BORDER_FRAME"
-    ],
-    [
-      "HEIGHT",
-      "100"
-    ]
+    [ TEXT, "Panel 1" ],
+    [ BOXTYPE, BORDER_FRAME ],
+    [ HEIGHT, 100 ]
   ],
-  [
-    "NEW",
-    "Box",
-    "todo",
+  [ NEW, Box, todo,
     {
-      "GRID_ALIGN": "HORIZONTAL"
+      GRID_ALIGN: HORIZONTAL
     },
-    [
-      "TEXT",
-      "Another Panel"
-    ],
-    [
-      "BOXTYPE",
-      "FLAT_BOX"
-    ],
-    [
-      "HEIGHT",
-      "50"
-    ]
+    [ TEXT, "Another Panel" ],
+    [ BOXTYPE, FLAT_BOX ],
+    [ HEIGHT, 50 ]
   ],
-  [
-    "NEW",
-    "Choice",
-    "TableType",
+  [ NEW, Choice, TableType,
     {},
-    [
-      "clear_visible_focus"
-    ],
-    [
-      "WIDTH",
-      "100"
-    ],
-    [
-      "ADD",
-      "Type 1",
-      "Type 2"
-    ]
+    [ clear_visible_focus ],
+    [ WIDTH, 100 ],
+    [ ADD, "Type 1", "Type 2" ]
   ],
-  [
-    "NEW",
-    "Label",
-    "TableRowLabel",
+  [ NEW, Label, TableRowLabel,
     {
-      "LABEL_ALIGN": "RIGHT"
+      LABEL_ALIGN: RIGHT
     },
-    [
-      "TEXT",
-      "X X X X X X:"
-    ]
+    [ TEXT, "X X X X X X:" ]
   ],
-  [
-    "NEW",
-    "Choice",
-    "TableRow",
+  [ NEW, Choice, TableRow,
     {},
-    [
-      "clear_visible_focus"
-    ],
-    [
-      "WIDTH",
-      "150"
-    ],
-    [
-      "ADD",
+    [ clear_visible_focus ],
+    [ WIDTH, 150 ],
+    [ ADD,
       "FB: Fritz Jolander Jeremias Braun",
       "DG: Diego Garcia",
       "PM: Pamela Masterson"
     ]
   ],
-  [
-    "NEW",
-    "Label",
-    "TableTotalsLabel",
+  [ NEW, Label, TableTotalsLabel,
     {
-      "LABEL_ALIGN": "RIGHT"
+      LABEL_ALIGN: RIGHT
     },
-    [
-      "TEXT",
-      "Total lessons:"
+    [ TEXT, "Total lessons:"
     ]
   ],
   [
-    "NEW",
-    "Output",
-    "TableTotals",
+    NEW, Output, TableTotals,
     {
-      "GRID_ALIGN": "HORIZONTAL",
-      "GRID_GROW": "1"
+      GRID_ALIGN: HORIZONTAL,
+      GRID_GROW: 1
     },
-    [
-      "VALUE",
-      "Read only ˝Öößŋħĸ€"
-    ],
-    [
-      "clear_visible_focus"
-    ]
+    [ VALUE, "Read only ˝Öößŋħĸ€" ],
+    [ clear_visible_focus ]
   ],
-  [
-    "NEW",
-    "RowTable",
-    "T1",
+  [ NEW, RowTable, T1,
     {
-      "GRID_ALIGN": "FILL",
-      "GRID_GROW": "1"
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
     },
-    [
-      "col_headers",
-      "Col 1",
-      "Column 2",
-      "Col 3",
-      "Col 4"
-    ],
-    [
-      "col_header_height",
-      "30"
-    ],
-    [
-      "row_header_width",
-      "80"
-    ],
-    [
-      "row_height_all",
-      "30"
-    ],
-    [
-      "row_header_color",
-      "ffe8e8"
-    ],
+    [ col_headers, "Col 1", "Column 2", "Col 3", "Col 4" ],
+    [ col_header_height, 30 ],
+    [ row_header_width, 80 ],
+    [ row_height_all, 30],
+    [ row_header_color, ffe8e8 ],
     [
       "add_row",
       "Row 1",

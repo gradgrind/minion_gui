@@ -3,11 +3,6 @@
 
 #include "minion.h"
 
-// This is used to manage the memory of a result from minion_read. It is
-// freed before a call to backend(), whose result is then parsed and
-// stored there.
-extern minion::MValue input_value;
-
 // Writing (serializing) MINION messages.
 std::string dump_value(minion::MValue m);
 void value_error(std::string msg, minion::MValue m);

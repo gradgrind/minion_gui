@@ -1,13 +1,74 @@
 #include "functions.h"
 #include "callback.h"
+#include "iofile.h"
 #include "support_functions.h"
 #include "widget.h"
 #include <FL/Fl.H>
-//#include <iostream>
+#include <FL/fl_ask.H>
 using namespace std;
+using namespace minion;
+
+void GUI(
+    MList* cmd)
+{
+    string s;
+    if (!cmd->get_string(0, s)) {
+        value_error("Invalid GUI command: ", *cmd);
+    }
+    if (s == "WIDGET") {
+        // Handle widget methods
+        string w;
+        if (cmd->get_string(1, w)) {
+            Widget::get_widget(w)->handle_methods(cmd, 2);
+            return;
+        }
+        value_error("Invalid WIDGET command: ", *cmd);
+    }
+    if (s == "NEW") {
+        // Make a new widget
+        Widget::new_widget(cmd);
+        return;
+    }
+    auto f = function_map.at(s);
+    f(cmd);
+}
+
+void do_commands(
+    MList* dolist)
+{
+    auto len = dolist->size();
+    for (size_t i = 0; i < len; ++i) {
+        if (auto command = dolist->get(i).m_list())
+            GUI(command->get());
+        else {
+            value_error("Invalid GUI command: ", **command);
+        }
+    }
+}
+
+void f_MINION_FILE(
+    MList* m)
+{
+    string f;
+    if (m->get_string(0, f)) {
+        string data0 = readfile(f);
+        if (data0.empty()) {
+            throw "Error opening file:/n " + f;
+        }
+        auto guidata = Reader::read(data0);
+        if (auto e = guidata.error_message()) {
+            throw e;
+        }
+        auto dolist0 = guidata.m_list();
+        if (dolist0)
+            do_commands(dolist0->get());
+        else
+            value_error("Input data not a GUI command list: ", guidata);
+    }
+}
 
 void f_RUN(
-    minion::MList* m)
+    MList* m)
 {
     (void) m;
     //auto cc = Fl::run();
@@ -16,7 +77,7 @@ void f_RUN(
 }
 
 void setup_method(
-    string_view method, minion::MList* paramlist)
+    string_view method, MList* paramlist)
 {
     if (method == "BACKGROUND") {
         std::string colour;
@@ -67,7 +128,7 @@ void setup_method(
 }
 
 void f_SETUP(
-    minion::MList* m)
+    MList* m)
 {
     auto len = m->size();
     for (size_t i = 1; i < len; ++i) {
@@ -86,6 +147,7 @@ void f_SETUP(
 
 std::unordered_map<std::string, function_handler> function_map{
     //
+    {"MINION_FILE", f_MINION_FILE},
     {"RUN", f_RUN},
     {"SETUP", f_SETUP}
     //
