@@ -56,11 +56,9 @@
     {
       LABEL_ALIGN: RIGHT
     },
-    [ TEXT, "Total lessons:"
-    ]
+    [ TEXT, "Total lessons:" ]
   ],
-  [
-    NEW, Output, TableTotals,
+  [ NEW, Output, TableTotals,
     {
       GRID_ALIGN: HORIZONTAL,
       GRID_GROW: 1
@@ -78,228 +76,110 @@
     [ row_header_width, 80 ],
     [ row_height_all, 30],
     [ row_header_color, ffe8e8 ],
-    [
-      "add_row",
-      "Row 1",
-      "A",
-      "B",
-      "C",
-      "D"
-    ],
-    [
-      "add_row",
-      "Long Row 2",
-      "a",
-      "b",
-      "c",
-      "d"
-    ],
-    [
-      "add_row",
-      "Row 3",
-      "",
-      "",
-      "A very long table entry",
-      "last"
-    ]
+    [ add_row, "Row 1", A, B, C, D ],
+    [ add_row, "Long Row 2", a, b, c, d ],
+    [ add_row, "Row 3", "", "", "A very long table entry", last ]
   ],
-  [
-    "NEW",
-    "PopupEditor",
-    "EF1",
+  [ NEW, PopupEditor, EF1,
     {
-      "LABEL": "EDITOR 1"
+      LABEL: "EDITOR 1"
     }
   ],
-  [
-    "NEW",
-    "TextLine",
-    "EF2",
+  [ NEW, TextLine, EF2,
     {
-      "LABEL": "TEXT 1"
+      LABEL: "TEXT 1"
     }
   ],
-  [
-    "NEW",
-    "TextLine",
-    "EF2X",
+  [ NEW, TextLine, EF2X,
     {
-      "LABEL": "TEXT 2"
+      LABEL: "TEXT 2"
     }
   ],
-  [
-    "NEW",
-    "Choice",
-    "EF3",
+  [ NEW, Choice, EF3,
     {
-      "LABEL": "CHOICE 1"
+      LABEL: "CHOICE 1"
     }
   ],
-  [
-    "NEW",
-    "Hline",
-    "Sep1",
+  [ NEW, Hline, Sep1,
     {
-      "SPAN": "2"
+      SPAN: 2
     }
   ],
-  [
-    "NEW",
-    "PopupEditor",
-    "EF4",
+  [ NEW, PopupEditor, EF4,
     {
-      "LABEL": "ANOTHER EDITOR"
+      LABEL: "ANOTHER EDITOR"
     }
   ],
-  [
-    "NEW",
-    "Checkbox",
-    "EF5",
+  [ NEW, Checkbox, EF5,
     {
-      "SPAN": "2"
+      SPAN: 2
     },
-    [
-      "TEXT",
-      "CHECKBOX with a long label"
-    ]
+    [ TEXT, "CHECKBOX with a long label" ]
   ],
-  [
-    "NEW",
-    "List",
-    "EF6",
+  [ NEW, List, EF6,
     {
-      "LABEL": "List entry",
-      "SPAN": "2",
-      "GROW": "1"
+      LABEL: "List entry",
+      SPAN: 2,
+      GROW: 1
     }
   ],
-  [
-    "NEW",
-    "EditForm",
-    "EditorForm",
+  [ NEW, EditForm, EditorForm,
     {
-      "GRID_ALIGN": "VERTICAL",
-      "WIDGETS": [
-        "EF1",
-        "EF2",
-        "EF2X",
-        "EF3",
-        "Sep1",
-        "EF4",
-        "EF5",
-        "EF6"
+      GRID_ALIGN: VERTICAL,
+      WIDGETS: [ EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6 ]
+    },
+    [ WIDTH, 300 ]
+  ],
+  [ NEW, Hlayout, ViewSelect,
+    {
+      GRID_ALIGN: HORIZONTAL,
+      WIDGETS: [
+        TableType,
+        TableRowLabel,
+        TableRow,
+        TableTotalsLabel,
+        TableTotals
       ]
     },
-    [
-      "WIDTH",
-      "300"
-    ]
+    [ MARGIN, 5 ],
+    [ GAP, 5 ],
+    [ HEIGHT, 60 ]
   ],
-  [
-    "NEW",
-    "Hlayout",
-    "ViewSelect",
+  [ NEW, Hlayout, Content,
     {
-      "GRID_ALIGN": "HORIZONTAL",
-      "WIDGETS": [
-        "TableType",
-        "TableRowLabel",
-        "TableRow",
-        "TableTotalsLabel",
-        "TableTotals"
-      ]
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1,
+      WIDGETS: [ T1, EditorForm ]
     },
-    [
-      "MARGIN",
-      "5"
-    ],
-    [
-      "GAP",
-      "5"
-    ],
-    [
-      "HEIGHT",
-      "60"
-    ]
+    [ GAP, 3 ]
   ],
-  [
-    "NEW",
-    "Hlayout",
-    "Content",
+  [ NEW, Vlayout, CoursePanel,
     {
-      "GRID_ALIGN": "FILL",
-      "GRID_GROW": "1",
-      "WIDGETS": [
-        "T1",
-        "EditorForm"
-      ]
-    },
-    [
-      "GAP",
-      "3"
-    ]
-  ],
-  [
-    "NEW",
-    "Vlayout",
-    "CoursePanel",
-    {
-      "GRID_ALIGN": "FILL",
-      "GRID_GROW": "1",
-      "WIDGETS": [
-        "todo",
-        "ViewSelect",
-        "Content"
-      ]
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1,
+      WIDGETS: [ todo, ViewSelect, Content ]
     }
   ],
-  [
-    "NEW",
-    "Vlayout",
-    "l_MainWindow",
+  [ NEW, Vlayout, l_MainWindow,
     {
-      "PARENT": "MainWindow",
-      "WIDGETS": [
-        "P1",
-        "CoursePanel"
+      PARENT: MainWindow,
+      WIDGETS: [ P1, CoursePanel
       ]
     },
-    [
-      "fit_to_parent"
-    ]
+    [ fit_to_parent ]
   ],
-  [
-    "WIDGET",
-    "EF1",
-    [
-      "VALUE",
-      "Changed First"
-    ]
+  [ WIDGET, EF1,
+    [ VALUE, "Changed First" ]
   ],
-  [
-    "WIDGET",
-    "EF3",
-    [
-      "ADD",
-      "Item1",
-      "Item2"
-    ]
+  [ WIDGET, EF3,
+    [ ADD, "Item1", "Item2" ]
   ],
-  [
-    "WIDGET",
-    "EF6",
-    [
-      "SET",
-      "New list 1",
-      "New list 2"
-    ]
+  [ WIDGET, EF6,
+    [ SET, "New list 1", "New list 2" ]
   ],
-  [
-    "NEW",
-    "Dialog",
-    "popup",
+  [ NEW, Dialog, popup,
     {
-      "FLOATING": "1"
+      FLOATING: 1
     }
   ]
 ]
