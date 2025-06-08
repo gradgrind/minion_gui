@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/gradgrind/minion/gominion"
@@ -10,19 +9,19 @@ import (
 )
 
 func main() {
-	fp := filepath.Join("..", "..", "..", "examples", "various1.minion")
-	content, err := os.ReadFile(fp)
+	fp, err := filepath.Abs(
+		filepath.Join("..", "..", "..", "examples", "various1.minion"))
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		guidata := string(content)
-		mugui.MinionGui(guidata, callback)
+		panic(err)
 	}
+	fpm := fmt.Sprintf(
+		`[[MINION_FILE,"%s"],[WIDGET,MainWindow,[SHOW]],[RUN]]`,
+		fp)
+	mugui.MinionGui(fpm, callback)
 }
 
 func callback(data string) string {
 	fmt.Printf("Go callback got '%s'\n", data)
-
 	v := gominion.ReadMinion(data)
 	if e, ok := v.(gominion.MError); ok {
 		fmt.Println(" *** Error ***")
@@ -32,12 +31,16 @@ func callback(data string) string {
 		fmt.Println(gominion.DumpMinion(v, -1))
 	}
 
-	mp := gominion.MMap{
-		gominion.MPair{Key: "WIDGET", Value: gominion.MString("TableTotals")},
-		gominion.MPair{Key: "DO", Value: gominion.MList{
-			gominion.MList{gominion.MString("VALUE"),
-				gominion.MString(data)}}}}
-	cbr := gominion.DumpMinion(mp, -1)
+	mm := v.(gominion.MList)
+	var wname string
+	mm.GetString(0, &wname)
+
+	cbr := fmt.Sprintf(`[[WIDGET,"TableTotals",[VALUE,%s]]`,
+		gominion.DumpMinion(gominion.MString(data), -1))
+	if wname == "EF1" {
+		cbr += fmt.Sprintf(`,[WIDGET,popup,[SHOW,"%s"]]`, wname)
+	}
+	cbr += "]"
 	fmt.Println("CB: " + cbr)
 	return cbr
 }
