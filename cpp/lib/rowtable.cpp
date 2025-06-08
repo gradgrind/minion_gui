@@ -3,7 +3,6 @@
 #include "support_functions.h"
 #include "widgets.h"
 #include <FL/fl_draw.H>
-#include <iostream>
 using namespace std;
 using namespace minion;
 
@@ -180,17 +179,19 @@ void RowTable::_row_cb(
     auto ww = static_cast<RowTable *>(table);
     string* dw{Widget::get_widget_name(ww)};
     int i = ww->_current_row;
-    //auto res = Callback1(dw, to_string(i));
-
-    //TODO: Do I want the row data?
-    auto rowheader = ww->row_headers.at(i);
-    auto row = ww->data.at(i);
-    MList ml{};
-    ml.emplace_back(rowheader);
-    for (const auto & s : row) {
-        ml.emplace_back(s);
+    if (i >= 0) {
+        //TODO: Do I want the row data?
+        auto rowheader = ww->row_headers.at(i);
+        auto row = ww->data.at(i);
+        MList ml{};
+        ml.emplace_back(rowheader);
+        for (const auto& s : row) {
+            ml.emplace_back(s);
+        }
+        Callback2(*dw, to_string(i), ml);
+    } else {
+        Callback1(*dw, to_string(i));
     }
-    Callback2(*dw, to_string(i), ml);
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
