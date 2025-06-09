@@ -13,3 +13,5 @@ cd build/release
 cmake ../..
 
 make
+
+cp lib/libminion_gui.so ../../../go/mugui/lib/libminion_gui.so

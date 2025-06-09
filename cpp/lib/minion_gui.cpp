@@ -76,7 +76,7 @@ void Callback(
     if (auto dolist0 = input_value.m_list())
         do_commands(dolist0->get());
     else if (const char* e = input_value.error_message())
-        throw e;
+        throw string{e};
     else
         throw string{"Invalid callback result: "}.append(cbresult);
 }
