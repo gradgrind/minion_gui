@@ -15,10 +15,9 @@ const char* callback1(
     if (auto mm = m.m_list()) {
         string wname;
         if ((*mm)->get_string(0, wname)) {
-            minion::MList mlist({"WIDGET", "Output_1", {"VALUE", wname}});
-            minion::MValue val{mlist};
-            minion::Writer writer(val, -1);
-            callback_data = writer.dump_c();
+            callback_data = string{"[[WIDGET, Output_1, [VALUE, "} //
+                                .append(wname)
+                                .append("]]]");
             printf("??? %s\n", callback_data.c_str());
             fflush(stdout);
             return callback_data.c_str();
@@ -35,10 +34,11 @@ const char* callback2(
     if (auto mm = m.m_list()) {
         string wname;
         if ((*mm)->get_string(0, wname)) {
-            minion::MList mlist({"WIDGET", wname, {"TEXT", wname}});
-            minion::MValue val{mlist};
-            minion::Writer writer(val, -1);
-            callback_data = writer.dump_c();
+            callback_data = string{"[[WIDGET, "} //
+                                .append(wname)
+                                .append(", [TEXT, \"")
+                                .append(wname)
+                                .append(" pushed\"]]]");
             printf("??? %s\n", callback_data.c_str());
             fflush(stdout);
             return callback_data.c_str();
@@ -55,16 +55,15 @@ const char* callback3(
     if (auto mm = m.m_list()) {
         string wname;
         if ((*mm)->get_string(0, wname)) {
-            minion::MValue mlist0({"WIDGET", "TableTotals", {"VALUE", data}});
-            minion::MValue mlist;
-            if (wname == "EF1") {
-                minion::MValue mlist1({"WIDGET", "popup", {"SHOW", wname}});
-                mlist = minion::MValue({mlist0, mlist1});
-            } else {
-                mlist = minion::MValue({mlist0});
+            callback_data = string{"[[WIDGET, TableTotals, [VALUE, "} //
+                                .append(minion::Writer::dumpString(data))
+                                .append("]]");
+            if (wname == "EF1" or wname == "EF4") {
+                callback_data.append(", [WIDGET, popup, [SHOW, ");
+                callback_data.append(wname);
+                callback_data.append("]]");
             }
-            minion::Writer writer(mlist, 0);
-            callback_data = writer.dump_c();
+            callback_data.append("]");
             printf("??? %s\n", callback_data.c_str());
             fflush(stdout);
             return callback_data.c_str();
@@ -94,24 +93,15 @@ int main()
 
     string guidata;
 
-    for (int count = 0; count < 2; ++count) {
+    for (int count = 0; count < 1; ++count) {
         int i = 0;
         for (const auto& fp : fplist) {
-            /*
-            guidata = readfile(fp);
-            if (guidata.empty()) {
-                cerr << "Read file failed: " << fp << endl;
-                exit(1);
-            }
-            */
-
             SetCallbackFunction(flist.begin()[i]);
             ++i;
 
             string fpm = string{"[[MINION_FILE,"}.append(fp).append(
                 "],[WIDGET,MainWindow,[SHOW]],[RUN]]");
             Init(fpm.c_str());
-            //Init(guidata.c_str());
         }
     }
 

@@ -37,7 +37,7 @@ func callback(data string) string {
 
 	cbr := fmt.Sprintf(`[[WIDGET,"TableTotals",[VALUE,%s]]`,
 		gominion.DumpString(data))
-	if wname == "EF1" {
+	if wname == "EF1" || wname == "EF4" {
 		cbr += fmt.Sprintf(`,[WIDGET,popup,[SHOW,"%s"]]`, wname)
 	}
 	cbr += "]"
