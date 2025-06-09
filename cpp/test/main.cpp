@@ -64,12 +64,31 @@ const char* callback0(
                 callback_data.append(wtab);
                 callback_data.append("]]]");
 
-            } else {
-                //TODO???
-
-                callback_data = string{"[[WIDGET, ()viewer, [TEXT, \""} //
+            } else if (wname.starts_with("(buttons)")) {
+                callback_data = string{"[[WIDGET, Output_1, [VALUE, "} //
                                     .append(wname)
-                                    .append("\"]]]");
+                                    .append("]]]");
+
+            } else if (wname.starts_with("(grid)")) {
+                callback_data = string{"[[WIDGET, "} //
+                                    .append(wname)
+                                    .append(", [TEXT, \"")
+                                    .append(wname)
+                                    .append(" pushed\"]]]");
+
+            } else if (wname.starts_with("(complex)")) {
+                callback_data = string{"[[WIDGET, TableTotals, [VALUE, "} //
+                                    .append(minion::Writer::dumpString(data))
+                                    .append("]]");
+                if (wname == "(complex)EF1" or wname == "(complex)EF4") {
+                    callback_data.append(", [WIDGET, popup, [SHOW, ");
+                    callback_data.append(wname);
+                    callback_data.append("]]");
+                }
+                callback_data.append("]");
+
+            } else {
+                throw "Unknown Callback" + minion::Writer::dumpString(data);
             }
             printf("??? %s\n", callback_data.c_str());
             fflush(stdout);
