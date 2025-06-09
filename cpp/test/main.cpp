@@ -25,7 +25,20 @@ const char* callback0(
                 if (!tabs[wtab]) {
                     callback_data.append( //
                         ",[MINION_FILE, ../../examples/buttons.minion],[WIDGET, ");
-                    //TODO: make PARENT a method ...
+                    callback_data.append(wtab);
+                    callback_data.append(", [PARENT, ()viewer]]");
+                    tabs[wtab] = true;
+                }
+                callback_data.append( //
+                    ",[WIDGET, ()viewer, [SELECT, ");
+                callback_data.append(wtab);
+                callback_data.append("]]]");
+            } else if (wname == "()grid") {
+                callback_data = string{"[[WIDGET_PREFIX, grid]"};
+                wtab = "(grid)l_MainWindow";
+                if (!tabs[wtab]) {
+                    callback_data.append( //
+                        ",[MINION_FILE, ../../examples/grid.minion],[WIDGET, ");
                     callback_data.append(wtab);
                     callback_data.append(", [PARENT, ()viewer]]");
                     tabs[wtab] = true;

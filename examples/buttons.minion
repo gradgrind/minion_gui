@@ -36,7 +36,8 @@
     },
     [MARGIN, 5],
     [GAP, 10],
-    # [COLOUR, ff0000] # No effect (FL_NO_BOX)
+    [BOXTYPE, BORDER_BOX],
+    [COLOUR, ffff00] # No effect if (FL_NO_BOX)
   ],
   
   [WIDGET, PB1,

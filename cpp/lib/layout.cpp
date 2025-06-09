@@ -325,13 +325,14 @@ void W_Stack::handle_method(
     std::string_view method, minion::MList* paramlist)
 {
     if (method == "SELECT") {
-        //TODO: This is not working ...
         string wname;
         if (paramlist->get_string(1, wname)) {
             auto subw = Widget::get_fltk_widget(wname);
             static_cast<Fl_Wizard*>(fl_widget)->value(subw);
+            subw->resize(fl_widget->x(), fl_widget->y(), fl_widget->w(), fl_widget->h());
+            static_cast<Fl_Wizard*>(fl_widget)->resizable(subw);
         } else {
-            throw "Method RESIZABLE without widget";
+            throw "Method SELECT without widget";
         }
     } else {
         W_Group::handle_method(method, paramlist);
