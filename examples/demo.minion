@@ -11,7 +11,7 @@
     # [FOREGROUND, f0f0f0],
     # [SELECTION_BACKGROUND, a0a0f0],
   ],
-  
+
   [NEW, Window, MainWindow, {
       FLOATING: 1,
       WIDTH: &APP_WIDTH,
