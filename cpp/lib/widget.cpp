@@ -105,20 +105,27 @@ void Widget::new_widget(
 {
     string wtype;
     string name;
-    // Check new widget name
-    if ( //
-        m->size() < 4 || !m->get_string(1, wtype) || !m->get_string(2, name)
-        //
-    ) {
-        MValue m0{*m};
-        throw string{"Bad NEW command: "} + dump_value(m0);
+    {
+        string name_;
+        // Check new widget name
+        if ( //
+            m->size() < 4 || !m->get_string(1, wtype) || !m->get_string(2, name_)
+            //
+        ) {
+            MValue m0{*m};
+            throw string{"Bad NEW command: "} + dump_value(m0);
+        }
+        // Check name unique
+        if (name_.empty()) {
+            throw "A new widget must have a name ...";
+        }
+        name = "(" + w_prefix + ")";
+        name.append(name_);
     }
-    // Check name unique
-    if (name.empty()) {
-        throw "A new widget must have a name ...";
-    } else if (widget_map.contains(name)) {
+    if (widget_map.contains(name)) {
         throw string{"Widget name already exists: "}.append(name);
     }
+
     new_function f;
     try {
         f = new_function_map.at(string{wtype});
@@ -140,15 +147,16 @@ void Widget::new_widget(
     w->fltk_widget()->user_data(w, true); // auto-free = true
     w->properties = *props;
 
-    // Add to parent, if specified
+    /* Add to parent, if specified -> now a method
     string parent;
     if ((*props)->get_string("PARENT", parent) && !parent.empty()) {
         auto p = Widget::get_fltk_widget(parent)->as_group();
         if (!p)
             throw string{"Invalid parent widget: "} + parent;
         p->add(w->fltk_widget());
-    }
-     // Handle method calls supplied with the widget creation
+    } */
+
+    // Handle method calls supplied with the widget creation
     w->handle_methods(m, 4);
 }
 
@@ -156,6 +164,12 @@ void Widget::new_widget(
 Widget* Widget::get_widget(
     string_view name)
 {
+    string n;
+    if (!name.starts_with('(')) {
+        n = "(" + w_prefix + ")";
+        n.append(name);
+        name = n;
+    }
     try {
         return widget_map.at(name).widget;
     } catch (const out_of_range& e) {
@@ -203,6 +217,16 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
     } else if (method == "HEIGHT") {
         paramlist->get_int(1, wh); // height
         fl_widget->size(fl_widget->w(), wh);
+    } else if (method == "PARENT") {
+        // Add to parent
+        string parent;
+        if (paramlist->get_string(1, parent) && !parent.empty()) {
+            auto p = Widget::get_fltk_widget(parent)->as_group();
+            if (!p)
+                throw string{"Invalid parent widget: "} + parent;
+            p->add(fl_widget);
+        } else
+            throw "Invalid PARENT method for widget " + w_name;
     } else if (method == "WIDTH") {
         paramlist->get_int(1, ww); // width
         fl_widget->size(ww, fl_widget->h());

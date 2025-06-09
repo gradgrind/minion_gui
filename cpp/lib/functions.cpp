@@ -57,7 +57,7 @@ void f_MINION_FILE(
         }
         auto guidata = Reader::read(data0);
         if (auto e = guidata.error_message()) {
-            throw e;
+            throw string(e);
         }
         auto dolist0 = guidata.m_list();
         if (dolist0) {
@@ -147,10 +147,23 @@ void f_SETUP(
     }
 }
 
+void f_WIDGET_PREFIX(
+    MList* m)
+{
+    //(void) m;
+    string p;
+    if (m->get_string(1, p)) {
+        Widget::set_prefix(p);
+        return;
+    }
+    throw string{"INVALID WIDGET_PREFIX function: "} + dump_value(*m);
+}
+
 std::unordered_map<std::string, function_handler> function_map{
     //
     {"MINION_FILE", f_MINION_FILE},
     {"RUN", f_RUN},
-    {"SETUP", f_SETUP}
+    {"SETUP", f_SETUP},
+    {"WIDGET_PREFIX", f_WIDGET_PREFIX}
     //
 };

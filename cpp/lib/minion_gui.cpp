@@ -29,6 +29,7 @@ const map<string, new_function> new_function_map{
     {"Grid", W_Grid::make},
     {"Hlayout", W_Grid::make_hlayout},
     {"Vlayout", W_Grid::make_vlayout},
+    {"Stack", W_Stack::make},
     {"PushButton", W_PushButton::make},
     {"Box", W_Box::make},
     {"Hline", W_Hline::make},
@@ -108,6 +109,10 @@ void Init(
     Widget::init_settings();
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
+    //TODO? Where? If?
+    Fl::option(Fl::OPTION_VISIBLE_FOCUS, false);
+    Fl::box_border_radius_max(8);
+
     auto guidata = minion::Reader::read(data0);
     if (auto e = guidata.error_message()) {
         fl_alert("%s", e);
@@ -125,9 +130,6 @@ void Init(
         }
     } catch (string& e) {
         fl_alert("%s", e.c_str());
-        Widget::clear();
-    } catch (char const* e) {
-        fl_alert("%s", e);
         Widget::clear();
     }
 }

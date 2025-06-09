@@ -40,7 +40,11 @@ public:
     }
 };
 
-//TODO ...
-void tmp_run(minion::MMap data);
+class W_Stack : public W_Group
+{
+public:
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
+    static W_Stack* make(minion::MMap* props);
+};
 
 #endif // LAYOUT_H

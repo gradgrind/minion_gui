@@ -20,7 +20,7 @@ const Fl_Color ENTRY_BG = 0xffffc800;
 const Fl_Color PENDING_BG = 0xffe0e000;
 const Fl_Color SELECTION_BG = 0x4c64ff00;
 
-/// Each widget needs additional data, including its name. To make the
+// Each widget needs additional data, including its name. To make the
 // widget accessible to the text-based (MINION) interface, a map is
 // built from the widget-names to their management data, which would
 // also include a pointer to the FLTK widget itself (as Fl_Widget*, which
@@ -38,6 +38,9 @@ class Widget : public Fl_Callback_User_Data
     };
 
     static std::unordered_map<std::string_view, flagged_widget> widget_map;
+
+    // Widget "namespace"
+    inline static std::string w_prefix;
 
     // Widget name, used for look-up, etc.
     std::string w_name;
@@ -62,18 +65,27 @@ public:
 
     static std::string clear();
     static void new_widget(minion::MList* m);
+
     static Widget* get_widget(std::string_view name);
     static Fl_Widget* get_fltk_widget(
         std::string_view name)
     {
         return get_widget(name)->fl_widget;
     }
+
     //TODO? static minion::MList list_widgets();
     static std::string* get_widget_name(
         Fl_Widget* w)
     { //TODO: is this needed?
         auto wd{static_cast<Widget*>(w->user_data())};
         return &wd->w_name;
+    }
+
+    const static std::string_view get_prefix() { return w_prefix; }
+    static void set_prefix(
+        const std::string_view prefix)
+    {
+        w_prefix = prefix;
     }
 
     inline static int line_height;

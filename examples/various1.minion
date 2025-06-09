@@ -13,8 +13,7 @@
     [ TEXT, "Complex Window Test" ],
     [ COLOUR, &BACKGROUND ]
   ],
-  [
-    NEW, Box, P1,
+  [ NEW, Box, P1,
     {
       GRID_ALIGN: HORIZONTAL
     },

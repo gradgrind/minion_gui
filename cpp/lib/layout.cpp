@@ -5,7 +5,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Grid.H>
-#include <iostream>
+#include <FL/Fl_Wizard.H>
 #include <map>
 using namespace std;
 using namespace minion;
@@ -113,7 +113,7 @@ struct grid_item
 W_Grid* W_Grid::make(
     MMap* props)
 {
-    (void) props;
+    //(void) props;
     auto w = new Fl_Grid(0, 0, 0, 0);
     w->box(FL_NO_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
@@ -319,4 +319,35 @@ W_Grid* W_Grid::new_hvgrid(
         }
     }
     throw "Layout with no WIDGETS list: " + *widget->widget_name();
+}
+
+void W_Stack::handle_method(
+    std::string_view method, minion::MList* paramlist)
+{
+    if (method == "SELECT") {
+        //TODO: This is not working ...
+        string wname;
+        if (paramlist->get_string(1, wname)) {
+            auto subw = Widget::get_fltk_widget(wname);
+            static_cast<Fl_Wizard*>(fl_widget)->value(subw);
+        } else {
+            throw "Method RESIZABLE without widget";
+        }
+    } else {
+        W_Group::handle_method(method, paramlist);
+    }
+}
+
+//static method
+W_Stack* W_Stack::make(
+    minion::MMap* props)
+{
+    (void) props;
+    auto w = new Fl_Wizard(0, 0, 0, 0);
+    w->box(FL_EMBOSSED_BOX);
+    Fl_Group::current(0); // disable "auto-grouping"
+    auto widget = new W_Stack();
+    widget->fl_widget = w;
+
+    return widget;
 }

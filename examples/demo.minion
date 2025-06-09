@@ -1,0 +1,82 @@
+# demo
+&APP_WIDTH: 600,
+&APP_HEIGHT: 400,
+[
+  [SETUP,      
+    # [BACKGROUND, ffffff],
+    # [BACKGROUND2, c8ffff],
+    # [FOREGROUND, 804040]
+    # [BACKGROUND, 202020],
+    # [BACKGROUND2, 404040],
+    # [FOREGROUND, f0f0f0],
+    # [SELECTION_BACKGROUND, a0a0f0],
+  ],
+  
+  [NEW, Window, MainWindow, {
+      FLOATING: 1,
+      WIDTH: &APP_WIDTH,
+      HEIGHT: &APP_HEIGHT,
+      #ESC_CLOSES: 1,
+    },
+    [TEXT, "FLTK minion demo"]
+  ],
+  # Top-level contents
+  [NEW, Label, _chooser, {
+      GRID_ALIGN: HORIZONTAL,
+      LABEL_ALIGN: LEFT
+    },
+    [TEXT, "Choose demo"]
+  ],
+  [NEW, PushButton, buttons, {
+      GRID_ALIGN: HORIZONTAL
+    },
+    [TEXT, "Buttons"],
+    [BOXTYPE, ROUNDED_BOX]
+  ],
+  [NEW, PushButton, grid, {
+      GRID_ALIGN: HORIZONTAL
+    },
+    [TEXT, "Grid layout"],
+    [BOXTYPE, ROUNDED_BOX]
+  ],
+  [NEW, PushButton, complex, {
+      GRID_ALIGN: HORIZONTAL
+    },
+    [TEXT, "Complex layout"],
+    [BOXTYPE, ROUNDED_BOX]
+  ],
+  [NEW, Vlayout, chooser, {
+      GRID_ALIGN: VERTICAL,
+      WIDGETS: [
+        _chooser, buttons, grid, complex
+      ]
+    },
+    [GAP, 5]
+  ],
+  
+  [NEW, Stack, viewer, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [COLOUR, ffe0e0],
+    [BOXTYPE, ENGRAVED_BOX]
+  ],
+  #[ [NEW, Box, viewer, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [COLOUR, ffe0e0],
+    [BOXTYPE, ENGRAVED_BOX]
+  ], ]#
+  
+  [NEW, Hlayout, l_MainWindow, {
+      WIDGETS: [
+        chooser, viewer
+      ]
+    },
+    [PARENT, MainWindow],
+    [fit_to_parent],
+    [MARGIN, 5],
+    [GAP, 5]
+  ],
+]
