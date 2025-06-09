@@ -33,6 +33,7 @@ const char* callback0(
                     ",[WIDGET, ()viewer, [SELECT, ");
                 callback_data.append(wtab);
                 callback_data.append("]]]");
+
             } else if (wname == "()grid") {
                 callback_data = string{"[[WIDGET_PREFIX, grid]"};
                 wtab = "(grid)l_MainWindow";
@@ -47,7 +48,25 @@ const char* callback0(
                     ",[WIDGET, ()viewer, [SELECT, ");
                 callback_data.append(wtab);
                 callback_data.append("]]]");
+
+            } else if (wname == "()complex") {
+                callback_data = string{"[[WIDGET_PREFIX, complex]"};
+                wtab = "(complex)l_MainWindow";
+                if (!tabs[wtab]) {
+                    callback_data.append( //
+                        ",[MINION_FILE, ../../examples/complex.minion],[WIDGET, ");
+                    callback_data.append(wtab);
+                    callback_data.append(", [PARENT, ()viewer]]");
+                    tabs[wtab] = true;
+                }
+                callback_data.append( //
+                    ",[WIDGET, ()viewer, [SELECT, ");
+                callback_data.append(wtab);
+                callback_data.append("]]]");
+
             } else {
+                //TODO???
+
                 callback_data = string{"[[WIDGET, ()viewer, [TEXT, \""} //
                                     .append(wname)
                                     .append("\"]]]");

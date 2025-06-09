@@ -1,6 +1,6 @@
 # demo
-&APP_WIDTH: 600,
-&APP_HEIGHT: 400,
+&APP_WIDTH: 1000,
+&APP_HEIGHT: 700,
 [
   [SETUP,      
     # [BACKGROUND, ffffff],
