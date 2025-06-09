@@ -328,9 +328,11 @@ void W_Stack::handle_method(
         string wname;
         if (paramlist->get_string(1, wname)) {
             auto subw = Widget::get_fltk_widget(wname);
-            static_cast<Fl_Wizard*>(fl_widget)->value(subw);
-            subw->resize(fl_widget->x(), fl_widget->y(), fl_widget->w(), fl_widget->h());
-            static_cast<Fl_Wizard*>(fl_widget)->resizable(subw);
+            if (current)
+                current->hide();
+            subw->show();
+            current = subw;
+            static_cast<Fl_Flex*>(fl_widget)->layout();
         } else {
             throw "Method SELECT without widget";
         }
@@ -344,7 +346,7 @@ W_Stack* W_Stack::make(
     minion::MMap* props)
 {
     (void) props;
-    auto w = new Fl_Wizard(0, 0, 0, 0);
+    auto w = new Fl_Flex(0, 0, 0, 0);
     w->box(FL_EMBOSSED_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Stack();

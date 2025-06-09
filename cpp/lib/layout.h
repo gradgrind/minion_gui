@@ -42,6 +42,8 @@ public:
 
 class W_Stack : public W_Group
 {
+    Fl_Widget* current = nullptr;
+
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Stack* make(minion::MMap* props);
