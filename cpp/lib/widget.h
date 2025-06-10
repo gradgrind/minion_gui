@@ -20,6 +20,7 @@ const Fl_Color ENTRY_BG = 0xffffc800;
 const Fl_Color PENDING_BG = 0xffe0e000;
 const Fl_Color SELECTION_BG = 0x4c64ff00;
 const int BUTTON_ON_CONTRAST = 20;
+const int TABLE_HEADER_CONTRAST = 20;
 
 // Each widget needs additional data, including its name. To make the
 // widget accessible to the text-based (MINION) interface, a map is
@@ -96,6 +97,7 @@ public:
     inline static Fl_Color pending_bg;
     inline static Fl_Color selection_bg;
     inline static float button_on_contrast;
+    inline static float table_header_contrast;
 
     static void init_settings();
     static void init_foreground(Fl_Color colour);
@@ -103,7 +105,8 @@ public:
     static void init_background2(Fl_Color colour);
     static void init_selection_background(Fl_Color colour);
     static void init_pending_background(Fl_Color colour);
-    static void init_button_on_contrast(int c); // 0 .. 100
+    static void init_button_on_contrast(int c);    // 0 .. 100
+    static void init_table_header_contrast(int c); // 0 .. 100
 
     Fl_Widget* fltk_widget() { return fl_widget; }
 

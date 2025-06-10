@@ -16,6 +16,11 @@ RowTable::RowTable()
     row_header(0); // disable row headers (along left)
     col_header(0); // disable column headers (along top)
     type(Fl_Table_Row::SELECT_SINGLE);
+
+    callback([](Fl_Widget* w, void* ud) {
+        (void) ud;
+        w->take_focus();
+    });
 }
 
 // Need to handle the effect of column changes on data stores.
@@ -225,9 +230,12 @@ W_RowTable* W_RowTable::make(minion::MMap* parammap)
     auto w = new RowTable();
     auto widget = new W_RowTable();
     widget->fl_widget = w;
-    w->color(w->bg);
-    w->col_header_color(w->header_bg);
-    w->row_header_color(w->header_bg);
+
+    Fl_Color cx = (fl_lightness(normal_bg) < 50) ? 0xffffff00 : 0;
+    auto cp = fl_color_average(cx, normal_bg, table_header_contrast);
+    w->header_bg = cp;
+    w->col_header_color(cp);
+    w->row_header_color(cp);
     return widget;
 }
 

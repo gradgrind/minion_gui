@@ -73,6 +73,18 @@ void Widget::init_button_on_contrast(
 }
 
 // static member
+// Note that this can only affect tables defined after calling
+void Widget::init_table_header_contrast(
+    int c) // 0 .. 100
+{
+    if (c < 0)
+        c = 0;
+    else if (c > 100)
+        c = 100;
+    table_header_contrast = float(c) / 100;
+}
+
+// static member
 void Widget::init_settings()
 {
     line_height = LINE_HEIGHT;
@@ -82,6 +94,7 @@ void Widget::init_settings()
     init_pending_background(PENDING_BG);
     init_selection_background(SELECTION_BG);
     init_button_on_contrast(BUTTON_ON_CONTRAST);
+    init_table_header_contrast(TABLE_HEADER_CONTRAST);
 }
 
 // static
