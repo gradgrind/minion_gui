@@ -34,9 +34,20 @@ public:
 
 class W_PushButton : public W_Label
 {
+protected:
+    float contrast; // contrast (0.0 - 1.0) between on colour and off colour
+    void set_colour(Fl_Color clr);
+
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_PushButton* make(minion::MMap* props);
+};
+
+class W_RadioButton : public W_PushButton
+{
+public:
+    //void handle_method(std::string_view method, minion::MList* paramlist) override;
+    static W_RadioButton* make(minion::MMap* props);
 };
 
 class W_Checkbox : public Widget

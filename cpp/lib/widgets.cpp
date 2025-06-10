@@ -6,6 +6,7 @@
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Grid.H>
 #include <FL/Fl_Output.H>
+#include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Select_Browser.H>
 using namespace std;
@@ -160,6 +161,14 @@ W_PopupEditor* W_PopupEditor::make(
     return widget;
 }
 
+void W_PushButton::set_colour(
+    Fl_Color clr)
+{
+    Fl_Color cx = (fl_lightness(clr) < 50) ? 0xffffff00 : 0;
+    auto cp = fl_color_average(cx, clr, contrast);
+    fl_widget->color(clr, cp);
+}
+
 //static
 W_PushButton* W_PushButton::make(
     MMap* props)
@@ -169,9 +178,8 @@ W_PushButton* W_PushButton::make(
     auto widget = new W_PushButton();
     widget->fl_widget = w;
     // "selection" (pressed) colour
-    auto cx = fl_contrast(0, Widget::entry_bg);
-    auto cp = fl_color_average(Widget::entry_bg, cx, 0.9);
-    w->color(Widget::entry_bg, cp);
+    widget->contrast = Widget::button_on_contrast;
+    widget->set_colour(Widget::entry_bg);
     w->callback([](Fl_Widget* w, void* ud) {
         (void) ud;
         string* dw{Widget::get_widget_name(w)};
@@ -185,18 +193,45 @@ W_PushButton* W_PushButton::make(
 void W_PushButton::handle_method(
     string_view method, MList* paramlist)
 {
-    string label;
     if (method == "COLOUR") {
         string clr;
         if (paramlist->get_string(1, clr)) {
-            auto c = get_colour(clr);
-            auto cx = fl_contrast(0, c);
-            auto cp = fl_color_average(c, cx, 0.9);
-            fl_widget->color(c, cp);
+            set_colour(get_colour(clr));
+        }
+    } else if (method == "ON_CONTRAST") {
+        int c;
+        if (paramlist->get_int(1, c)) {
+            if (c < 0)
+                c = 0;
+            else if (c > 100)
+                c = 100;
+            contrast = float(c) / 100;
+            set_colour(fl_widget->color());
         }
     } else {
         W_Label::handle_method(method, paramlist);
     }
+}
+
+//static
+W_RadioButton* W_RadioButton::make(
+    MMap* props)
+{
+    (void) props;
+    auto w = new Fl_Radio_Button(0, 0, 0, 0);
+    auto widget = new W_RadioButton();
+    widget->fl_widget = w;
+    // "selection" (pressed) colour
+    widget->contrast = Widget::button_on_contrast;
+    widget->set_colour(Widget::entry_bg);
+    w->callback([](Fl_Widget* w, void* ud) {
+        (void) ud;
+        string* dw{Widget::get_widget_name(w)};
+        // or string dw{static_cast<Widget*>(ud)->widget_name()};
+        //auto ww = static_cast<Fl_Button*>(w);
+        Callback0(*dw);
+    });
+    return widget;
 }
 
 //static

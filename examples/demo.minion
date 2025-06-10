@@ -9,7 +9,8 @@
     # [BACKGROUND, 202020],
     # [BACKGROUND2, 404040],
     # [FOREGROUND, f0f0f0],
-    # [SELECTION_BACKGROUND, a0a0f0],
+    # [SELECTION_BACKGROUND, d0d0d0],
+    [BUTTON_ON_CONTRAST, 80],
   ],
 
   [NEW, Window, MainWindow, {
@@ -27,19 +28,19 @@
     },
     [TEXT, "Choose demo"]
   ],
-  [NEW, PushButton, buttons, {
+  [NEW, RadioButton, buttons, {
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Buttons"],
     [BOXTYPE, ROUNDED_BOX]
   ],
-  [NEW, PushButton, grid, {
+  [NEW, RadioButton, grid, {
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Grid layout"],
     [BOXTYPE, ROUNDED_BOX]
   ],
-  [NEW, PushButton, complex, {
+  [NEW, RadioButton, complex, {
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Complex layout"],

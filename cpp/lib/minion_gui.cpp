@@ -31,6 +31,7 @@ const map<string, new_function> new_function_map{
     {"Vlayout", W_Grid::make_vlayout},
     {"Stack", W_Stack::make},
     {"PushButton", W_PushButton::make},
+    {"RadioButton", W_RadioButton::make},
     {"Box", W_Box::make},
     {"Hline", W_Hline::make},
     {"Vline", W_Vline::make},

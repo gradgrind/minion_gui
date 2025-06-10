@@ -121,6 +121,15 @@ void setup_method(
         }
         throw string{"Invalid SETUP method, colour expected: "} + dump_value(*paramlist);
     }
+    if (method == "BUTTON_ON_CONTRAST") {
+        int c;
+        if (paramlist->get_int(1, c)) {
+            Widget::init_button_on_contrast(c);
+            return;
+        }
+        throw string{"Invalid SETUP method, contrast (0 .. 100) expected: "}
+            + dump_value(*paramlist);
+    }
     throw string{"Invalid SETUP method: "} + dump_value(*paramlist);
     //TODO?
     //Fl::box_border_radius_max 	( 	int 	R	);
