@@ -331,6 +331,7 @@ void W_Stack::handle_method(
             if (current)
                 current->hide();
             subw->show();
+            subw->take_focus();
             current = subw;
             static_cast<Fl_Flex*>(fl_widget)->layout();
         } else {

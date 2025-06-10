@@ -4,6 +4,16 @@
 &BACKGROUND: fffff0,
 
 [
+  [SETUP,      
+    # [BACKGROUND, ffffff],
+    # [BACKGROUND2, c8ffff],
+    # [FOREGROUND, 804040]
+    # [BACKGROUND, 202020],
+    # [BACKGROUND2, 404040],
+    # [FOREGROUND, f0f0f0],
+    # [SELECTION_BACKGROUND, a0a0f0],
+  ],
+  
   [ NEW, Window, MainWindow,
     {
       WIDTH: &APP_WIDTH,
@@ -74,7 +84,7 @@
     [ col_header_height, 30 ],
     [ row_header_width, 80 ],
     [ row_height_all, 30],
-    [ row_header_color, ffe8e8 ],
+    [ row_header_colour, ffe8e8 ],
     [ add_row, "Row 1", A, B, C, D ],
     [ add_row, "Long Row 2", a, b, c, d ],
     [ add_row, "Row 3", "", "", "A very long table entry", last ]
@@ -161,10 +171,9 @@
   ],
   [ NEW, Vlayout, l_MainWindow,
     {
-      PARENT: MainWindow,
-      WIDGETS: [ P1, CoursePanel
-      ]
+      WIDGETS: [ P1, CoursePanel ]
     },
+    [ PARENT, MainWindow ],
     [ fit_to_parent ]
   ],
   [ WIDGET, EF1,

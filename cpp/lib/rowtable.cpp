@@ -6,10 +6,7 @@
 using namespace std;
 using namespace minion;
 
-//TODO: When the table doesn't fit in the space, scrollbars should appear.
-// It is not clear to me why they don't! Isn't this solved already?
-
-//TODO: After changes I probably need to force a redraw (redraw()).
+//TODO: After changes I might need to force a redraw (redraw())?
 
 RowTable::RowTable()
     : Fl_Table_Row(0, 0, 0, 0)
@@ -68,32 +65,35 @@ void RowTable::draw_cell(
     case CONTEXT_COL_HEADER: // Draw column headers
         fl_push_clip(X, Y, W, H);
         fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, col_header_color());
-        fl_color(FL_BLACK);
+        fl_color(fl_contrast(FL_BLACK, col_header_color()));
         fl_draw(col_headers[COL].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
         fl_pop_clip();
         return;
     case CONTEXT_ROW_HEADER: // Draw row headers
         fl_push_clip(X, Y, W, H);
         fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, row_header_color());
-        fl_color(FL_BLACK);
+        fl_color(fl_contrast(FL_BLACK, row_header_color()));
         fl_draw(row_headers[ROW].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
         fl_pop_clip();
         return;
     case CONTEXT_CELL: // Draw data in cells
         fl_push_clip(X, Y, W, H);
         // Draw cell bg
+        Fl_Color textclr;
         if (row_selected(ROW)) {
             //if (ROW == _current_row) {
-            fl_color(FL_YELLOW);
+            fl_color(Widget::selection_bg);
+            textclr = fl_contrast(Widget::normal_fg, Widget::selection_bg);
         } else {
-            fl_color(FL_WHITE);
+            fl_color(Widget::normal_bg);
+            textclr = Widget::normal_fg;
         }
         fl_rectf(X, Y, W, H);
         // Draw cell data
-        fl_color(FL_GRAY0);
+        fl_color(textclr);
         fl_draw(data[ROW][COL].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
         // Draw box border
-        fl_color(0xb0b0b000);
+        fl_color(textclr);
         fl_rect(X, Y, W, H);
         fl_pop_clip();
         return;
@@ -237,14 +237,14 @@ void W_RowTable::handle_method(std::string_view method, minion::MList* paramlist
         } else {
             t->col_header(0);
         }
-    } else if (method == "col_header_color") {
+    } else if (method == "col_header_colour") {
         string clr;
         if (paramlist->get_string(1, clr)) {
             t->col_header_color(get_colour(clr));
         } else {
             t->col_header_color(t->header_bg);
         }
-    } else if (method == "row_header_color") {
+    } else if (method == "row_header_colour") {
         string clr;
         if (paramlist->get_string(1, clr)) {
             t->row_header_color(get_colour(clr));

@@ -61,7 +61,7 @@
     [ col_header_height, 30 ],
     [ row_header_width, 80 ],
     [ row_height_all, 30],
-    [ row_header_color, ffe8e8 ],
+    [ row_header_colour, ffe8e8 ],
     [ add_row, "Row 1", A, B, C, D ],
     [ add_row, "Long Row 2", a, b, c, d ],
     [ add_row, "Row 3", "", "", "A very long table entry", last ]
