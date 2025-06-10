@@ -1,5 +1,6 @@
 #include "widgets.h"
 #include "callback.h"
+#include "support_functions.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Flex.H>
@@ -167,8 +168,10 @@ W_PushButton* W_PushButton::make(
     auto w = new Fl_Button(0, 0, 0, 0);
     auto widget = new W_PushButton();
     widget->fl_widget = w;
-    //TODO: "selection" colour
-    w->color(Widget::entry_bg, Widget::selection_bg);
+    // "selection" (pressed) colour
+    auto cx = fl_contrast(0, Widget::entry_bg);
+    auto cp = fl_color_average(Widget::entry_bg, cx, 0.9);
+    w->color(Widget::entry_bg, cp);
     w->callback([](Fl_Widget* w, void* ud) {
         (void) ud;
         string* dw{Widget::get_widget_name(w)};
@@ -177,6 +180,23 @@ W_PushButton* W_PushButton::make(
         Callback0(*dw);
     });
     return widget;
+}
+
+void W_PushButton::handle_method(
+    string_view method, MList* paramlist)
+{
+    string label;
+    if (method == "COLOUR") {
+        string clr;
+        if (paramlist->get_string(1, clr)) {
+            auto c = get_colour(clr);
+            auto cx = fl_contrast(0, c);
+            auto cp = fl_color_average(c, cx, 0.9);
+            fl_widget->color(c, cp);
+        }
+    } else {
+        W_Label::handle_method(method, paramlist);
+    }
 }
 
 //static

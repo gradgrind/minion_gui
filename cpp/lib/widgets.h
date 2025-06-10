@@ -35,6 +35,7 @@ public:
 class W_PushButton : public W_Label
 {
 public:
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_PushButton* make(minion::MMap* props);
 };
 
