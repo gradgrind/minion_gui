@@ -49,9 +49,8 @@ void RowTable::draw_cell(
 {
     switch (context) {
     case CONTEXT_STARTPAGE: // before page is drawn..
-        //fl_font(FL_HELVETICA, 16); // set the font for our drawing operations
+        //fl_font(FL_HELVETICA, 16); // set the font for the drawing operations
 
-        //TODO: Adjust width of row headers?
         // Adjust column widths
         size_columns();
 
@@ -62,41 +61,65 @@ void RowTable::draw_cell(
             Fl::add_timeout(0.0, _row_cb, this);
         }
         return;
+
     case CONTEXT_COL_HEADER: // Draw column headers
         fl_push_clip(X, Y, W, H);
-        fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, col_header_color());
-        fl_color(fl_contrast(FL_BLACK, col_header_color()));
-        fl_draw(col_headers[COL].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
+        {
+            // Draw cell bg
+            Fl_Color bg = col_header_color();
+            fl_color(bg);
+            Fl_Color textclr = fl_contrast(Widget::normal_fg, bg);
+            fl_rectf(X, Y, W, H);
+            // Draw cell data
+            fl_color(textclr);
+            fl_draw(col_headers[COL].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
+            // Draw box border
+            fl_rect(X, Y, W, H);
+        }
         fl_pop_clip();
         return;
+
     case CONTEXT_ROW_HEADER: // Draw row headers
         fl_push_clip(X, Y, W, H);
-        fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, row_header_color());
-        fl_color(fl_contrast(FL_BLACK, row_header_color()));
-        fl_draw(row_headers[ROW].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
+        {
+            // Draw cell bg
+            Fl_Color bg = row_header_color();
+            fl_color(bg);
+            Fl_Color textclr = fl_contrast(Widget::normal_fg, bg);
+            fl_rectf(X, Y, W, H);
+            // Draw cell data
+            fl_color(textclr);
+            fl_draw(row_headers[ROW].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
+            // Draw box border
+            fl_rect(X, Y, W, H);
+        }
         fl_pop_clip();
         return;
+
     case CONTEXT_CELL: // Draw data in cells
         fl_push_clip(X, Y, W, H);
-        // Draw cell bg
-        Fl_Color textclr;
-        if (row_selected(ROW)) {
-            //if (ROW == _current_row) {
-            fl_color(Widget::selection_bg);
-            textclr = fl_contrast(Widget::normal_fg, Widget::selection_bg);
-        } else {
-            fl_color(Widget::normal_bg);
-            textclr = Widget::normal_fg;
+        {
+            // Draw cell bg
+            Fl_Color textclr;
+            if (row_selected(ROW)) {
+                //if (ROW == _current_row) {
+                fl_color(Widget::selection_bg);
+                textclr = fl_contrast(Widget::normal_fg, Widget::selection_bg);
+            } else {
+                fl_color(Widget::normal_bg);
+                textclr = Widget::normal_fg;
+            }
+            fl_rectf(X, Y, W, H);
+            // Draw cell data
+            fl_color(textclr);
+            fl_draw(data[ROW][COL].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
+            // Draw box border
+            fl_color(textclr);
+            fl_rect(X, Y, W, H);
         }
-        fl_rectf(X, Y, W, H);
-        // Draw cell data
-        fl_color(textclr);
-        fl_draw(data[ROW][COL].c_str(), X, Y, W, H, FL_ALIGN_CENTER);
-        // Draw box border
-        fl_color(textclr);
-        fl_rect(X, Y, W, H);
         fl_pop_clip();
         return;
+
     default:
         return;
     }
