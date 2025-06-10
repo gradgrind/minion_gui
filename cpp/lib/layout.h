@@ -3,11 +3,14 @@
 
 #include "minion.h"
 #include "widget.h"
+#include <FL/Fl_Flex.H>
 #include <FL/Fl_Widget.H>
 #include <string_view>
 
 class W_Group : public Widget
 {
+    void add_child(Fl_Widget* child) override;
+
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     //static W_Group* make(minion::MMap* props);
@@ -15,8 +18,11 @@ public:
 
 class W_Window : public W_Group
 {
+    Fl_Flex* container;
+    void add_child(Fl_Widget* child) override;
+
 public:
-    // Inherit handle_method from W_Group
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Window* make(minion::MMap* props);
 };
 

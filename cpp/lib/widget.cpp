@@ -247,10 +247,20 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
         // Add to parent
         string parent;
         if (paramlist->get_string(1, parent) && !parent.empty()) {
-            auto p = Widget::get_fltk_widget(parent)->as_group();
-            if (!p)
-                throw string{"Invalid parent widget: "} + parent;
-            p->add(fl_widget);
+            auto pw = Widget::get_widget(parent);
+            if (pw) {
+                auto pf = pw->fl_widget->as_group();
+                if (pf) {
+                    pw->add_child(fl_widget);
+                    return;
+                }
+            }
+            throw string{"Invalid parent widget: "} + parent;
+
+            //auto p = Widget::get_fltk_widget(parent)->as_group();
+            //if (!p)
+            //    throw string{"Invalid parent widget: "} + parent;
+            //p->add(fl_widget);
         } else
             throw "Invalid PARENT method for widget " + w_name;
     } else if (method == "WIDTH") {

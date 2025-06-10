@@ -58,28 +58,46 @@ void callback_close_window(
 
 // *** layout widgets – Fl_Group based
 
+void W_Group::add_child(
+    Fl_Widget* child)
+{
+    fl_widget->as_group()->add(child);
+}
+
+//TODO--?
 // The Group widget is only needed for its `handle_method`.
 void W_Group::handle_method(
     string_view method, MList* paramlist)
 {
     if (method == "RESIZABLE") {
-        string wname;
+        /*string wname;
         if (paramlist->get_string(1, wname)) {
             auto rsw = Widget::get_fltk_widget(wname);
             fl_widget->as_group()->resizable(rsw);
         } else {
             throw "Method RESIZABLE without widget";
-        }
+        }*/
     } else if (method == "fit_to_parent") {
-        if (auto parent = fltk_widget()->parent()) {
+        /*if (auto parent = fltk_widget()->parent()) {
             fltk_widget()->resize(0, 0, parent->w(), parent->h());
             parent->resizable(fltk_widget());
         } else {
             throw "Widget (" + *widget_name() + ") method 'fit_to_parent': no parent";
-        }
+        }*/
     } else {
         Widget::handle_method(method, paramlist);
     }
+}
+
+void W_Window::add_child(
+    Fl_Widget* child)
+{
+    if (container->children() != 0) {
+        string msg{"Window already has child: "};
+        msg.append(*widget_name());
+        throw msg;
+    }
+    container->add(child);
 }
 
 W_Window* W_Window::make(
@@ -91,13 +109,37 @@ W_Window* W_Window::make(
     props->get_int("HEIGHT", wh);
     auto w = new Fl_Double_Window(ww, wh);
     w->callback(callback_close_window);
-    Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Window();
+    widget->container = new Fl_Flex(0, 0, 0, 0);
+    //w->box(FL_EMBOSSED_BOX);
+    Fl_Group::current(0); // disable "auto-grouping"
     widget->fl_widget = w;
     props->get_int("MIN_WIDTH", ww);
     props->get_int("MIN_HEIGHT", wh);
     w->size_range(ww, wh);
+
+    widget->container->resize(0, 0, w->w(), w->h());
+    w->resizable(widget->container);
+    //widget->container->layout();
+
     return widget;
+}
+
+void W_Window::handle_method(
+    std::string_view method, minion::MList* paramlist)
+{
+    if (method == "SHOW") {
+        container->layout();
+        fl_widget->show();
+    } else if (method == "TEXT") {
+        string lbl;
+        if (paramlist->get_string(1, lbl)) {
+            fl_widget->copy_label(lbl.c_str());
+        } else
+            throw "TEXT value missing for window " + *widget_name();
+    } else {
+        throw string{"Unknown method on window " + *widget_name() + ": "}.append(method);
+    }
 }
 
 struct grid_item
