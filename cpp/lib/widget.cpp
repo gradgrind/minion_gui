@@ -172,16 +172,6 @@ void Widget::new_widget(
     widget_map.emplace(w->w_name, flagged_widget{w, fwidget != 0});
     w->fltk_widget()->user_data(w, true); // auto-free = true
     w->properties = *props;
-
-    /* Add to parent, if specified -> now a method
-    string parent;
-    if ((*props)->get_string("PARENT", parent) && !parent.empty()) {
-        auto p = Widget::get_fltk_widget(parent)->as_group();
-        if (!p)
-            throw string{"Invalid parent widget: "} + parent;
-        p->add(w->fltk_widget());
-    } */
-
     // Handle method calls supplied with the widget creation
     w->handle_methods(m, 4);
 }
@@ -243,26 +233,6 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
     } else if (method == "HEIGHT") {
         paramlist->get_int(1, wh); // height
         fl_widget->size(fl_widget->w(), wh);
-    } else if (method == "PARENT") {
-        // Add to parent
-        string parent;
-        if (paramlist->get_string(1, parent) && !parent.empty()) {
-            auto pw = Widget::get_widget(parent);
-            if (pw) {
-                auto pf = pw->fl_widget->as_group();
-                if (pf) {
-                    pw->add_child(fl_widget);
-                    return;
-                }
-            }
-            throw string{"Invalid parent widget: "} + parent;
-
-            //auto p = Widget::get_fltk_widget(parent)->as_group();
-            //if (!p)
-            //    throw string{"Invalid parent widget: "} + parent;
-            //p->add(fl_widget);
-        } else
-            throw "Invalid PARENT method for widget " + w_name;
     } else if (method == "WIDTH") {
         paramlist->get_int(1, ww); // width
         fl_widget->size(ww, fl_widget->h());

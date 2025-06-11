@@ -57,13 +57,6 @@ class Widget : public Fl_Callback_User_Data
     void *user_data = nullptr;
     bool auto_delete_user_data = false;
 
-    virtual void add_child(
-        Fl_Widget* child)
-    {
-        (void) child;
-        throw "Cannot add children to widget: " + w_name;
-    }
-
 protected:
     Fl_Widget* fl_widget;
 

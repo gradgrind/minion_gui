@@ -27,8 +27,8 @@ const map<string, new_function> new_function_map{
     //
     {"Window", W_Window::make},
     {"Grid", W_Grid::make},
-    {"Hlayout", W_Grid::make_hlayout},
-    {"Vlayout", W_Grid::make_vlayout},
+    {"Hlayout", W_Layout::make_hlayout},
+    {"Vlayout", W_Layout::make_vlayout},
     {"Stack", W_Stack::make},
     {"PushButton", W_PushButton::make},
     {"RadioButton", W_RadioButton::make},

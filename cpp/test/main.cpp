@@ -24,9 +24,10 @@ const char* callback0(
                 wtab = "(buttons)l_MainWindow";
                 if (!tabs[wtab]) {
                     callback_data.append( //
-                        ",[MINION_FILE, ../../examples/buttons.minion],[WIDGET, ");
+                        ",[MINION_FILE, ../../examples/buttons.minion]");
+                    callback_data.append(",[WIDGET, ()viewer, [ADD, ");
                     callback_data.append(wtab);
-                    callback_data.append(", [PARENT, ()viewer]]");
+                    callback_data.append("]]");
                     tabs[wtab] = true;
                 }
                 callback_data.append( //
@@ -39,9 +40,10 @@ const char* callback0(
                 wtab = "(grid)l_MainWindow";
                 if (!tabs[wtab]) {
                     callback_data.append( //
-                        ",[MINION_FILE, ../../examples/grid.minion],[WIDGET, ");
+                        ",[MINION_FILE, ../../examples/grid.minion]");
+                    callback_data.append(",[WIDGET, ()viewer, [ADD, ");
                     callback_data.append(wtab);
-                    callback_data.append(", [PARENT, ()viewer]]");
+                    callback_data.append("]]");
                     tabs[wtab] = true;
                 }
                 callback_data.append( //
@@ -54,9 +56,10 @@ const char* callback0(
                 wtab = "(complex)l_MainWindow";
                 if (!tabs[wtab]) {
                     callback_data.append( //
-                        ",[MINION_FILE, ../../examples/complex.minion],[WIDGET, ");
+                        ",[MINION_FILE, ../../examples/complex.minion]");
+                    callback_data.append(",[WIDGET, ()viewer, [ADD, ");
                     callback_data.append(wtab);
-                    callback_data.append(", [PARENT, ()viewer]]");
+                    callback_data.append("]]");
                     tabs[wtab] = true;
                 }
                 callback_data.append( //

@@ -7,46 +7,60 @@
 #include <FL/Fl_Widget.H>
 #include <string_view>
 
-class W_Group : public Widget
+class W_Window : public Widget
 {
-    void add_child(Fl_Widget* child) override;
-
-public:
-    void handle_method(std::string_view method, minion::MList* paramlist) override;
-    //static W_Group* make(minion::MMap* props);
-};
-
-class W_Window : public W_Group
-{
+protected:
     Fl_Flex* container;
-    void add_child(Fl_Widget* child) override;
+    static void make_window(int ww, int wh, W_Window* widget, minion::MMap* props);
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Window* make(minion::MMap* props);
 };
 
-class W_Grid : public W_Group
+class W_Grid : public Widget
 {
 protected:
-    static W_Grid* new_hvgrid(minion::MMap* parammap, bool horizontal);
-    
+    struct grid_element
+    {
+        int row;
+        int col;
+        int rspan = 1;
+        int cspan = 1;
+    };
+
+    int nrows = 0;
+    int ncols = 0;
+    std::map<Widget*, grid_element> children;
+
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Grid* make(minion::MMap* props);
-    static W_Grid* make_hlayout(
-        minion::MMap* parammap)
+};
+
+class W_Layout : public Widget
+{
+    static W_Layout* new_hvgrid(minion::MMap* parammap, bool horizontal);
+
+protected:
+    bool horizontal;
+    std::vector<Widget*> children;
+
+public:
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
+    static W_Layout* make_hlayout(
+        minion::MMap* props)
     {
-        return new_hvgrid(parammap, true);
+        return new_hvgrid(props, true);
     }
-    static W_Grid* make_vlayout(
-        minion::MMap* parammap)
+    static W_Layout* make_vlayout(
+        minion::MMap* props)
     {
-        return new_hvgrid(parammap, false);
+        return new_hvgrid(props, false);
     }
 };
 
-class W_Stack : public W_Group
+class W_Stack : public Widget
 {
     Fl_Widget* current = nullptr;
 

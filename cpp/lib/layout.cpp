@@ -58,58 +58,13 @@ void callback_close_window(
 
 // *** layout widgets – Fl_Group based
 
-void W_Group::add_child(
-    Fl_Widget* child)
+void W_Window::make_window(
+    int ww, int wh, W_Window* widget, MMap* props)
 {
-    fl_widget->as_group()->add(child);
-}
-
-//TODO--?
-// The Group widget is only needed for its `handle_method`.
-void W_Group::handle_method(
-    string_view method, MList* paramlist)
-{
-    if (method == "RESIZABLE") {
-        /*string wname;
-        if (paramlist->get_string(1, wname)) {
-            auto rsw = Widget::get_fltk_widget(wname);
-            fl_widget->as_group()->resizable(rsw);
-        } else {
-            throw "Method RESIZABLE without widget";
-        }*/
-    } else if (method == "fit_to_parent") {
-        /*if (auto parent = fltk_widget()->parent()) {
-            fltk_widget()->resize(0, 0, parent->w(), parent->h());
-            parent->resizable(fltk_widget());
-        } else {
-            throw "Widget (" + *widget_name() + ") method 'fit_to_parent': no parent";
-        }*/
-    } else {
-        Widget::handle_method(method, paramlist);
-    }
-}
-
-void W_Window::add_child(
-    Fl_Widget* child)
-{
-    if (container->children() != 0) {
-        string msg{"Window already has child: "};
-        msg.append(*widget_name());
-        throw msg;
-    }
-    container->add(child);
-}
-
-W_Window* W_Window::make(
-    MMap* props)
-{
-    int ww = 800;
-    int wh = 600;
     props->get_int("WIDTH", ww);
     props->get_int("HEIGHT", wh);
     auto w = new Fl_Double_Window(ww, wh);
     w->callback(callback_close_window);
-    auto widget = new W_Window();
     widget->container = new Fl_Flex(0, 0, 0, 0);
     //w->box(FL_EMBOSSED_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
@@ -121,7 +76,13 @@ W_Window* W_Window::make(
     widget->container->resize(0, 0, w->w(), w->h());
     w->resizable(widget->container);
     //widget->container->layout();
+}
 
+W_Window* W_Window::make(
+    MMap* props)
+{
+    auto widget = new W_Window();
+    make_window(800, 600, widget, props);
     return widget;
 }
 
@@ -137,6 +98,15 @@ void W_Window::handle_method(
             fl_widget->copy_label(lbl.c_str());
         } else
             throw "TEXT value missing for window " + *widget_name();
+    } else if (method == "SET_LAYOUT") {
+        string w;
+        if (paramlist->get_string(1, w)) {
+            if (container->children() != 0) {
+                throw "Window " + *widget_name() + " already has child: ";
+            }
+            container->add(get_fltk_widget(w));
+        } else
+            throw "SET_LAYOUT widget missing for window " + *widget_name();
     } else {
         throw string{"Unknown method on window " + *widget_name() + ": "}.append(method);
     }
@@ -155,218 +125,271 @@ struct grid_item
 W_Grid* W_Grid::make(
     MMap* props)
 {
-    //(void) props;
+    (void) props;
     auto w = new Fl_Grid(0, 0, 0, 0);
     w->box(FL_NO_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Grid();
     widget->fl_widget = w;
-
-    // Get contained widgets ...
-    auto wlist0 = props->get("WIDGETS");
-    if (!wlist0.is_null()) {
-        auto wlist = wlist0.m_list()->get();
-        auto n = wlist->size();
-        if (n != 0) {
-            // Need to determine the dimensions
-            int maxrow = 0, maxcol = 0;
-            string wname;
-            string fill;
-            vector<grid_item> items;
-            for (size_t i = 0; i < n; ++i) {
-                auto witem = wlist->get(i);
-                if (!witem.is_null()) {
-                    auto wl_i = witem.m_list();
-                    if (wl_i) {
-                        auto list_i = wl_i->get();
-                        if (list_i->get_string(0, wname)) {
-                            if (auto w_i = Widget::get_widget(wname)) {
-                                auto wfltk = w_i->fltk_widget();
-                                w->add(wfltk);
-                                grid_item item{wfltk};
-                                list_i->get_int(1, item.row);
-                                if (item.row > maxrow)
-                                    maxrow = item.row;
-                                list_i->get_int(2, item.col);
-                                if (item.col > maxcol)
-                                    maxcol = item.col;
-                                list_i->get_int(3, item.rspan);
-                                list_i->get_int(4, item.cspan);
-                                if (w_i->property_string("GRID_ALIGN", fill)) {
-                                    try {
-                                        item.align = GRID_ALIGN.at(fill);
-                                    } catch (out_of_range& e) {
-                                        throw string{"Invalid GRID_ALIGN: "} + fill;
-                                    }
-                                }
-                                items.emplace_back(item);
-                                continue;
-                            }
-                        }
-                    }
-                }
-                throw "Layout with invalid WIDGETS list: " + *widget->widget_name();
-            }
-
-            // Place the widgets in the grid
-            w->layout(maxrow + 1, maxcol + 1);
-            for (const auto& item : items) {
-                w->widget(item.widget, item.row, item.col, item.rspan, item.cspan, item.align);
-            }
-
-            // Row and column weights ...
-            auto wmap0 = props->get("ROW_WEIGHTS");
-            if (!wmap0.is_null()) {
-                if (auto wmap = wmap0.m_list()) {
-                    auto wl = wmap->get();
-                    auto n = wl->size();
-                    for (size_t i = 0; i < n; ++i) {
-                        auto witem = wl->get(i);
-                        if (auto wil0 = witem.m_list()) {
-                            auto wil = wil0->get();
-                            int ix = -1;
-                            wil->get_int(0, ix);
-                            if (ix >= 0 && ix <= maxrow) {
-                                int weight = -1;
-                                wil->get_int(1, weight);
-                                if (weight >= 0) {
-                                    w->row_weight(ix, weight);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            wmap0 = props->get("COL_WEIGHTS");
-            if (!wmap0.is_null()) {
-                if (auto wmap = wmap0.m_list()) {
-                    auto wl = wmap->get();
-                    auto n = wl->size();
-                    for (size_t i = 0; i < n; ++i) {
-                        auto witem = wl->get(i);
-                        if (auto wil0 = witem.m_list()) {
-                            auto wil = wil0->get();
-                            int ix = -1;
-                            wil->get_int(0, ix);
-                            if (ix >= 0 && ix <= maxcol) {
-                                int weight = -1;
-                                wil->get_int(1, weight);
-                                if (weight >= 0) {
-                                    w->col_weight(ix, weight);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return widget;
-        }
-    }
-    throw "Layout with no WIDGETS list: " + *widget->widget_name();
+    return widget;
 }
 
 void W_Grid::handle_method(
     string_view method, MList* paramlist)
 {
+    if (method == "RC") {
+        auto fw = static_cast<Fl_Grid*>(fl_widget);
+        if (fw->children() != 0) {
+            fw->clear_layout();
+        }
+        int r, c;
+        if (paramlist->get_int(1, r) && paramlist->get_int(2, c)) {
+            fw->layout(r, c);
+            nrows = r;
+            ncols = c;
+            return;
+        }
+        throw "RC command needs two values (rows and columns), grid: " + *widget_name();
+    }
+
+    if (method == "ADD") {
+        auto fw = static_cast<Fl_Grid*>(fl_widget);
+        if (fw->children() != 0) {
+            fw->clear_layout();
+        }
+        // Add new children to map
+        auto n = paramlist->size();
+        for (size_t i = 1; i < n; ++i) {
+            auto w_i = paramlist->get(i);
+            auto wlistp = w_i.m_list();
+            if (wlistp) {
+                auto wlist = wlistp->get();
+                string wname;
+                if (wlist->get_string(0, wname)) {
+                    auto wc = get_widget(wname);
+                    if (children.contains(wc))
+                        throw "Widget " + wname + " already in layout " + *widget_name();
+
+                    grid_element rc;
+                    if (wlist->get_int(1, rc.row) && wlist->get_int(2, rc.col)) {
+                        wlist->get_int(2, rc.rspan);
+                        wlist->get_int(3, rc.cspan);
+                        children.emplace(wc, rc);
+                        fw->add(wc->fltk_widget());
+                        continue;
+                    }
+                    throw "Grid ADD command needs two values (row and column), grid: "
+                        + *widget_name();
+                }
+            }
+            throw "Invalid grid ADD command on '" + *widget_name() + "':\n  " + dump_value(w_i);
+        }
+
+        // Lay out the grid
+        for (const auto [wc, rc] : children) {
+            auto wfltk = wc->fltk_widget();
+
+            Fl_Grid_Align align = FL_GRID_CENTER;
+            string fill;
+            if (wc->property_string("GRID_ALIGN", fill)) {
+                try {
+                    align = GRID_ALIGN.at(fill);
+                } catch (out_of_range& e) {
+                    throw string{"Invalid GRID_ALIGN: "} + fill;
+                }
+            }
+            //TODO: Check rows and cols (with spans)
+            fw->widget(wfltk, rc.row, rc.col, rc.rspan, rc.cspan, align);
+        }
+
+        fw->layout();
+        return;
+    }
+
+    // Set row weights
+    if (method == "ROW_WEIGHTS") {
+        auto fw = static_cast<Fl_Grid*>(fl_widget);
+        auto n = paramlist->size();
+        for (size_t i = 1; i < n; ++i) {
+            auto m = paramlist->get(i);
+            if (auto wlp = m.m_list()) {
+                auto wl = wlp->get();
+                int row, wt;
+                if (wl->get_int(0, row) && wl->get_int(1, wt)) {
+                    fw->row_weight(row, wt);
+                    continue;
+                }
+            }
+            throw "Invalid ROW_WEIGHTS value: " + dump_value(m);
+        }
+        fw->layout();
+        return;
+    }
+
+    // Set column weights
+    if (method == "COL_WEIGHTS") {
+        auto fw = static_cast<Fl_Grid*>(fl_widget);
+        auto n = paramlist->size();
+        for (size_t i = 1; i < n; ++i) {
+            auto m = paramlist->get(i);
+            if (auto wlp = m.m_list()) {
+                auto wl = wlp->get();
+                int col, wt;
+                if (wl->get_int(0, col) && wl->get_int(1, wt)) {
+                    fw->row_weight(col, wt);
+                    continue;
+                }
+            }
+            throw "Invalid COL_WEIGHTS value: " + dump_value(m);
+        }
+        fw->layout();
+        return;
+    }
+
     if (method == "GAP") {
         int rowgap;
         if (paramlist->get_int(1, rowgap)) {
+            auto fw = static_cast<Fl_Grid*>(fl_widget);
             int colgap = rowgap;
-            if (paramlist->size() > 2)
-                paramlist->get_int(2, colgap);
-            static_cast<Fl_Grid *>(fl_widget)->gap(rowgap, colgap);
+            paramlist->get_int(2, colgap);
+            fw->gap(rowgap, colgap);
+            fw->layout();
             return;
         }
-    } else if (method == "MARGIN") {
+        throw "GAP command with no gap on layout '" + *widget_name();
+    }
+
+    if (method == "MARGIN") {
         int s;
         if (paramlist->get_int(1, s)) {
-            static_cast<Fl_Grid *>(fl_widget)->margin(s, s, s, s);
+            auto fw = static_cast<Fl_Grid*>(fl_widget);
+            fw->margin(s, s, s, s);
+            fw->layout();
             return;
         }
-    } else if (method == "SHOW_GRID") {
+        throw "MARGIN command with no margin on layout '" + *widget_name();
+    }
+
+    if (method == "SHOW_GRID") {
         int show_grid = 0;
         paramlist->get_int(1, show_grid);
         static_cast<Fl_Grid*>(fl_widget)->show_grid(show_grid);
         return;
-    } else {
-        W_Group::handle_method(method, paramlist);
-        return;
     }
-    MValue m{*paramlist};
-    throw string{"Invalid command on grid '" + *widget_name()}.append("':\n  ").append(
-        dump_value(m));
+
+    Widget::handle_method(method, paramlist);
+    return;
 }
 
 //static
-W_Grid* W_Grid::new_hvgrid(
+W_Layout* W_Layout::new_hvgrid(
     MMap* props, bool horizontal)
 {
+    (void) props;
     auto w = new Fl_Grid(0, 0, 0, 0);
     w->box(FL_NO_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
-    auto widget = new W_Grid();
+    auto widget = new W_Layout();
     widget->fl_widget = w;
+    widget->horizontal = horizontal;
+    return widget;
+}
 
-    // Get contained widgets ...
-    auto wlist0 = props->get("WIDGETS");
-    if (!wlist0.is_null()) {
-        auto wlist = wlist0.m_list()->get();
-        auto n = wlist->size();
-        if (n != 0) {
-            if (horizontal)
-                w->layout(1, n);
-            else
-                w->layout(n, 1);
-            int xsize = 0; // find transverse size
-            for (size_t i = 0; i < n; ++i) {
-                string wname;
-                if (wlist->get_string(i, wname)) {
-                    if (auto w_i = Widget::get_widget(wname)) {
-                        auto wfltk = w_i->fltk_widget();
-                        w->add(wfltk);
-                        auto xs = horizontal ? wfltk->h() : wfltk->w();
-                        if (xs > xsize)
-                            xsize = xs;
-                        Fl_Grid_Align align = FL_GRID_CENTER;
-                        string fill;
-                        if (w_i->property_string("GRID_ALIGN", fill)) {
-                            try {
-                                align = GRID_ALIGN.at(fill);
-                            } catch (out_of_range& e) {
-                                throw string{"Invalid GRID_ALIGN: "} + fill;
-                            }
-                        }
-                        if (horizontal)
-                            w->widget(wfltk, 0, i, align);
-                        else
-                            w->widget(wfltk, i, 0, align);
-                        int weight = 0;
-                        w_i->property_int("GRID_GROW", weight);
-                        if (horizontal)
-                            w->col_weight(i, weight);
-                        else
-                            w->row_weight(i, weight);
-                        continue;
-                    }
+void W_Layout::handle_method(
+    std::string_view method, minion::MList* paramlist)
+{
+    if (method == "ADD") {
+        auto fw = static_cast<Fl_Grid*>(fl_widget);
+        if (fw->children() != 0) {
+            fw->clear_layout();
+        }
+        auto n = paramlist->size();
+        if (n < 2)
+            throw "No widget(s) to ADD to " + *widget_name();
+        // Add new children to list
+        for (size_t i = 1; i < n; ++i) {
+            string wname;
+            if (paramlist->get_string(1, wname)) {
+                auto wc = get_widget(wname);
+                if (std::find(children.begin(), children.end(), wc) != children.end())
+                    throw "Widget " + wname + " already in layout " + *widget_name();
+                fw->add(wc->fltk_widget());
+                children.emplace_back(wc);
+            }
+        }
+        // Lay out the grid
+        n = children.size();
+        if (horizontal)
+            fw->layout(1, n);
+        else
+            fw->layout(n, 1);
+        int xsize = 0; // find transverse size
+        int i = 0;     // child index
+        for (const auto wc : children) {
+            auto wfltk = wc->fltk_widget();
+            auto xs = horizontal ? wfltk->h() : wfltk->w();
+            if (xs > xsize)
+                xsize = xs;
+            Fl_Grid_Align align = FL_GRID_CENTER;
+            string fill;
+            if (wc->property_string("GRID_ALIGN", fill)) {
+                try {
+                    align = GRID_ALIGN.at(fill);
+                } catch (out_of_range& e) {
+                    throw string{"Invalid GRID_ALIGN: "} + fill;
                 }
-                throw "Layout with invalid WIDGETS list: " + *widget->widget_name();
             }
             if (horizontal)
-                w->size(0, xsize);
+                fw->widget(wfltk, 0, i, align);
             else
-                w->size(xsize, 0);
-            return widget;
+                fw->widget(wfltk, i, 0, align);
+            int weight = 0;
+            wc->property_int("GRID_GROW", weight);
+            if (horizontal)
+                fw->col_weight(i, weight);
+            else
+                fw->row_weight(i, weight);
+            ++i;
         }
+        if (horizontal)
+            fw->size(0, xsize);
+        else
+            fw->size(xsize, 0);
+        fw->layout(); // lay out container
+        return;
     }
-    throw "Layout with no WIDGETS list: " + *widget->widget_name();
+
+    if (method == "GAP") {
+        int gap;
+        if (paramlist->get_int(1, gap)) {
+            if (horizontal)
+                static_cast<Fl_Grid*>(fl_widget)->gap(0, gap);
+            else
+                static_cast<Fl_Grid*>(fl_widget)->gap(gap, 0);
+            return;
+        }
+        throw "GAP command with no gap on layout '" + *widget_name();
+    }
+    if (method == "MARGIN") {
+        int s;
+        if (paramlist->get_int(1, s)) {
+            static_cast<Fl_Grid*>(fl_widget)->margin(s, s, s, s);
+            return;
+        }
+        throw "MARGIN command with no margin on layout '" + *widget_name();
+    }
+    Widget::handle_method(method, paramlist);
 }
 
 void W_Stack::handle_method(
     std::string_view method, minion::MList* paramlist)
 {
-    if (method == "SELECT") {
+    if (method == "ADD") {
+        string wname;
+        if (paramlist->get_string(1, wname)) {
+            fl_widget->as_group()->add(get_fltk_widget(wname));
+        }
+    } else if (method == "SELECT") {
         string wname;
         if (paramlist->get_string(1, wname)) {
             auto subw = Widget::get_fltk_widget(wname);
@@ -380,7 +403,7 @@ void W_Stack::handle_method(
             throw "Method SELECT without widget";
         }
     } else {
-        W_Group::handle_method(method, paramlist);
+        Widget::handle_method(method, paramlist);
     }
 }
 
