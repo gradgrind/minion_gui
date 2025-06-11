@@ -75,7 +75,6 @@ void W_Window::make_window(
 
     widget->container->resize(0, 0, w->w(), w->h());
     w->resizable(widget->container);
-    //widget->container->layout();
 }
 
 W_Window* W_Window::make(
@@ -134,6 +133,7 @@ W_Grid* W_Grid::make(
     return widget;
 }
 
+//TODO: What about changing min col size when a text changes?
 void W_Grid::handle_method(
     string_view method, MList* paramlist)
 {
@@ -202,7 +202,7 @@ void W_Grid::handle_method(
             fw->widget(wfltk, rc.row, rc.col, rc.rspan, rc.cspan, align);
         }
 
-        fw->layout();
+        //fw->layout();
         return;
     }
 
@@ -222,7 +222,8 @@ void W_Grid::handle_method(
             }
             throw "Invalid ROW_WEIGHTS value: " + dump_value(m);
         }
-        fw->layout();
+
+        //fw->layout();
         return;
     }
 
@@ -236,13 +237,14 @@ void W_Grid::handle_method(
                 auto wl = wlp->get();
                 int col, wt;
                 if (wl->get_int(0, col) && wl->get_int(1, wt)) {
-                    fw->row_weight(col, wt);
+                    fw->col_weight(col, wt);
                     continue;
                 }
             }
             throw "Invalid COL_WEIGHTS value: " + dump_value(m);
         }
-        fw->layout();
+
+        //fw->layout();
         return;
     }
 
@@ -253,7 +255,7 @@ void W_Grid::handle_method(
             int colgap = rowgap;
             paramlist->get_int(2, colgap);
             fw->gap(rowgap, colgap);
-            fw->layout();
+            //fw->layout();
             return;
         }
         throw "GAP command with no gap on layout '" + *widget_name();
@@ -264,7 +266,7 @@ void W_Grid::handle_method(
         if (paramlist->get_int(1, s)) {
             auto fw = static_cast<Fl_Grid*>(fl_widget);
             fw->margin(s, s, s, s);
-            fw->layout();
+            //fw->layout();
             return;
         }
         throw "MARGIN command with no margin on layout '" + *widget_name();
@@ -309,7 +311,7 @@ void W_Layout::handle_method(
         // Add new children to list
         for (size_t i = 1; i < n; ++i) {
             string wname;
-            if (paramlist->get_string(1, wname)) {
+            if (paramlist->get_string(i, wname)) {
                 auto wc = get_widget(wname);
                 if (std::find(children.begin(), children.end(), wc) != children.end())
                     throw "Widget " + wname + " already in layout " + *widget_name();
@@ -355,7 +357,7 @@ void W_Layout::handle_method(
             fw->size(0, xsize);
         else
             fw->size(xsize, 0);
-        fw->layout(); // lay out container
+        //fw->layout(); // lay out container
         return;
     }
 
