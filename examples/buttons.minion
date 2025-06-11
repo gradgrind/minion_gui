@@ -22,22 +22,17 @@
   ],
   [NEW, Hlayout, l_output, {
       GRID_ALIGN: HORIZONTAL,
-      WIDGETS: [
-        Label_1, Output_1
-      ]
     },
-    # [HEIGHT, 80],
+    [ADD, Label_1, Output_1]
   ],
   [NEW, Vlayout, l_MainWindow, {
-      FLOATING: 1,
-      WIDGETS: [
-        PB1, l_output, PB2
-      ]
+      FLOATING: 1      
     },
     [MARGIN, 5],
     [GAP, 10],
     [BOXTYPE, FLAT_BOX],
-    [COLOUR, ffff00] # No effect if (FL_NO_BOX)
+    [COLOUR, ffff00], # No effect if (FL_NO_BOX)
+    [ADD, PB1, l_output, PB2]
   ],
   
   [WIDGET, PB1,

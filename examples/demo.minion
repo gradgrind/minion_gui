@@ -21,6 +21,7 @@
     },
     [TEXT, "FLTK minion demo"]
   ],
+  
   # Top-level contents
   [NEW, Label, _chooser, {
       GRID_ALIGN: HORIZONTAL,
@@ -48,11 +49,9 @@
   ],
   [NEW, Vlayout, chooser, {
       GRID_ALIGN: VERTICAL,
-      WIDGETS: [
-        _chooser, buttons, grid, complex
-      ]
     },
-    [GAP, 5]
+    [GAP, 5],
+    [ADD, _chooser, buttons, grid, complex]
   ],
   
   [NEW, Stack, viewer, {
@@ -62,22 +61,12 @@
     [COLOUR, ffe0e0],
     [BOXTYPE, ENGRAVED_BOX]
   ],
-  #[ [NEW, Box, viewer, {
-      GRID_ALIGN: FILL,
-      GRID_GROW: 1
-    },
-    [COLOUR, ffe0e0],
-    [BOXTYPE, ENGRAVED_BOX]
-  ], ]#
   
-  [NEW, Hlayout, l_MainWindow, {
-      WIDGETS: [
-        chooser, viewer
-      ]
-    },
-    [PARENT, MainWindow],
-    [fit_to_parent],
+  [NEW, Hlayout, l_MainWindow, {},
     [MARGIN, 5],
-    [GAP, 5]
+    [GAP, 5],
+    [ADD, chooser, viewer]
   ],
+  
+  [WIDGET, MainWindow, [SET_LAYOUT, l_MainWindow]]
 ]
