@@ -1,6 +1,5 @@
-#include "editform.h"
 #include "callback.h"
-#include "widgets.h"
+#include "layout.h"
 #include <FL/Enumerations.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
@@ -9,8 +8,8 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Select_Browser.H>
-#include <string>
 #include <FL/fl_draw.H>
+#include <string>
 using namespace std;
 using namespace minion;
 
@@ -19,22 +18,133 @@ using namespace minion;
 //  Entry_name + new_value (ENTRY)
 //  Entry_name + [new_value ...] (LIST)
 
-EditForm::EditForm()
-    : Fl_Grid(0, 0, 0, 0)
+class EditForm : public Fl_Grid
 {
-    Fl_Group::current(0); // disable "auto-grouping"
-    box(FL_BORDER_FRAME);
-    gap(10, 5);
-    margin(5, 5, 5, 5);
-}
+public:
+    int v_title_gap{5};
+
+    EditForm()
+        : Fl_Grid(0, 0, 0, 0)
+    {
+        Fl_Group::current(0); // disable "auto-grouping"
+        box(FL_BORDER_FRAME);
+        gap(10, 5);
+        margin(5, 5, 5, 5);
+    }
+};
 
 // static
-W_EditForm* W_EditForm::make(minion::MMap* parammap)
+W_EditForm* W_EditForm::make(
+    minion::MMap* props)
 {
+    // Now create the EditForm widget
+    (void) props;
+    auto efw = new EditForm();
+    auto widget = new W_EditForm();
+    widget->fl_widget = efw;
+    //efw->color(Widget::entry_bg);
+    return widget;
+}
+
+void W_EditForm::handle_method(
+    std::string_view method, minion::MList* paramlist)
+{
+    //TODO
+    if (method == "ADD") {
+        auto fw = static_cast<Fl_Grid*>(fl_widget);
+        if (fw->children() != 0) {
+            fw->clear_layout();
+        }
+        auto n = paramlist->size();
+        if (n < 2)
+            throw "No widget(s) to ADD to " + *widget_name();
+        // Add new children to list
+        for (size_t i = 1; i < n; ++i) {
+            string wname;
+            if (paramlist->get_string(i, wname)) {
+                auto wc = get_widget(wname);
+                if (std::find(children.begin(), children.end(), wc) != children.end())
+                    throw "Widget " + wname + " already in layout " + *widget_name();
+                fw->add(wc->fltk_widget());
+                children.emplace_back(wc);
+            }
+        }
+        // Lay out the grid
+        n = children.size();
+        fw->layout(n, 2);
+        fw->col_weight(0, 0);
+        if (horizontal)
+            fw->layout(1, n);
+        else
+            fw->layout(n, 1);
+        int xsize = 0; // find transverse size
+        int i = 0;     // child index
+        for (const auto wc : children) {
+            auto wfltk = wc->fltk_widget();
+            auto xs = horizontal ? wfltk->h() : wfltk->w();
+            if (xs > xsize)
+                xsize = xs;
+            Fl_Grid_Align align = FL_GRID_CENTER;
+            string fill;
+            if (wc->property_string("GRID_ALIGN", fill)) {
+                try {
+                    align = GRID_ALIGN.at(fill);
+                } catch (out_of_range& e) {
+                    throw string{"Invalid GRID_ALIGN: "} + fill;
+                }
+            }
+            if (horizontal)
+                fw->widget(wfltk, 0, i, align);
+            else
+                fw->widget(wfltk, i, 0, align);
+            int weight = 0;
+            wc->property_int("GRID_GROW", weight);
+            if (horizontal)
+                fw->col_weight(i, weight);
+            else
+                fw->row_weight(i, weight);
+            ++i;
+        }
+        if (horizontal)
+            fw->size(0, xsize);
+        else
+            fw->size(xsize, 0);
+        //fw->layout(); // lay out container
+        return;
+    }
+
+    if (method == "GAP") {
+        int rowgap;
+        if (paramlist->get_int(1, rowgap)) {
+            int colgap = rowgap;
+            paramlist->get_int(2, colgap);
+            static_cast<Fl_Grid*>(fl_widget)->gap(rowgap, colgap);
+            return;
+        }
+        throw "GAP command with no gap on layout '" + *widget_name();
+    }
+
+    if (method == "MARGIN") {
+        int s;
+        if (paramlist->get_int(1, s)) {
+            static_cast<Fl_Grid*>(fl_widget)->margin(s, s, s, s);
+            return;
+        }
+        throw "MARGIN command with no margin on layout '" + *widget_name();
+    }
+
+    Widget::handle_method(method, paramlist);
+
+    //old:
+
     auto wlist0 = parammap->get("WIDGETS");
     if (auto wlist = wlist0.m_list()) {
         auto mlist = wlist->get();
         auto n = mlist->size();
+
+        efw->layout(n, 2);
+        efw->col_weight(0, 0);
+
         if (n != 0) {
             vector<Widget*> children;
             for (size_t i = 0; i < n; ++i) {
@@ -52,13 +162,6 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
                 }
                 children.emplace_back(Widget::get_widget(wname));
             }
-            // Now create the EditForm widget
-            auto efw = new EditForm();
-            efw->layout(n, 2);
-            efw->col_weight(0, 0);
-            auto widget = new W_EditForm();
-            widget->fl_widget = efw;
-            efw->color(Widget::entry_bg);
 
             int label_width{0};
             Fl_Align align{FL_ALIGN_LEFT | FL_ALIGN_INSIDE};
@@ -86,7 +189,7 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
                         efw->widget(wx, i, 0, 1, 2);
                     } else {
                         auto gbox = new Fl_Flex(0, 0, 0, 0);
-                        auto wl = new Fl_Box (0, 0, 0, 0);
+                        auto wl = new Fl_Box(0, 0, 0, 0);
                         Fl_Group::current(0); // disable "auto-grouping"
                         gbox->add(wx);
                         efw->add(gbox);
@@ -106,7 +209,7 @@ W_EditForm* W_EditForm::make(minion::MMap* parammap)
                     // If there is a label, make a labelled box for the
                     // first column.
                     if (!label.empty()) {
-                        auto wl = new Fl_Box (0, 0, 0, 0);
+                        auto wl = new Fl_Box(0, 0, 0, 0);
                         wl->copy_label(label.c_str());
                         wl->align(align);
                         efw->add(wl);

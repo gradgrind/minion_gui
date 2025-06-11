@@ -6,7 +6,7 @@ find_package(FLTK 1.4 CONFIG REQUIRED)
 add_library(minion_gui SHARED
 #  ../include/backend.h
   callback.h
-  editform.cpp editform.h
+  editform.cpp
   functions.cpp functions.h
   iofile.cpp iofile.h
   layout.cpp layout.h

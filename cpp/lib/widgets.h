@@ -100,10 +100,4 @@ public:
     static W_RowTable* make(minion::MMap* props);
 };
 
-class W_EditForm : public Widget
-{
-public:
-    static W_EditForm* make(minion::MMap* props);
-};
-
 #endif // WIDGETS_H

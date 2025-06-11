@@ -69,4 +69,23 @@ public:
     static W_Stack* make(minion::MMap* props);
 };
 
+class W_EditForm : public Widget
+{
+protected:
+    struct form_element
+    {
+        Widget* element;
+        Widget* label; // This is actually a W_Label?
+        bool span = false;
+    };
+
+    int nrows = 0;
+    int ncols = 0;
+    std::vector<form_element> children;
+
+public:
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
+    static W_EditForm* make(minion::MMap* props);
+};
+
 #endif // LAYOUT_H
