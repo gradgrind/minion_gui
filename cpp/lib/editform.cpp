@@ -1,4 +1,3 @@
-#include "callback.h"
 #include "layout.h"
 #include <FL/Enumerations.H>
 #include <FL/Fl_Box.H>
@@ -49,7 +48,6 @@ W_EditForm* W_EditForm::make(
 void W_EditForm::handle_method(
     std::string_view method, minion::MList* paramlist)
 {
-    //TODO
     if (method == "ADD") {
         auto fw = static_cast<Fl_Grid*>(fl_widget);
         if (fw->children() != 0) {
@@ -133,6 +131,7 @@ void W_EditForm::handle_method(
                 children.emplace_back(form_element{wc, wlabel, span});
             }
         }
+
         // Lay out the grid
         n = children.size();
         fw->layout(n, 2);
@@ -153,72 +152,30 @@ void W_EditForm::handle_method(
                 }
                 fw->widget(el.element->fltk_widget(), i, 1);
                 fw->row_weight(i, 0);
+
             } else {
-                if (el.label) {
+                if (el.label) { // Label above element
                     // Measure label dimensions
-                    //TODO: need to get the label out of the Flex box ...
                     int wlw{0}, wlh;
-                    wl->measure_label(wlw, wlh);
-                    gbox->size(wlw, wlh + efw->v_title_gap + wx->h());
-                    gbox->fixed(wl, wlh);
-                    gbox->gap(efw->v_title_gap);
-
+                    auto wlbl = static_cast<Fl_Flex*>(el.label)->child(0);
+                    wlbl->measure_label(wlw, wlh);
+                    el.label->size(wlw, wlh + v_label_gap + el.element->fltk_widget()->h());
+                    static_cast<Fl_Flex*>(el.label)->fixed(wlbl, wlh);
+                    static_cast<Fl_Flex*>(el.label)->gap(v_label_gap);
                     fw->widget(el.label, i, 0, 1, 2);
+                } else { // No label
+                    fw->widget(el.element->fltk_widget(), i, 0, 1, 2);
                 }
+                if (el.span != 1)
+                    fw->row_weight(i, 1);
+                else
+                    fw->row_weight(i, 0);
             }
 
             ++i;
         }
 
-        //spanned, no label
-        efw->widget(wx, i, 0, 1, 2);
-
-        //spanned, label
-        // Measure label dimensions
-        int wlw{0}, wlh;
-        wl->measure_label(wlw, wlh);
-        gbox->size(wlw, wlh + efw->v_title_gap + wx->h());
-        gbox->fixed(wl, wlh);
-        gbox->gap(efw->v_title_gap);
-        efw->widget(gbox, i, 0, 1, 2);
-
-        efw->row_weight(i, grow);
-
-        //
-
-        int xsize = 0; // find transverse size
-        int i = 0;     // child index
-        for (const auto wc : children) {
-            auto wfltk = wc->fltk_widget();
-            auto xs = horizontal ? wfltk->h() : wfltk->w();
-            if (xs > xsize)
-                xsize = xs;
-            Fl_Grid_Align align = FL_GRID_CENTER;
-            string fill;
-            if (wc->property_string("GRID_ALIGN", fill)) {
-                try {
-                    align = GRID_ALIGN.at(fill);
-                } catch (out_of_range& e) {
-                    throw string{"Invalid GRID_ALIGN: "} + fill;
-                }
-            }
-            if (horizontal)
-                fw->widget(wfltk, 0, i, align);
-            else
-                fw->widget(wfltk, i, 0, align);
-            int weight = 0;
-            wc->property_int("GRID_GROW", weight);
-            if (horizontal)
-                fw->col_weight(i, weight);
-            else
-                fw->row_weight(i, weight);
-            ++i;
-        }
-        if (horizontal)
-            fw->size(0, xsize);
-        else
-            fw->size(xsize, 0);
-        //fw->layout(); // lay out container
+        fw->col_width(0, label_width);
         return;
     }
 
@@ -243,102 +200,4 @@ void W_EditForm::handle_method(
     }
 
     Widget::handle_method(method, paramlist);
-
-    //old:
-
-    auto wlist0 = parammap->get("WIDGETS");
-    if (auto wlist = wlist0.m_list()) {
-        auto mlist = wlist->get();
-        auto n = mlist->size();
-
-        efw->layout(n, 2);
-        efw->col_weight(0, 0);
-
-        if (n != 0) {
-            vector<Widget*> children;
-            for (size_t i = 0; i < n; ++i) {
-                string wname;
-                try {
-                    mlist->get_string(i, wname);
-                } catch (...) {
-                    string efname;
-                    parammap->get_string("NAME", efname);
-                    MValue m = *mlist;
-                    throw string{"Invalid WIDGETS list for widget "}
-                        .append(efname)
-                        .append(": ")
-                        .append(dump_value(m));
-                }
-                children.emplace_back(Widget::get_widget(wname));
-            }
-
-            int label_width{0};
-            Fl_Align align{FL_ALIGN_LEFT | FL_ALIGN_INSIDE};
-            string algn;
-            parammap->get_string("LABEL_ALIGN", algn);
-            if (algn == "CENTRE") {
-                align = FL_ALIGN_CENTER;
-            } else if (algn == "RIGHT") {
-                align = FL_ALIGN_RIGHT | FL_ALIGN_INSIDE;
-            }
-            for (size_t i = 0; i < n; ++i) {
-                auto w = children.at(i);
-                int span = 1;
-                w->property_int("SPAN", span);
-                int grow = 0;
-                w->property_int("GROW", grow);
-                string label;
-                w->property_string("LABEL", label);
-                auto wx = w->fltk_widget();
-                if (span == 2) {
-                    // If there is a label, it will need to come first. Bundle
-                    // label and widget together in a flex layout.
-                    if (label.empty()) {
-                        efw->add(wx);
-                        efw->widget(wx, i, 0, 1, 2);
-                    } else {
-                        auto gbox = new Fl_Flex(0, 0, 0, 0);
-                        auto wl = new Fl_Box(0, 0, 0, 0);
-                        Fl_Group::current(0); // disable "auto-grouping"
-                        gbox->add(wx);
-                        efw->add(gbox);
-                        wl->copy_label(label.c_str());
-                        wl->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-                        // Measure label dimensions
-                        int wlw{0}, wlh;
-                        wl->measure_label(wlw, wlh);
-                        gbox->size(wlw, wlh + efw->v_title_gap + wx->h());
-                        gbox->fixed(wl, wlh);
-                        gbox->gap(efw->v_title_gap);
-                        efw->widget(gbox, i, 0, 1, 2);
-                    }
-                    efw->row_weight(i, grow);
-                } else {
-                    efw->add(wx);
-                    // If there is a label, make a labelled box for the
-                    // first column.
-                    if (!label.empty()) {
-                        auto wl = new Fl_Box(0, 0, 0, 0);
-                        wl->copy_label(label.c_str());
-                        wl->align(align);
-                        efw->add(wl);
-                        efw->widget(wl, i, 0);
-                        // Measure width, compare with running maximum
-                        int wlw{0}, wlh;
-                        wl->measure_label(wlw, wlh);
-                        if (wlw > label_width) {
-                            label_width = wlw;
-                        }
-                    }
-                    efw->widget(wx, i, 1);
-                    efw->row_weight(i, 0);
-                }
-            }
-            efw->col_width(0, label_width);
-            return widget;
-        }
-    }
-    string efname;
-    parammap->get_string("NAME", efname);
-    throw "EditForm missing WIDGETS list: " + efname;
 }

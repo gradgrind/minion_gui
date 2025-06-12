@@ -71,7 +71,6 @@ public:
 
 class W_EditForm : public Widget
 {
-protected:
     struct form_element
     {
         Widget* element;
@@ -79,8 +78,7 @@ protected:
         int span = 0; // 0: right column, otherwise both columns, 2: "grow"
     };
 
-    int nrows = 0;
-    int ncols = 0;
+    int v_label_gap = 5;
     std::vector<form_element> children;
 
 public:
