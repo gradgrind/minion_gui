@@ -172,8 +172,8 @@ void W_Grid::handle_method(
 
                     grid_element rc;
                     if (wlist->get_int(1, rc.row) && wlist->get_int(2, rc.col)) {
-                        wlist->get_int(2, rc.rspan);
-                        wlist->get_int(3, rc.cspan);
+                        wlist->get_int(3, rc.rspan);
+                        wlist->get_int(4, rc.cspan);
                         children.emplace(wc, rc);
                         fw->add(wc->fltk_widget());
                         continue;
@@ -186,7 +186,7 @@ void W_Grid::handle_method(
         }
 
         // Lay out the grid
-        for (const auto [wc, rc] : children) {
+        for (const auto& [wc, rc] : children) {
             auto wfltk = wc->fltk_widget();
 
             Fl_Grid_Align align = FL_GRID_CENTER;
@@ -297,6 +297,45 @@ W_Layout* W_Layout::new_hvgrid(
     return widget;
 }
 
+void W_Layout::transverse_size()
+{
+    //TODO: This should take the margin into account ...
+
+    int xsize = min_transverse_size;
+    int i = 0; // child index
+    auto fw = static_cast<Fl_Grid*>(fl_widget);
+    for (const auto wc : children) {
+        auto wfltk = wc->fltk_widget();
+        auto xs = horizontal ? wfltk->h() : wfltk->w();
+        if (xs > xsize)
+            xsize = xs;
+        Fl_Grid_Align align = FL_GRID_CENTER;
+        string fill;
+        if (wc->property_string("GRID_ALIGN", fill)) {
+            try {
+                align = GRID_ALIGN.at(fill);
+            } catch (out_of_range& e) {
+                throw string{"Invalid GRID_ALIGN: "} + fill;
+            }
+        }
+        if (horizontal)
+            fw->widget(wfltk, 0, i, align);
+        else
+            fw->widget(wfltk, i, 0, align);
+        int weight = 0;
+        wc->property_int("GRID_GROW", weight);
+        if (horizontal)
+            fw->col_weight(i, weight);
+        else
+            fw->row_weight(i, weight);
+        ++i;
+    }
+    if (horizontal)
+        fw->size(0, xsize);
+    else
+        fw->size(xsize, 0);
+}
+
 void W_Layout::handle_method(
     std::string_view method, minion::MList* paramlist)
 {
@@ -325,38 +364,7 @@ void W_Layout::handle_method(
             fw->layout(1, n);
         else
             fw->layout(n, 1);
-        int xsize = 0; // find transverse size
-        int i = 0;     // child index
-        for (const auto wc : children) {
-            auto wfltk = wc->fltk_widget();
-            auto xs = horizontal ? wfltk->h() : wfltk->w();
-            if (xs > xsize)
-                xsize = xs;
-            Fl_Grid_Align align = FL_GRID_CENTER;
-            string fill;
-            if (wc->property_string("GRID_ALIGN", fill)) {
-                try {
-                    align = GRID_ALIGN.at(fill);
-                } catch (out_of_range& e) {
-                    throw string{"Invalid GRID_ALIGN: "} + fill;
-                }
-            }
-            if (horizontal)
-                fw->widget(wfltk, 0, i, align);
-            else
-                fw->widget(wfltk, i, 0, align);
-            int weight = 0;
-            wc->property_int("GRID_GROW", weight);
-            if (horizontal)
-                fw->col_weight(i, weight);
-            else
-                fw->row_weight(i, weight);
-            ++i;
-        }
-        if (horizontal)
-            fw->size(0, xsize);
-        else
-            fw->size(xsize, 0);
+        transverse_size();
         //fw->layout(); // lay out container
         return;
     }
