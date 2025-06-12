@@ -86,7 +86,7 @@
   ],
   [NEW, Hline, Sep1,
     {
-      SPAN: 2
+      SPAN: 1
     }
   ],
   [NEW, PopupEditor, EF4,
@@ -96,15 +96,14 @@
   ],
   [NEW, Checkbox, EF5,
     {
-      SPAN: 2
+      SPAN: 1
     },
     [ TEXT, "CHECKBOX with a long label" ]
   ],
   [NEW, List, EF6,
     {
       LABEL: "List entry",
-      SPAN: 2,
-      GROW: 1
+      SPAN: 2 # variable height
     }
   ],
   [NEW, EditForm, EditorForm,

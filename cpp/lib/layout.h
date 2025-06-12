@@ -75,8 +75,8 @@ protected:
     struct form_element
     {
         Widget* element;
-        Widget* label; // This is actually a W_Label?
-        bool span = false;
+        Fl_Widget* label;
+        int span = 0; // 0: right column, otherwise both columns, 2: "grow"
     };
 
     int nrows = 0;

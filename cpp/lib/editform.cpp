@@ -55,28 +55,137 @@ void W_EditForm::handle_method(
         if (fw->children() != 0) {
             fw->clear_layout();
         }
+
+        // Label alignment
+        Fl_Align align{FL_ALIGN_LEFT | FL_ALIGN_INSIDE};
+        {
+            string align_;
+            property_string("LABEL_ALIGN", align_);
+            if (align_ == "CENTRE") {
+                align = FL_ALIGN_CENTER;
+            } else if (align_ == "RIGHT") {
+                align = FL_ALIGN_RIGHT | FL_ALIGN_INSIDE;
+            }
+        }
+
+        // Add new children to list
         auto n = paramlist->size();
         if (n < 2)
             throw "No widget(s) to ADD to " + *widget_name();
-        // Add new children to list
+        auto nc = fw->children();
         for (size_t i = 1; i < n; ++i) {
             string wname;
             if (paramlist->get_string(i, wname)) {
                 auto wc = get_widget(wname);
-                if (std::find(children.begin(), children.end(), wc) != children.end())
-                    throw "Widget " + wname + " already in layout " + *widget_name();
-                fw->add(wc->fltk_widget());
-                children.emplace_back(wc);
+                auto fwc = wc->fltk_widget();
+                // Check that it is new to the layout
+                for (int i = 0; i < nc; ++i) {
+                    if (fwc == fw->child(i))
+                        throw "Widget " + wname + " already in layout " + *widget_name();
+                }
+
+                int span = 0;
+                wc->property_int("SPAN", span);
+                string label;
+                wc->property_string("LABEL", label);
+
+                ++nc;
+                Fl_Widget* wlabel = nullptr;
+
+                if (span == 0) {
+                    fw->add(fwc);
+                    // If there is a label, make a labelled box for the
+                    // first column.
+                    if (!label.empty()) {
+                        wlabel = new Fl_Box(0, 0, 0, 0);
+                        wlabel->copy_label(label.c_str());
+                        wlabel->align(align);
+                        fw->add(wlabel);
+                    }
+
+                } else {
+                    // If there is a label, it will need to come first. Bundle
+                    // label and widget together in a flex layout.
+                    if (label.empty()) {
+                        fw->add(fwc);
+                    } else {
+                        auto gbox = new Fl_Flex(0, 0, 0, 0);
+                        auto wl = new Fl_Box(0, 0, 0, 0);
+                        Fl_Group::current(0); // disable "auto-grouping"
+                        gbox->add(fwc);
+                        wlabel = gbox;
+                        // Note that if this element is removed from the form,
+                        // the element's main widget (here fwc) must be removed
+                        // from the Flex layout before deleting the latter,
+                        // assuming that fwc is managed by its Widget object.
+
+                        fw->add(gbox);
+                        wl->copy_label(label.c_str());
+                        wl->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+                        //TODO: If removal is to be a possibility, this `wlabel`
+                        // contains the actual widget (`fwc`). So if the label is
+                        // deleted, `fwc` must be removed from it first, as this
+                        // is managed by its associated `Widget` object.
+                    }
+                }
+
+                children.emplace_back(form_element{wc, wlabel, span});
             }
         }
         // Lay out the grid
         n = children.size();
         fw->layout(n, 2);
         fw->col_weight(0, 0);
-        if (horizontal)
-            fw->layout(1, n);
-        else
-            fw->layout(n, 1);
+        int label_width = 0;
+
+        int i = 0;
+        for (const auto& el : children) {
+            if (el.span == 0) {
+                if (el.label) {
+                    fw->widget(el.label, i, 0);
+                    // Measure width, compare with running maximum
+                    int wlw = 0, wlh;
+                    el.label->measure_label(wlw, wlh);
+                    if (wlw > label_width) {
+                        label_width = wlw;
+                    }
+                }
+                fw->widget(el.element->fltk_widget(), i, 1);
+                fw->row_weight(i, 0);
+            } else {
+                if (el.label) {
+                    // Measure label dimensions
+                    //TODO: need to get the label out of the Flex box ...
+                    int wlw{0}, wlh;
+                    wl->measure_label(wlw, wlh);
+                    gbox->size(wlw, wlh + efw->v_title_gap + wx->h());
+                    gbox->fixed(wl, wlh);
+                    gbox->gap(efw->v_title_gap);
+
+                    fw->widget(el.label, i, 0, 1, 2);
+                }
+            }
+
+            ++i;
+        }
+
+        //spanned, no label
+        efw->widget(wx, i, 0, 1, 2);
+
+        //spanned, label
+        // Measure label dimensions
+        int wlw{0}, wlh;
+        wl->measure_label(wlw, wlh);
+        gbox->size(wlw, wlh + efw->v_title_gap + wx->h());
+        gbox->fixed(wl, wlh);
+        gbox->gap(efw->v_title_gap);
+        efw->widget(gbox, i, 0, 1, 2);
+
+        efw->row_weight(i, grow);
+
+        //
+
         int xsize = 0; // find transverse size
         int i = 0;     // child index
         for (const auto wc : children) {
