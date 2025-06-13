@@ -198,8 +198,16 @@ void W_Grid::handle_method(
                     throw string{"Invalid GRID_ALIGN: "} + fill;
                 }
             }
-            //TODO: Check rows and cols (with spans)
-            fw->widget(wfltk, rc.row, rc.col, rc.rspan, rc.cspan, align);
+            // Check rows and cols (with spans)
+            if (rc.row >= 0 && rc.col >= 0 && rc.rspan > 0 && rc.cspan > 0
+                && (rc.col + rc.cspan) <= ncols && (rc.row + rc.rspan) <= nrows) {
+                fw->widget(wfltk, rc.row, rc.col, rc.rspan, rc.cspan, align);
+            } else {
+                throw "Widget " + *wc->widget_name() + ", Grid placement invalid: \n "
+                    + to_string(rc.row) + "+" + to_string(rc.rspan) + " / " + to_string(rc.col)
+                    + "+" + to_string(rc.cspan) + "\n Layout: " + to_string(nrows) + " / "
+                    + to_string(ncols);
+            }
         }
 
         //fw->layout();
