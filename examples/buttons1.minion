@@ -41,26 +41,21 @@
     [TEXT, "PushButton 2"]
   ],
   [NEW, Hlayout, l_output, {
-      GRID_ALIGN: HORIZONTAL,
-      WIDGETS: [
-        Label_1, Output_1
-      ]
+      AUTOSIZE: true,
+      GRID_ALIGN: HORIZONTAL
     },
-    # [HEIGHT, 80],
+    [ADD, Label_1, Output_1]
   ],
-  [NEW, Vlayout, l_MainWindow, {
-      PARENT: MainWindow,
-      WIDGETS: [
-        PB1, l_output, PB2
-      ]
-    },
-    [fit_to_parent],
+  [NEW, Vlayout, l_MainWindow, {},
     [MARGIN, 5],
     [GAP, 10],
-    # [COLOUR, ff0000] # No effect (FL_NO_BOX)
+    # [COLOUR, ff0000], # No effect (FL_NO_BOX)
+    [ADD, PB1, l_output, PB2]
   ],
   
   [WIDGET, PB1,
     [SIZE, 200, 60]
   ],
+
+  [WIDGET, MainWindow, [SET_LAYOUT, l_MainWindow]]
 ]

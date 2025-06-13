@@ -84,7 +84,8 @@
   [NEW, PopupEditor, EF1,
     {
       LABEL: "EDITOR 1"
-    }
+    },
+    [clear_visible_focus]
   ],
   [NEW, TextLine, EF2,
     {
@@ -109,7 +110,8 @@
   [NEW, PopupEditor, EF4,
     {
       LABEL: "ANOTHER EDITOR"
-    }
+    },
+    [clear_visible_focus]
   ],
   [NEW, Checkbox, EF5,
     {

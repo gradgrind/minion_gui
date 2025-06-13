@@ -152,7 +152,7 @@ const char* callback3(
             callback_data = string{"[[WIDGET, TableTotals, [VALUE, "} //
                                 .append(minion::Writer::dumpString(data))
                                 .append("]]");
-            if (wname == "EF1" or wname == "EF4") {
+            if (wname == "()EF1" or wname == "()EF4") {
                 callback_data.append(", [WIDGET, popup, [SHOW, ");
                 callback_data.append(wname);
                 callback_data.append("]]");
@@ -172,9 +172,9 @@ int main()
         // These paths are realtive to the directory
         // in which the binary is built.
         "../../examples/demo.minion",
-        //"../../examples/buttons1.minion",
-        //"../../examples/grid1.minion",
-        //"../../examples/various1.minion"
+        "../../examples/buttons1.minion",
+        "../../examples/grid1.minion",
+        "../../examples/complex1.minion"
         //
     };
 

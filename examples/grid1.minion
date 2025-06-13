@@ -4,8 +4,7 @@
 &BACKGROUND: ffffff,
 
 [
-  [
-    NEW, Window, MainWindow,
+  [NEW, Window, MainWindow,
     {
       FLOATING: 1,
       WIDTH: &APP_WIDTH,
@@ -14,67 +13,55 @@
       MIN_HEIGHT: 120,
       ESC_CLOSES: 1
     },
-    [ TEXT, "Grid Test" ],
-    [ COLOUR, &BACKGROUND ]
+    [TEXT, "Grid Test"],
   ],
-  [
-    NEW, PushButton, b0,
+  [NEW, PushButton, b0,
     {
       GRID_ALIGN: FILL
     },
-    [ TEXT, "New" ]
+    [TEXT, "New"]
   ],
-  [
-    NEW, PushButton, b1,
+  [NEW, PushButton, b1,
     {
       GRID_ALIGN: FILL
     },
-    [ TEXT, "Options" ]
+    [TEXT, "Options"]
   ],
-  [
-    NEW, PushButton, b2,
+  [NEW, PushButton, b2,
     {
       GRID_ALIGN: FILL
     },
-    [ TEXT, "About" ]
+    [TEXT, "About"]
   ],
-  [
-    NEW, PushButton, b3,
+  [NEW, PushButton, b3,
     {
       GRID_ALIGN: FILL
     },
-    [ TEXT, "Help" ]
+    [TEXT, "Help"]
   ],
-  [
-    NEW, PushButton, b4,
+  [NEW, PushButton, b4,
     {
       GRID_ALIGN: FILL
     },
-    [ TEXT, "Quit" ]
+    [TEXT, "Quit"]
   ],
-  [
-    NEW, Grid, l_MainWindow,
-    {
-      PARENT: MainWindow,
-      WIDGETS: [
-        [ b0, 0, 0 ],
-        [ b1, 0, 2 ],
-        [ b2, 1, 1 ],
-        [ b3, 2, 0 ],
-        [ b4, 2, 2 ]
-      ],
-      ROW_WEIGHTS: [
-        [1, 1]
-      ],
-      COL_WEIGHTS: [
-        [0, 1]
-      ]
-    },
-    [
-      fit_to_parent
+  [NEW, Grid, l_MainWindow, {},
+    [COLOUR, &BACKGROUND],
+    [MARGIN, 3],
+    [GAP, 10],
+    [SHOW_GRID, 1],
+    [BOXTYPE, FLAT_BOX],
+    [RC, 3, 3],
+    [ADD,
+      [b0, 0, 0],
+      [b1, 0, 2],
+      [b2, 1, 1],
+      [b3, 2, 0],
+      [b4, 2, 2]
     ],
-    [ MARGIN, 3 ],
-    [ GAP, 10 ],
-    [ SHOW_GRID, 1 ]
-  ]
+    [ROW_WEIGHTS, [1, 1]],
+    [COL_WEIGHTS, [0, 1]]
+  ],
+  
+  [WIDGET, MainWindow, [SET_LAYOUT, l_MainWindow]]
 ]
