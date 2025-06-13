@@ -2,11 +2,12 @@
 #include "callback.h"
 #include "support_functions.h"
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
+#include <FL/fl_draw.H>
 #include <functional>
 #include <iostream>
 #include <stdexcept>
-#include <FL/Fl_Group.H>
 using namespace std;
 using namespace minion;
 
@@ -87,7 +88,7 @@ void Widget::init_table_header_contrast(
 // static member
 void Widget::init_settings()
 {
-    line_height = LINE_HEIGHT;
+    line_height = fl_height() * LINE_HEIGHT_FACTOR;
     init_foreground(NORMAL_FG);
     init_background(NORMAL_BG);
     init_background2(ENTRY_BG);

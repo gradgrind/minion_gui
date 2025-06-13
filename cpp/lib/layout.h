@@ -42,12 +42,10 @@ class W_Layout : public Widget
 {
     static W_Layout* new_hvgrid(minion::MMap* parammap, bool horizontal);
 
-    //protected:
     bool horizontal = false;
-    int min_transverse_size = 0;
     std::vector<Widget*> children;
-
-    void transverse_size();
+    int padding = 0;
+    void set_transverse_size();
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;

@@ -107,12 +107,13 @@ void Callback2(string& widget, MValue data, MValue data2)
 void Init(
     const char* data0)
 {
+    fl_font(FL_HELVETICA, FONT_SIZE);
     Widget::init_settings();
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
     //TODO? Where? If?
     Fl::option(Fl::OPTION_VISIBLE_FOCUS, false);
-    Fl::box_border_radius_max(8);
+    Fl::box_border_radius_max(6);
 
     auto guidata = minion::Reader::read(data0);
     if (auto e = guidata.error_message()) {

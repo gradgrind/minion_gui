@@ -21,7 +21,6 @@
     [TEXT, "PushButton 2"]
   ],
   [NEW, Hlayout, l_output, {
-      AUTOSIZE: true,
       GRID_ALIGN: HORIZONTAL,
     },
     [ADD, Label_1, Output_1]

@@ -49,15 +49,15 @@
       GRID_GROW: 1
     },
     [VALUE, "Read only ˝Öößŋħĸ€"],
-    # [clear_visible_focus]
+    [clear_visible_focus]
   ],
   [NEW, Hlayout, ViewSelect,
     {
+      AUTOSIZE: true,
       GRID_ALIGN: HORIZONTAL
     },
-    [ MARGIN, 20 ],
-    [ GAP, 5 ],
-    [ HEIGHT, 100 ],
+    [MARGIN, 10],
+    [GAP, 5],
     [ADD,
       TableType,
       TableRowLabel,
@@ -128,10 +128,9 @@
       GRID_ALIGN: VERTICAL
     },
     [WIDTH, 300],
+    [GAP, 12, 8],
     [ADD, EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6]
   ],
-  
-  #[
   [NEW, Hlayout, Content,
     {
       GRID_ALIGN: FILL,
@@ -140,30 +139,18 @@
     [GAP, 3],
     [ADD, T1, EditorForm]
   ],
-  ]#
-  
-  [NEW, Box, bx,
-    {
-      GRID_ALIGN: FILL,
-      GRID_GROW: 1
-    },
-    [TEXT, "NEW BOX"],
-    [BOXTYPE, BORDER_BOX],
-    [COLOUR, a0ffa0],
-  ],
   
   [NEW, Vlayout, CoursePanel,
     {
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
-    # [ADD, todo, ViewSelect, Content]
-    [ADD, todo, ViewSelect, bx]
+    [ADD, todo, ViewSelect, Content]
   ],
   
   # The area consists of the top panel, P1, and the page panel, CoursePanel
   [NEW, Vlayout, l_MainWindow, {},
-    [ADD, CoursePanel]
+    [ADD, P1, CoursePanel]
   ],
   
   [WIDGET, EF1,

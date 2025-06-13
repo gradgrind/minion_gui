@@ -13,7 +13,8 @@
 // These are default values. The values used by the widgets are taken from
 // static variables in `Widget`, which can be changed before creating
 // widgets to make global changes.
-const int LINE_HEIGHT = 30;
+const int FONT_SIZE = 16;
+const float LINE_HEIGHT_FACTOR = 1.2;
 const Fl_Color NORMAL_FG = 0x40404000;
 const Fl_Color NORMAL_BG = 0xf0f0f000;
 const Fl_Color ENTRY_BG = 0xffffc800;

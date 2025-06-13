@@ -9,6 +9,7 @@
 #include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Select_Browser.H>
+#include <FL/Fl_Window.H>
 using namespace std;
 using namespace minion;
 
@@ -208,6 +209,13 @@ void W_PushButton::handle_method(
             contrast = float(c) / 100;
             set_colour(fl_widget->color());
         }
+    } else if (method == "DOWNBOXTYPE") {
+        string btype;
+        if (paramlist->get_string(1, btype)) {
+            auto bxt = get_boxtype(btype);
+            static_cast<Fl_Button*>(fl_widget)->down_box(bxt);
+        } else
+            throw "DOWNBOXTYPE value missing for widget " + *widget_name();
     } else {
         W_Label::handle_method(method, paramlist);
     }

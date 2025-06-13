@@ -297,43 +297,26 @@ W_Layout* W_Layout::new_hvgrid(
     return widget;
 }
 
-void W_Layout::transverse_size()
+void W_Layout::set_transverse_size()
 {
-    //TODO: This should take the margin into account ...
-
-    int xsize = min_transverse_size;
-    int i = 0; // child index
-    auto fw = static_cast<Fl_Grid*>(fl_widget);
+    // Take the padding and box type into account
+    int boxsize = padding * 2;
+    if (horizontal) {
+        boxsize += Fl::box_dh(fl_widget->box());
+    } else {
+        boxsize += Fl::box_dw(fl_widget->box());
+    }
+    int xsize = 0;
     for (const auto wc : children) {
         auto wfltk = wc->fltk_widget();
         auto xs = horizontal ? wfltk->h() : wfltk->w();
         if (xs > xsize)
             xsize = xs;
-        Fl_Grid_Align align = FL_GRID_CENTER;
-        string fill;
-        if (wc->property_string("GRID_ALIGN", fill)) {
-            try {
-                align = GRID_ALIGN.at(fill);
-            } catch (out_of_range& e) {
-                throw string{"Invalid GRID_ALIGN: "} + fill;
-            }
-        }
-        if (horizontal)
-            fw->widget(wfltk, 0, i, align);
-        else
-            fw->widget(wfltk, i, 0, align);
-        int weight = 0;
-        wc->property_int("GRID_GROW", weight);
-        if (horizontal)
-            fw->col_weight(i, weight);
-        else
-            fw->row_weight(i, weight);
-        ++i;
     }
     if (horizontal)
-        fw->size(0, xsize);
+        static_cast<Fl_Grid*>(fl_widget)->size(0, xsize + boxsize);
     else
-        fw->size(xsize, 0);
+        static_cast<Fl_Grid*>(fl_widget)->size(xsize + boxsize, 0);
 }
 
 void W_Layout::handle_method(
@@ -364,7 +347,33 @@ void W_Layout::handle_method(
             fw->layout(1, n);
         else
             fw->layout(n, 1);
-        transverse_size();
+        int i = 0; // child index
+        for (const auto wc : children) {
+            Fl_Grid_Align align = FL_GRID_CENTER;
+            string fill;
+            if (wc->property_string("GRID_ALIGN", fill)) {
+                try {
+                    align = GRID_ALIGN.at(fill);
+                } catch (out_of_range& e) {
+                    throw string{"Invalid GRID_ALIGN: "} + fill;
+                }
+            }
+            if (horizontal)
+                fw->widget(wc->fltk_widget(), 0, i, align);
+            else
+                fw->widget(wc->fltk_widget(), i, 0, align);
+            int weight = 0;
+            wc->property_int("GRID_GROW", weight);
+            if (horizontal)
+                fw->col_weight(i, weight);
+            else
+                fw->row_weight(i, weight);
+            ++i;
+        }
+
+        string autosize;
+        if (property_string("AUTOSIZE", autosize) && !autosize.empty())
+            set_transverse_size();
         //fw->layout(); // lay out container
         return;
     }
@@ -381,9 +390,11 @@ void W_Layout::handle_method(
         throw "GAP command with no gap on layout '" + *widget_name();
     }
     if (method == "MARGIN") {
-        int s;
-        if (paramlist->get_int(1, s)) {
-            static_cast<Fl_Grid*>(fl_widget)->margin(s, s, s, s);
+        if (paramlist->get_int(1, padding)) {
+            static_cast<Fl_Grid*>(fl_widget)->margin(padding, padding, padding, padding);
+            string autosize;
+            if (property_string("AUTOSIZE", autosize) && !autosize.empty())
+                set_transverse_size();
             return;
         }
         throw "MARGIN command with no margin on layout '" + *widget_name();

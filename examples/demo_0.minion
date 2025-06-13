@@ -33,29 +33,24 @@
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Buttons"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
+    [BOXTYPE, ROUNDED_BOX]
   ],
   [NEW, RadioButton, grid, {
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Grid layout"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
+    [BOXTYPE, ROUNDED_BOX]
   ],
   [NEW, RadioButton, complex, {
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Complex layout"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
+    [BOXTYPE, ROUNDED_BOX]
   ],
   [NEW, Vlayout, chooser, {
-      AUTOSIZE: true,
       GRID_ALIGN: VERTICAL,
     },
     [GAP, 5],
-    [WIDTH, 200],
     [ADD, _chooser, buttons, grid, complex]
   ],
   
