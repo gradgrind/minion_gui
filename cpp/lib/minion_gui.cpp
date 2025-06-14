@@ -115,6 +115,8 @@ void Init(
     Fl::option(Fl::OPTION_VISIBLE_FOCUS, false);
     Fl::box_border_radius_max(6);
 
+    Widget::set_prefix(""); // start without widget namespace
+
     auto guidata = minion::Reader::read(data0);
     if (auto e = guidata.error_message()) {
         fl_alert("%s", e);
