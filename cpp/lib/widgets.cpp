@@ -1,5 +1,6 @@
 #include "widgets.h"
 #include "callback.h"
+#include "layout.h"
 #include "support_functions.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
@@ -70,16 +71,17 @@ void W_Label::handle_method(
             fl_widget->measure_label(lw, lh);
             //w->horizontal_label_margin(5);
             fl_widget->size(lw + 20, Widget::line_height);
-            string align;
-            property_string("LABEL_ALIGN", align);
-            if (align == "LEFT")
-                fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-            else if (align == "RIGHT")
-                fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
-            if (auto g = dynamic_cast<Fl_Grid*>(fl_widget->parent())) {
-                g->layout();
-            }
+            W_Group::child_size_modified(this);
         }
+    } else if (method == "LABEL_ALIGN") {
+        string align;
+        paramlist->get_string(1, align);
+        if (align == "LEFT")
+            fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+        else if (align == "RIGHT")
+            fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
+        else
+            fl_widget->align(FL_ALIGN_CENTER);
     } else {
         Widget::handle_method(method, paramlist);
     }

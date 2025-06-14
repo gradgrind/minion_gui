@@ -133,6 +133,15 @@ W_Grid* W_Grid::make(
     return widget;
 }
 
+void W_Grid::handle_child_modified(
+    Widget* wc)
+{
+    auto fc = wc->fltk_widget();
+    auto c = static_cast<Fl_Grid*>(fl_widget)->cell(fc);
+    c->minimum_size(fc->w(), fc->h());
+    static_cast<Fl_Grid*>(fl_widget)->layout();
+}
+
 //TODO: What about changing min col size when a text changes?
 void W_Grid::handle_method(
     string_view method, MList* paramlist)
@@ -327,6 +336,12 @@ void W_Layout::set_transverse_size()
         static_cast<Fl_Grid*>(fl_widget)->size(xsize + boxsize, 0);
 }
 
+void W_Layout::handle_child_modified(
+    Widget* wc)
+{
+    throw "TODO: W_Layout::handle_child_modified";
+}
+
 void W_Layout::handle_method(
     std::string_view method, minion::MList* paramlist)
 {
@@ -408,6 +423,12 @@ void W_Layout::handle_method(
         throw "MARGIN command with no margin on layout '" + *widget_name();
     }
     Widget::handle_method(method, paramlist);
+}
+
+void W_Stack::handle_child_modified(
+    Widget* wc)
+{
+    throw "TODO: W_Stack::handle_child_modified";
 }
 
 void W_Stack::handle_method(

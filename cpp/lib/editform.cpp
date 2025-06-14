@@ -45,6 +45,12 @@ W_EditForm* W_EditForm::make(
     return widget;
 }
 
+void W_EditForm::handle_child_modified(
+    Widget* wc)
+{
+    throw "TODO: W_EditForm::handle_child_modified";
+}
+
 void W_EditForm::handle_method(
     std::string_view method, minion::MList* paramlist)
 {

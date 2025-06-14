@@ -141,6 +141,27 @@ const char* callback2(
     throw "Invalid callback";
 }
 
+const char* callback2a(
+    const char* data)
+{
+    auto m = minion::Reader::read(data);
+    printf("callback got '%s'\n", data);
+    if (auto mm = m.m_list()) {
+        string wname;
+        if ((*mm)->get_string(0, wname)) {
+            callback_data = string{"[[WIDGET, "} //
+                                .append(wname)
+                                .append(", [TEXT, \"")
+                                .append(wname)
+                                .append("\"],[LABEL_ALIGN, LEFT]]]");
+            printf("??? %s\n", callback_data.c_str());
+            fflush(stdout);
+            return callback_data.c_str();
+        }
+    }
+    throw "Invalid callback";
+}
+
 const char* callback3(
     const char* data)
 {
@@ -171,20 +192,20 @@ int main()
     auto fplist = {
         // These paths are realtive to the directory
         // in which the binary is built.
+        "../../examples/demo.minion",
+        "../../examples/buttons1.minion",
+        "../../examples/grid1.minion",
         "../../examples/grid2.minion",
-        //"../../examples/demo.minion",
-        //"../../examples/buttons1.minion",
-        //"../../examples/grid1.minion",
-        //"../../examples/complex1.minion"
+        "../../examples/complex1.minion"
         //
     };
 
     auto flist = {
         //
-        callback2,
         callback0,
         callback1,
         callback2,
+        callback2a,
         callback3
         //
     };

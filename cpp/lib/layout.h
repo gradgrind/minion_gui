@@ -7,6 +7,27 @@
 #include <FL/Fl_Widget.H>
 #include <string_view>
 
+class W_Group : public Widget
+{
+protected:
+    virtual void handle_child_modified(Widget* wc) = 0;
+
+public:
+    static void child_size_modified(
+        Widget* wc)
+    {
+        /*printf("§ %s %d %d\n",
+               wc->widget_name()->c_str(),
+               wc->fltk_widget()->w(),
+               wc->fltk_widget()->h());
+        fflush(stdout);*/
+        if (auto p = wc->fltk_widget()->parent()) {
+            auto wp{static_cast<W_Group*>(p->user_data())};
+            wp->handle_child_modified(wc);
+        }
+    }
+};
+
 class W_Window : public Widget
 {
 protected:
@@ -18,8 +39,10 @@ public:
     static W_Window* make(minion::MMap* props);
 };
 
-class W_Grid : public Widget
+class W_Grid : public W_Group
 {
+    void handle_child_modified(Widget* wc) override;
+
 protected:
     struct grid_element
     {
@@ -38,7 +61,7 @@ public:
     static W_Grid* make(minion::MMap* props);
 };
 
-class W_Layout : public Widget
+class W_Layout : public W_Group
 {
     static W_Layout* new_hvgrid(minion::MMap* parammap, bool horizontal);
 
@@ -46,6 +69,8 @@ class W_Layout : public Widget
     std::vector<Widget*> children;
     int padding = 0;
     void set_transverse_size();
+
+    void handle_child_modified(Widget* wc) override;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
@@ -61,16 +86,18 @@ public:
     }
 };
 
-class W_Stack : public Widget
+class W_Stack : public W_Group
 {
     Fl_Widget* current = nullptr;
+
+    void handle_child_modified(Widget* wc) override;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Stack* make(minion::MMap* props);
 };
 
-class W_EditForm : public Widget
+class W_EditForm : public W_Group
 {
     struct form_element
     {
@@ -81,6 +108,8 @@ class W_EditForm : public Widget
 
     int v_label_gap = 5;
     std::vector<form_element> children;
+
+    void handle_child_modified(Widget* wc) override;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
