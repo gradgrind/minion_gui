@@ -44,17 +44,8 @@ class W_Grid : public W_Group
     void handle_child_modified(Widget* wc) override;
 
 protected:
-    struct grid_element
-    {
-        int row;
-        int col;
-        int rspan = 1;
-        int cspan = 1;
-    };
-
     int nrows = 0;
     int ncols = 0;
-    std::map<Widget*, grid_element> children;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;

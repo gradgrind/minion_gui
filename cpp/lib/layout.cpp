@@ -162,11 +162,8 @@ void W_Grid::handle_method(
     }
 
     if (method == "ADD") {
-        auto fw = static_cast<Fl_Grid*>(fl_widget);
-        if (fw->children() != 0) {
-            fw->clear_layout();
-        }
         // Add new children to map
+        auto flgrid = static_cast<Fl_Grid*>(fl_widget);
         auto n = paramlist->size();
         for (size_t i = 1; i < n; ++i) {
             auto w_i = paramlist->get(i);
@@ -175,16 +172,37 @@ void W_Grid::handle_method(
                 auto wlist = wlistp->get();
                 string wname;
                 if (wlist->get_string(0, wname)) {
-                    auto wc = get_widget(wname);
-                    if (children.contains(wc))
+                    auto wchild = get_widget(wname);
+                    auto flchild = wchild->fltk_widget();
+                    if (flgrid->cell(flchild))
                         throw "Widget " + wname + " already in layout " + *widget_name();
+                    int row, col, rspan = 1, cspan = 1;
+                    if (wlist->get_int(1, row) && wlist->get_int(2, col)) {
+                        wlist->get_int(3, rspan);
+                        wlist->get_int(4, cspan);
+                        flgrid->add(flchild);
 
-                    grid_element rc;
-                    if (wlist->get_int(1, rc.row) && wlist->get_int(2, rc.col)) {
-                        wlist->get_int(3, rc.rspan);
-                        wlist->get_int(4, rc.cspan);
-                        children.emplace(wc, rc);
-                        fw->add(wc->fltk_widget());
+                        Fl_Grid_Align align = FL_GRID_CENTER;
+                        string fill;
+                        if (wchild->property_string("GRID_ALIGN", fill)) {
+                            try {
+                                align = GRID_ALIGN.at(fill);
+                            } catch (out_of_range& e) {
+                                throw string{"Invalid GRID_ALIGN: "} + fill;
+                            }
+                        }
+
+                        // Place the child widget ...
+                        //  ... first check rows and cols (with spans)
+                        if (row >= 0 && col >= 0 && rspan > 0 && cspan > 0 && (col + cspan) <= ncols
+                            && (row + rspan) <= nrows) {
+                            flgrid->widget(flchild, row, col, rspan, cspan, align);
+                        } else {
+                            throw "Widget " + *wchild->widget_name()
+                                + ", Grid placement invalid: \n " + to_string(row) + "+"
+                                + to_string(rspan) + " / " + to_string(col) + "+" + to_string(cspan)
+                                + "\n Layout: " + to_string(nrows) + " / " + to_string(ncols);
+                        }
                         continue;
                     }
                     throw "Grid ADD command needs two values (row and column), grid: "
@@ -193,32 +211,6 @@ void W_Grid::handle_method(
             }
             throw "Invalid grid ADD command on '" + *widget_name() + "':\n  " + dump_value(w_i);
         }
-
-        // Lay out the grid
-        for (const auto& [wc, rc] : children) {
-            auto wfltk = wc->fltk_widget();
-
-            Fl_Grid_Align align = FL_GRID_CENTER;
-            string fill;
-            if (wc->property_string("GRID_ALIGN", fill)) {
-                try {
-                    align = GRID_ALIGN.at(fill);
-                } catch (out_of_range& e) {
-                    throw string{"Invalid GRID_ALIGN: "} + fill;
-                }
-            }
-            // Check rows and cols (with spans)
-            if (rc.row >= 0 && rc.col >= 0 && rc.rspan > 0 && rc.cspan > 0
-                && (rc.col + rc.cspan) <= ncols && (rc.row + rc.rspan) <= nrows) {
-                fw->widget(wfltk, rc.row, rc.col, rc.rspan, rc.cspan, align);
-            } else {
-                throw "Widget " + *wc->widget_name() + ", Grid placement invalid: \n "
-                    + to_string(rc.row) + "+" + to_string(rc.rspan) + " / " + to_string(rc.col)
-                    + "+" + to_string(rc.cspan) + "\n Layout: " + to_string(nrows) + " / "
-                    + to_string(ncols);
-            }
-        }
-
         //fw->layout();
         return;
     }
