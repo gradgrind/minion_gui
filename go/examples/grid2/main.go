@@ -10,7 +10,7 @@ import (
 
 func main() {
 	fp, err := filepath.Abs(
-		filepath.Join("..", "..", "..", "examples", "various1.minion"))
+		filepath.Join("..", "..", "..", "examples", "grid2.minion"))
 	if err != nil {
 		panic(err)
 	}
@@ -35,12 +35,7 @@ func callback(data string) string {
 	var wname string
 	mm.GetString(0, &wname)
 
-	cbr := fmt.Sprintf(`[[WIDGET,"TableTotals",[VALUE,%s]]`,
-		gominion.DumpString(data))
-	if wname == "EF1" || wname == "EF4" {
-		cbr += fmt.Sprintf(`,[WIDGET,popup,[SHOW,"%s"]]`, wname)
-	}
-	cbr += "]"
+	cbr := fmt.Sprintf(`[[WIDGET,"%s",[TEXT,"%s"],[LABEL_ALIGN, LEFT]]]`, wname, wname)
 	fmt.Println("CB: " + cbr)
 	return cbr
 }

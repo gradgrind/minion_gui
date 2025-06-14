@@ -44,9 +44,10 @@ func callback(data string) string {
 		cbr = "[[WIDGET_PREFIX, buttons]"
 		wtab := "(buttons)l_MainWindow"
 		if !tabs[wtab] {
-			cbr += ",[MINION_FILE, ../../../examples/buttons.minion],[WIDGET, "
+			cbr += ",[MINION_FILE, ../../../examples/buttons.minion]"
+			cbr += ",[WIDGET, ()viewer, [ADD, "
 			cbr += wtab
-			cbr += ", [PARENT, ()viewer]]"
+			cbr += "]]"
 			tabs[wtab] = true
 		}
 		cbr += ",[WIDGET, ()viewer, [SELECT, "
@@ -58,9 +59,10 @@ func callback(data string) string {
 		cbr = "[[WIDGET_PREFIX, grid]"
 		wtab := "(grid)l_MainWindow"
 		if !tabs[wtab] {
-			cbr += ",[MINION_FILE, ../../../examples/grid.minion],[WIDGET, "
+			cbr += ",[MINION_FILE, ../../../examples/grid.minion]"
+			cbr += ",[WIDGET, ()viewer, [ADD, "
 			cbr += wtab
-			cbr += ", [PARENT, ()viewer]]"
+			cbr += "]]"
 			tabs[wtab] = true
 		}
 		cbr += ",[WIDGET, ()viewer, [SELECT, "
@@ -72,9 +74,10 @@ func callback(data string) string {
 		cbr = "[[WIDGET_PREFIX, complex]"
 		wtab := "(complex)l_MainWindow"
 		if !tabs[wtab] {
-			cbr += ",[MINION_FILE, ../../../examples/complex.minion],[WIDGET, "
+			cbr += ",[MINION_FILE, ../../../examples/complex.minion]"
+			cbr += ",[WIDGET, ()viewer, [ADD, "
 			cbr += wtab
-			cbr += ", [PARENT, ()viewer]]"
+			cbr += "]]"
 			tabs[wtab] = true
 		}
 		cbr += ",[WIDGET, ()viewer, [SELECT, "
