@@ -171,15 +171,17 @@ int main()
     auto fplist = {
         // These paths are realtive to the directory
         // in which the binary is built.
-        "../../examples/demo.minion",
-        "../../examples/buttons1.minion",
-        "../../examples/grid1.minion",
-        "../../examples/complex1.minion"
+        "../../examples/grid2.minion",
+        //"../../examples/demo.minion",
+        //"../../examples/buttons1.minion",
+        //"../../examples/grid1.minion",
+        //"../../examples/complex1.minion"
         //
     };
 
     auto flist = {
         //
+        callback2,
         callback0,
         callback1,
         callback2,
