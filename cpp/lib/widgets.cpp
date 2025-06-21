@@ -1,15 +1,15 @@
-#include "widgets.h"
 #include "callback.h"
 #include "layout.h"
 #include "support_functions.h"
+#include "widgets.h"
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Flex.H>
 #include <FL/Fl_Grid.H>
+#include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Round_Button.H>
-#include <FL/Fl_Select_Browser.H>
 #include <FL/Fl_Window.H>
 using namespace std;
 using namespace minion;
@@ -270,15 +270,16 @@ W_List* W_List::make(
     MMap* props)
 {
     (void) props;
-    auto w = new Fl_Select_Browser(0, 0, 0, 0);
+    auto w = new Fl_Hold_Browser(0, 0, 0, 0);
     auto widget = new W_List();
     widget->fl_widget = w;
-    w->color(Widget::entry_bg);
+    //w->color(Widget::entry_bg);
+    w->selection_color(Widget::selection_bg);
     w->callback([](Fl_Widget* w, void* ud) {
         (void) ud;
         string* dw{Widget::get_widget_name(w)};
         // or string dw{static_cast<Widget*>(ud)->widget_name()};
-        auto ww = static_cast<Fl_Select_Browser*>(w);
+        auto ww = static_cast<Fl_Hold_Browser*>(w);
         auto i = ww->value();
         // Callback only for actual items (1-based indexing)
         if (i > 0) {
@@ -293,7 +294,7 @@ void W_List::handle_method(
 {
     string item;
     if (method == "SET") {
-        auto e1 = static_cast<Fl_Select_Browser*>(fl_widget);
+        auto e1 = static_cast<Fl_Hold_Browser*>(fl_widget);
         e1->clear();
         int n = paramlist->size();
         for (int i = 1; i < n; ++i) {

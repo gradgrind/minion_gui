@@ -6,10 +6,10 @@
     # [BACKGROUND, ffffff],
     # [BACKGROUND2, c8ffff],
     # [FOREGROUND, 804040]
-    # [BACKGROUND, 202020],
-    # [BACKGROUND2, 404040],
-    # [FOREGROUND, f0f0f0],
-    # [SELECTION_BACKGROUND, b0b0f0],
+     [BACKGROUND, 202020],
+     [BACKGROUND2, 404040],
+     [FOREGROUND, f0f0f0],
+     [SELECTION_BACKGROUND, b0b0f0],
     [BUTTON_ON_CONTRAST, 80],
   ],
 
@@ -63,7 +63,7 @@
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
-    [COLOUR, ffe0e0],
+    # [COLOUR, ffe0e0],
     [BOXTYPE, ENGRAVED_BOX]
   ],
   

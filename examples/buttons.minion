@@ -32,7 +32,7 @@
     [MARGIN, 5],
     [GAP, 10],
     [BOXTYPE, FLAT_BOX],
-    [COLOUR, ffff00], # No effect if (FL_NO_BOX)
+    # [COLOUR, ffff00], # No effect if (FL_NO_BOX)
     [ADD, PB1, l_output, PB2]
   ],
   

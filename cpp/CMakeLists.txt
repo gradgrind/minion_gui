@@ -13,4 +13,5 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 add_subdirectory(lib)
-add_subdirectory(test)
+#add_subdirectory(test)
+add_subdirectory(test1)
