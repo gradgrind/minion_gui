@@ -51,6 +51,22 @@ const char* callback0(
                 callback_data.append(wtab);
                 callback_data.append("]]]");
 
+            } else if (wname == "()studentgroups") {
+                callback_data = string{"[[WIDGET_PREFIX, studentgroups]"};
+                wtab = "(studentgroups)l_MainWindow";
+                if (!tabs[wtab]) {
+                    callback_data.append( //
+                        ",[MINION_FILE, ../../examples/studentgroups.minion]");
+                    callback_data.append(",[WIDGET, ()viewer, [ADD, ");
+                    callback_data.append(wtab);
+                    callback_data.append("]]");
+                    tabs[wtab] = true;
+                }
+                callback_data.append( //
+                    ",[WIDGET, ()viewer, [SELECT, ");
+                callback_data.append(wtab);
+                callback_data.append("]]]");
+
             } else if (wname == "()complex") {
                 callback_data = string{"[[WIDGET_PREFIX, complex]"};
                 wtab = "(complex)l_MainWindow";
@@ -89,6 +105,9 @@ const char* callback0(
                     callback_data.append("]]");
                 }
                 callback_data.append("]");
+
+            } else if (wname.starts_with("(studentgroups)")) {
+                callback_data = string{"[]"};
 
             } else {
                 throw "Unknown Callback" + minion::Writer::dumpString(data);
@@ -192,7 +211,7 @@ int main()
     auto fplist = {
         // These paths are realtive to the directory
         // in which the binary is built.
-        "../../examples/demo.minion",
+        "../../examples/fedap.minion",
         //"../../examples/buttons1.minion",
         //"../../examples/grid1.minion",
         //"../../examples/grid2.minion",

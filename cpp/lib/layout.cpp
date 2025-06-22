@@ -331,7 +331,13 @@ void W_Layout::set_transverse_size()
 void W_Layout::handle_child_modified(
     Widget* wc)
 {
-    throw "TODO: W_Layout::handle_child_modified";
+    //TODO: I think this needs handling specially for the 1-d grid ...
+
+    auto fc = wc->fltk_widget();
+    auto c = static_cast<Fl_Grid*>(fl_widget)->cell(fc);
+    c->minimum_size(fc->w(), fc->h());
+    static_cast<Fl_Grid*>(fl_widget)->layout();
+    //throw string{"TODO: W_Layout::handle_child_modified"};
 }
 
 void W_Layout::handle_method(

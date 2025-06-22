@@ -23,7 +23,8 @@ public:
         fflush(stdout);*/
         if (auto p = wc->fltk_widget()->parent()) {
             auto wp{static_cast<W_Group*>(p->user_data())};
-            wp->handle_child_modified(wc);
+            if (wp)
+                wp->handle_child_modified(wc);
         }
     }
 };

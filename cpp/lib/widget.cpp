@@ -1,6 +1,7 @@
-#include "widget.h"
 #include "callback.h"
+#include "layout.h"
 #include "support_functions.h"
+#include "widget.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
@@ -231,17 +232,21 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
         paramlist->get_int(1, ww); // width
         paramlist->get_int(2, wh); // height
         fl_widget->size(ww, wh);
+        W_Group::child_size_modified(this);
     } else if (method == "HEIGHT") {
         paramlist->get_int(1, wh); // height
         fl_widget->size(fl_widget->w(), wh);
+        W_Group::child_size_modified(this);
     } else if (method == "WIDTH") {
         paramlist->get_int(1, ww); // width
         fl_widget->size(ww, fl_widget->h());
+        W_Group::child_size_modified(this);
     } else if (method == "COLOUR") {
         string clr;
         if (paramlist->get_string(1, clr)) {
             auto c = get_colour(clr);
             fl_widget->color(c);
+            fl_widget->labelcolor(fl_contrast(c, c));
         }
     } else if (method == "BOXTYPE") {
         string btype;

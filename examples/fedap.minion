@@ -1,0 +1,98 @@
+# FEDAp sketch
+&APP_WIDTH: 1000,
+&APP_HEIGHT: 700,
+[
+  [SETUP,      
+    # [BACKGROUND, ffffff],
+    # [BACKGROUND2, c8ffff],
+    # [FOREGROUND, 804040]
+    # [BACKGROUND, 202020],
+    # [BACKGROUND2, 404040],
+    # [FOREGROUND, f0f0f0],
+    # [SELECTION_BACKGROUND, b0b0f0],
+    [BUTTON_ON_CONTRAST, 80],
+  ],
+
+  [NEW, Window, MainWindow, {
+      FLOATING: 1,
+      WIDTH: &APP_WIDTH,
+      HEIGHT: &APP_HEIGHT,
+      #ESC_CLOSES: 1,
+    },
+    [TEXT, "FLTK minion demo"]
+  ],
+  
+  # Top-level contents
+  [NEW, Label, _chooser, {
+      GRID_ALIGN: HORIZONTAL,
+    },
+    [TEXT, "Choose module"],
+    [LABEL_ALIGN, LEFT]
+  ],
+  [NEW, RadioButton, buttons, {
+      GRID_ALIGN: HORIZONTAL
+    },
+    [TEXT, "Buttons"],
+    [BOXTYPE, ROUNDED_BOX],
+    [DOWNBOXTYPE, ROUNDED_BOX]
+  ],
+  [NEW, RadioButton, grid, {
+      GRID_ALIGN: HORIZONTAL
+    },
+    [TEXT, "Grid layout"],
+    [BOXTYPE, ROUNDED_BOX],
+    [DOWNBOXTYPE, ROUNDED_BOX]
+  ],
+  [NEW, RadioButton, complex, {
+      GRID_ALIGN: HORIZONTAL
+    },
+    [TEXT, "Complex layout"],
+    [BOXTYPE, ROUNDED_BOX],
+    [DOWNBOXTYPE, ROUNDED_BOX]
+  ],
+  [NEW, RadioButton, studentgroups, {
+      GRID_ALIGN: HORIZONTAL
+    },
+    [TEXT, "Klassen"],
+    [BOXTYPE, ROUNDED_BOX],
+    [DOWNBOXTYPE, ROUNDED_BOX]
+  ],
+  [NEW, Vlayout, chooser, {
+      AUTOSIZE: true,
+      GRID_ALIGN: VERTICAL,
+    },
+    [GAP, 5],
+    [WIDTH, 200],
+    [ADD, _chooser, buttons, grid, complex, studentgroups]
+  ],
+  
+  [NEW, Box, panel1, { # temporary panel 
+      GRID_ALIGN: HORIZONTAL
+    },
+    [BOXTYPE, ENGRAVED_BOX],
+    [COLOUR, 804020],
+    [TEXT, "Panel: TODO"],
+    [HEIGHT, 100]
+  ],
+  [NEW, Stack, viewer, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    # [COLOUR, ffe0e0],
+    [BOXTYPE, ENGRAVED_BOX]
+  ],
+  [NEW, Vlayout, l_main, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [ADD, panel1, viewer]
+  ],
+  
+  [NEW, Hlayout, l_MainWindow, {},
+    [MARGIN, 5],
+    [GAP, 5],
+    [ADD, chooser, l_main]
+  ],
+  
+  [WIDGET, MainWindow, [SET_LAYOUT, l_MainWindow]]
+]

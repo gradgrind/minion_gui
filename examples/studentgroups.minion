@@ -1,0 +1,193 @@
+# student groups
+[
+  # Class / student-group list
+  [NEW, Label, _l1, {
+      GRID_ALIGN: FILL,
+    },
+    [BOXTYPE, BORDER_BOX],
+    [COLOUR, a00000],
+    [TEXT, Klassen],
+    [LABEL_ALIGN, LEFT]
+  ],
+  [NEW, List, classlist, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [SET, 1, 2, 9, 10, 11],
+    [WIDTH, 100],
+    [HEIGHT, 400]
+  ],
+  [NEW, Vlayout, _v1, {
+      # AUTOSIZE: true,
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [ADD, _l1, classlist],
+    [WIDTH, 100],
+  ],
+  
+  [NEW, PushButton, up1, {},
+    [TEXT, "▲"]
+  ],
+  [NEW, PushButton, dn1, {},
+    [TEXT, "▼"]
+  ],
+  [NEW, PushButton, add1, {},
+    [TEXT, "✚"]
+  ],
+  [NEW, PushButton, del1, {},
+    [TEXT, "━"]
+  ],
+  [NEW, Vlayout, _buttons1, {
+      AUTOSIZE: true,
+      GRID_ALIGN: VERTICAL,
+    },
+    [GAP, 20],
+    [ADD, up1, dn1, add1, del1]
+  ],
+  
+  # Divisions list
+  [NEW, Label, _l2, {
+      GRID_ALIGN: FILL,
+    },
+    [BOXTYPE, BORDER_BOX],
+    [COLOUR, a00000],
+    [TEXT, Teilungen],
+    [LABEL_ALIGN, LEFT]
+  ],
+  [NEW, List, divisions, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [SET, Hauptteilung, KP],
+    [WIDTH, 100],
+  ],
+  [NEW, Vlayout, _v2, {
+      # AUTOSIZE: true,
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [ADD, _l2, divisions],
+    [WIDTH, 150],
+  ],
+  
+  [NEW, PushButton, up2, {},
+    [TEXT, "@8->"]
+  ],
+  [NEW, PushButton, dn2, {},
+    [TEXT, "@2->"]
+  ],
+  [NEW, PushButton, add2, {},
+    [TEXT, "@+"]
+  ],
+  [NEW, PushButton, del2, {},
+    [TEXT, "@line"]
+  ],
+  [NEW, Vlayout, _buttons2, {
+      AUTOSIZE: true,
+      GRID_ALIGN: VERTICAL,
+    },
+    [GAP, 20],
+    [ADD, up2, dn2, add2, del2]
+  ],
+  
+  # Groups list
+  [NEW, Label, _l3, {
+      GRID_ALIGN: FILL,
+    },
+    [BOXTYPE, BORDER_BOX],
+    [COLOUR, a00000],
+    [TEXT, Gruppen],
+    [LABEL_ALIGN, LEFT]
+  ],
+  [NEW, List, groups, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [SET, A, BG, R],
+    [WIDTH, 100],
+  ],
+  [NEW, Vlayout, _v3, {
+      # AUTOSIZE: true,
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [ADD, _l3, groups],
+    [WIDTH, 100],
+  ],
+  
+  [NEW, PushButton, up3, {},
+    [TEXT, "@8->"]
+  ],
+  [NEW, PushButton, dn3, {},
+    [TEXT, "@2->"]
+  ],
+  [NEW, PushButton, add3, {},
+    [TEXT, "@+"]
+  ],
+  [NEW, PushButton, del3, {},
+    [TEXT, "@line"]
+  ],
+  [NEW, Vlayout, _buttons3, {
+      AUTOSIZE: true,
+      GRID_ALIGN: VERTICAL,
+    },
+    [GAP, 20],
+    [ADD, up3, dn3, add3, del3]
+  ],
+   
+  # Special (combining) groups
+  [NEW, Label, _l4, {
+      GRID_ALIGN: FILL,
+    },
+    [BOXTYPE, BORDER_BOX],
+    [COLOUR, a00000],
+    [TEXT, Sondergruppen],
+    [LABEL_ALIGN, LEFT]
+  ],
+  [NEW, List, xgroups, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [SET, B, G],
+    [WIDTH, 100],
+  ],
+  [NEW, Vlayout, _v4, {
+      # AUTOSIZE: true,
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [ADD, _l4, xgroups],
+    [WIDTH, 100],
+  ],
+  
+  [NEW, PushButton, up4, {},
+    [TEXT, "@8->"]
+  ],
+  [NEW, PushButton, dn4, {},
+    [TEXT, "@2->"]
+  ],
+  [NEW, PushButton, add4, {},
+    [TEXT, "@+"]
+  ],
+  [NEW, PushButton, del4, {},
+    [TEXT, "@line"]
+  ],
+  [NEW, Vlayout, _buttons4, {
+      AUTOSIZE: true,
+      GRID_ALIGN: VERTICAL,
+    },
+    [GAP, 20],
+    [ADD, up4, dn4, add4, del4]
+  ],
+  
+  [NEW, Hlayout, l_MainWindow, {
+      FLOATING: 1      
+    },
+    [MARGIN, 5],
+    [GAP, 10],
+    [BOXTYPE, BORDER_BOX],
+    # [COLOUR, ffff00], # No effect if (FL_NO_BOX)
+    [ADD, _v1, _buttons1, _v2, _buttons2, _v3, _buttons3, _v4, _buttons4]
+  ],
+]
