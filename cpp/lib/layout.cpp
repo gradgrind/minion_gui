@@ -124,16 +124,29 @@ W_Grid* W_Grid::make(
 
 //TODO: As Fl_Grid allows gaps to be set individually, but not to read
 // these gaps, this will only work if all gaps are equal.
-void get_grid_sizes(Fl_Grid* gw, int nrows, int ncols)
+void W_Grid::handle_child_resized()
 {
+    auto fgw = static_cast<Fl_Grid*>(fl_widget);
     vector<int> rsize(nrows, 0);
     vector<int> csize(ncols, 0);
     for (int r = 0; r < nrows; ++r) {
         for (int c = 0; c < ncols; ++c) {
-            auto cel = gw->cell(r, c);
+            auto cel = fgw->cell(r, c);
             if (cel) {
-                int w, h;
-                cel->minimum_size(&w, &h);
+                // Use the larger of the content size + margins + border size
+                // and the explicit minimum size
+                auto fcw = cel->widget();
+                auto cw = static_cast<Widget*>(fcw->user_data());
+                auto box = fcw->box();
+                int w = Fl::box_dx(box) * 2 + cw->margin + cw->content_width;
+                if (w < cw->minimum_width)
+                    w = cw->minimum_width;
+                int h = Fl::box_dy(box) * 2 + cw->margin + cw->content_height;
+                if (h < cw->minimum_height)
+                    h = cw->minimum_height;
+                cel->minimum_size(w, h);
+                // Take spans into consideration when determining running
+                // col/row sizes (span != 1 not counted)
                 if (cel->colspan() == 1 && w > csize.at(c))
                     csize[c] = w;
                 if (cel->rowspan() == 1 && h > rsize.at(r))
@@ -141,28 +154,22 @@ void get_grid_sizes(Fl_Grid* gw, int nrows, int ncols)
             }
         }
     }
-    int l, t, r, b;
-    gw->margin(&l, &t, &r, &b);
-    int rg, cg;
-    gw->gap(&rg, &cg);
-    auto ww = Fl::box_dx(gw->box()) * 2 + l + r + cg * (ncols - 1);
-    for (const auto wi : csize)
-        ww += wi;
-    auto wh = Fl::box_dy(gw->box()) * 2 + t + b + rg * (nrows - 1);
-    for (const auto hi : rsize)
-        wh += hi;
-    printf("GRID SIZE: %d %d => %d %d\n", nrows, ncols, ww, wh);
-    fflush(stdout);
-    //TODO: Set size / minimum_size of grid in parent
-    W_Group::set_child_size(gw, ww, wh);
-}
-
-void W_Grid::handle_child_size(Fl_Widget* wc, int ww, int wh)
-{
-    auto gw = static_cast<Fl_Grid*>(fl_widget);
-    gw->cell(wc)->minimum_size(ww, wh);
-    gw->layout();
-    get_grid_sizes(gw, nrows, ncols);
+    if (nrows != 0 && ncols != 0) {
+        int rg, cg;
+        fgw->gap(&rg, &cg);
+        auto ww = cg * (ncols - 1);
+        for (const auto wi : csize)
+            ww += wi;
+        content_width = ww;
+        auto wh = rg * (nrows - 1);
+        for (const auto hi : rsize)
+            wh += hi;
+        content_height = wh;
+        printf("GRID SIZE (%s): %d %d => %d %d\n", widget_name()->c_str(), nrows, ncols, ww, wh);
+        fflush(stdout);
+        static_cast<Fl_Grid*>(fl_widget)->layout();
+        W_Group::child_resized(this);
+    }
 }
 
 /*
@@ -198,9 +205,11 @@ void W_Grid::handle_method(
     }
 
     if (method == "ADD") {
-        // Add new children to map
+        // Add new children to grid
         auto flgrid = static_cast<Fl_Grid*>(fl_widget);
         auto n = paramlist->size();
+        if (n < 2)
+            throw "No widget(s) to ADD to " + *widget_name();
         for (size_t i = 1; i < n; ++i) {
             auto w_i = paramlist->get(i);
             auto wlistp = w_i.m_list();
@@ -345,9 +354,14 @@ W_Layout* W_Layout::new_hvgrid(
     auto widget = new W_Layout();
     widget->fl_widget = w;
     widget->horizontal = horizontal;
+    if (horizontal)
+        widget->nrows = 1;
+    else
+        widget->ncols = 1;
     return widget;
 }
 
+/*
 void W_Layout::set_transverse_size()
 {
     // Take the padding and box type into account
@@ -369,6 +383,7 @@ void W_Layout::set_transverse_size()
     else
         static_cast<Fl_Grid*>(fl_widget)->size(xsize + boxsize, 0);
 }
+*/
 
 /*
 void W_Layout::handle_child_modified(
@@ -395,6 +410,7 @@ void W_Layout::handle_child_modified(
 }
 */
 
+/*
 void W_Layout::handle_child_size(Fl_Widget* wc, int ww, int wh)
 {
     auto gw = static_cast<Fl_Grid*>(fl_widget);
@@ -405,70 +421,54 @@ void W_Layout::handle_child_size(Fl_Widget* wc, int ww, int wh)
     else
         get_grid_sizes(gw, gw->children(), 1);
 }
+*/
 
 void W_Layout::handle_method(
     std::string_view method, minion::MList* paramlist)
 {
     if (method == "ADD") {
-        auto fw = static_cast<Fl_Grid*>(fl_widget);
+        auto flgrid = static_cast<Fl_Grid*>(fl_widget);
         auto n = paramlist->size();
         if (n < 2)
             throw "No widget(s) to ADD to " + *widget_name();
-        auto n0 = children.size();
         // Add new children to list
         for (size_t i = 1; i < n; ++i) {
             string wname;
             if (paramlist->get_string(i, wname)) {
                 auto wc = get_widget(wname);
-                if (std::find(children.begin(), children.end(), wc) != children.end())
+                auto flchild = wc->fltk_widget();
+                if (flgrid->cell(flchild))
                     throw "Widget " + wname + " already in layout " + *widget_name();
-                fw->add(wc->fltk_widget());
-                children.emplace_back(wc);
+
+                flgrid->add(flchild);
+                Fl_Grid_Align align = FL_GRID_CENTER;
+                string fill;
+                if (wc->property_string("GRID_ALIGN", fill)) {
+                    try {
+                        align = GRID_ALIGN.at(fill);
+                    } catch (out_of_range& e) {
+                        throw string{"Invalid GRID_ALIGN: "} + fill;
+                    }
+                }
+                int weight = 0;
+                wc->property_int("GRID_GROW", weight);
+                if (horizontal) {
+                    ++ncols;
+                    flgrid->layout(1, ncols);
+                    flgrid->widget(flchild, 0, ncols - 1, align);
+                    flgrid->col_weight(ncols - 1, weight);
+                } else {
+                    ++nrows;
+                    flgrid->layout(nrows, 1);
+                    flgrid->widget(flchild, nrows - 1, 0, align);
+                    flgrid->row_weight(nrows - 1, weight);
+                }
             } else {
                 MValue m0{*paramlist};
                 throw "Invalid ADD to layout " + *widget_name() + ": " + dump_value(m0);
             }
         }
-        // Lay out the grid
-        n = children.size();
-        if (horizontal)
-            fw->layout(1, n);
-        else
-            fw->layout(n, 1);
-        for (size_t i = n0; i < n; ++i) {
-            auto wc = children.at(i);
-            Fl_Grid_Align align = FL_GRID_CENTER;
-            string fill;
-            if (wc->property_string("GRID_ALIGN", fill)) {
-                try {
-                    align = GRID_ALIGN.at(fill);
-                } catch (out_of_range& e) {
-                    throw string{"Invalid GRID_ALIGN: "} + fill;
-                }
-            }
-            if (horizontal)
-                fw->widget(wc->fltk_widget(), 0, i, align);
-            else
-                fw->widget(wc->fltk_widget(), i, 0, align);
-            int weight = 0;
-            wc->property_int("GRID_GROW", weight);
-            if (horizontal)
-                fw->col_weight(i, weight);
-            else
-                fw->row_weight(i, weight);
-        }
-
-        if (horizontal)
-            get_grid_sizes(fw, 1, n);
-        else
-            get_grid_sizes(fw, n, 1);
-
-        /*string autosize;
-        if (property_string("AUTOSIZE", autosize) && !autosize.empty())
-            set_transverse_size();
-        //fw->layout(); // lay out container
-        */
-
+        handle_child_resized();
         return;
     }
 
@@ -479,32 +479,22 @@ void W_Layout::handle_method(
                 static_cast<Fl_Grid*>(fl_widget)->gap(0, gap);
             else
                 static_cast<Fl_Grid*>(fl_widget)->gap(gap, 0);
+            handle_child_resized();
             return;
         }
         throw "GAP command with no gap on layout '" + *widget_name();
     }
 
     if (method == "MARGIN") {
-        if (paramlist->get_int(1, padding)) {
-            static_cast<Fl_Grid*>(fl_widget)->margin(padding, padding, padding, padding);
-            string autosize;
-            if (property_string("AUTOSIZE", autosize) && !autosize.empty())
-                set_transverse_size();
+        if (paramlist->get_int(1, margin)) {
+            static_cast<Fl_Grid*>(fl_widget)->margin(margin, margin, margin, margin);
+            handle_child_resized();
             return;
         }
         throw "MARGIN command with no margin on layout '" + *widget_name();
     }
 
     Widget::handle_method(method, paramlist);
-}
-
-//TODO?
-void W_Stack::handle_child_size(Fl_Widget* wc, int ww, int wh)
-{
-    (void) wc;
-    (void) ww;
-    (void) wh;
-    return;
 }
 
 /*    

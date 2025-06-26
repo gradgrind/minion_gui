@@ -20,15 +20,7 @@ void W_Labelled_Widget::handle_method(
     string_view method, MList* paramlist)
 {
     string label;
-    if (method == "TEXT") {
-        if (paramlist->get_string(1, label)) {
-            fl_widget->copy_label(label.c_str());
-            label_width = 0;
-            fl_widget->measure_label(label_width, label_height);
-            W_Group::set_widget_label(this);
-        } else
-            throw "No TEXT value for " + *widget_name();
-    } else if (method == "LABEL_POS") {
+    if (method == "LABEL_POS") {
         // This overrides the LABEL_POS of the container
         string align;
         paramlist->get_string(1, align);
@@ -42,7 +34,7 @@ void W_Labelled_Widget::handle_method(
             label_pos = -2;
         else
             throw "No valid LABEL_POS value for " + *widget_name();
-        W_Group::set_widget_label(this);
+        W_Group::child_resized(this);
     } else {
         Widget::handle_method(method, paramlist);
     }
@@ -96,18 +88,7 @@ void W_Label::handle_method(
     string_view method, MList* paramlist)
 {
     string label;
-    if (method == "TEXT") {
-        if (paramlist->get_string(1, label)) {
-            fl_widget->copy_label(label.c_str());
-            int lw{0}, lh;
-            fl_widget->measure_label(lw, lh);
-            //w->horizontal_label_margin(5);
-            W_Group::set_child_size(fl_widget, lw + 20, Widget::line_height);
-
-            //fl_widget->size(lw + 20, Widget::line_height);
-            //W_Group::child_size_modified(this);
-        }
-    } else if (method == "LABEL_ALIGN") {
+    if (method == "LABEL_ALIGN") {
         string align;
         paramlist->get_string(1, align);
         if (align == "LEFT")

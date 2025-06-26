@@ -12,7 +12,9 @@
 class W_Group : public Widget
 {
 protected:
+    virtual void handle_child_resized() {};
     //virtual void handle_child_modified(Widget* wc) = 0;
+    /*
     virtual void handle_widget_label(
         W_Labelled_Widget* wp)
     { //TODO ...
@@ -24,8 +26,18 @@ protected:
     {
         wc->size(ww, wh);
     }
+    */
 
 public:
+    static void child_resized(Widget* w)
+    {
+        if (auto fpw = w->fltk_widget()->parent()) {
+            auto pw = static_cast<W_Group*>(fpw->user_data());
+            pw->handle_child_resized();
+        }
+    }
+
+    /*
     static void set_widget_label(W_Labelled_Widget* w)
     {
         if (auto wp = w->fltk_widget()->parent()) {
@@ -44,7 +56,7 @@ public:
             wc->size(ww, wh);
         }
     }
-    /*
+    
     static void child_size_modified(
         Widget* wc)
     {
@@ -68,34 +80,38 @@ public:
     static W_Window* make(minion::MMap* props);
 };
 
-void get_grid_sizes(Fl_Grid* gw, int nrows, int ncols);
-
 class W_Grid : public W_Group
 {
     //void handle_child_modified(Widget* wc) override;
-    void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
+    //void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
 
 protected:
+    void handle_child_resized() override;
     int nrows = 0;
     int ncols = 0;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Grid* make(minion::MMap* props);
+
+    void grid_sizes();
 };
 
-class W_Layout : public W_Group
+class W_Layout : public W_Grid
 {
     static W_Layout* new_hvgrid(minion::MMap* parammap, bool horizontal);
 
     bool horizontal = false;
-    std::vector<Widget*> children;
-    int padding = 0;
-    void set_transverse_size();
 
-    void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
+    //TODO?
+    //std::vector<Widget*> children;
+    //int padding = 0;
+    //void set_transverse_size();
+
+    //void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
     //void handle_child_modified(Widget* wc) override;
-    void gridlayout(Fl_Grid* fw);
+    //TODO?
+    //void gridlayout(Fl_Grid* fw);
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
@@ -115,7 +131,7 @@ class W_Stack : public W_Group
 {
     Fl_Widget* current = nullptr;
 
-    void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
+    //void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
     //void handle_child_modified(Widget* wc) override;
 
 public:
@@ -139,8 +155,8 @@ class W_EditForm : public W_Group
     std::vector<form_element> children;
 
     void dolayout();
-    void handle_widget_label(W_Labelled_Widget* wp) override;
-    void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
+    //void handle_widget_label(W_Labelled_Widget* wp) override;
+    //void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
     //void handle_child_modified(Widget* wc) override;
 
 public:

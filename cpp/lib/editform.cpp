@@ -47,6 +47,7 @@ W_EditForm* W_EditForm::make(
     return widget;
 }
 
+/*
 void W_EditForm::handle_child_size(Fl_Widget* wc, int ww, int wh)
 {
     auto gw = static_cast<Fl_Grid*>(fl_widget);
@@ -54,6 +55,7 @@ void W_EditForm::handle_child_size(Fl_Widget* wc, int ww, int wh)
     gw->layout();
     get_grid_sizes(gw, children.size(), 2);
 }
+*/
 
 /*    
 void W_EditForm::handle_child_modified(
@@ -125,6 +127,7 @@ void W_EditForm::dolayout()
         ++i;
     }
 
+    /*
     {
         {
             int span = 0;
@@ -165,7 +168,9 @@ void W_EditForm::dolayout()
             children.emplace_back(form_element{wc, wlabel, span});
         }
     }
+    */
 
+    /*
     // Lay out the grid
     fw->layout(n, 2);
     fw->col_weight(0, 0);
@@ -181,7 +186,7 @@ void W_EditForm::dolayout()
                     el.label->measure_label(wlw, wlh);
                     if (wlw > label_width) {
                         label_width = wlw;
-                    }*/
+                    }* /
             }
             fw->widget(el.element->fltk_widget(), i, 1);
             fw->row_weight(i, 0);
@@ -208,13 +213,9 @@ void W_EditForm::dolayout()
 
     get_grid_sizes(fw, nc, 2);
     //fw->col_width(0, label_width);
+    */
 }
 
-void W_EditForm::handle_widget_label(
-    W_Labelled_Widget* wp)
-{
-    //TODO
-}
 
 void W_EditForm::handle_method(
     std::string_view method, minion::MList* paramlist)

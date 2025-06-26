@@ -206,6 +206,32 @@ Widget::~Widget() {
     widget_map.erase(w_name);
 }
 
+void Widget::print_dimensions(
+    string indent)
+{
+    printf("%sWIDGET INFO: %s\n", indent.c_str(), w_name.c_str());
+    printf("%sContent: %d x %d\n", indent.c_str(), content_width, content_height);
+    printf("%sSet size: %d x %d // %d\n", indent.c_str(), minimum_width, minimum_height, margin);
+    printf("%sActual size: %d x %d\n", indent.c_str(), fl_widget->w(), fl_widget->h());
+    if (auto g = dynamic_cast<Fl_Grid*>(fl_widget))
+        for (int i = 0; i < g->children(); ++i) {
+            auto fcw = g->child(i);
+            auto cw = static_cast<Widget*>(fcw->user_data());
+            if (auto c = g->cell(fcw)) {
+                printf("%s** Grid: %d @%d // %d @%d\n",
+                       indent.c_str(),
+                       c->row(),
+                       c->rowspan(),
+                       c->col(),
+                       c->colspan());
+            } else {
+                printf("%s** Grid: unplaced\n", indent.c_str());
+            }
+            cw->print_dimensions(indent + "  ");
+        }
+    printf("%s----------------------------------\n", indent.c_str());
+}
+
 void Widget::handle_methods(
     MList* dolist, size_t start)
 {
@@ -226,27 +252,19 @@ void Widget::handle_methods(
 
 void Widget::handle_method(std::string_view method, minion::MList* paramlist)
 {
-    //auto w = fl_widget;
-    int ww, wh;
     if (method == "SIZE") {
-        paramlist->get_int(1, ww); // width
-        paramlist->get_int(2, wh); // height
-        W_Group::set_child_size(fl_widget, ww, wh);
+        paramlist->get_int(1, minimum_width);
+        paramlist->get_int(2, minimum_height);
+        W_Group::child_resized(this);
 
-        //fl_widget->size(ww, wh);
-        //W_Group::child_size_modified(this);
     } else if (method == "HEIGHT") {
-        paramlist->get_int(1, wh); // height
-        W_Group::set_child_size(fl_widget, fl_widget->w(), wh);
+        paramlist->get_int(1, minimum_height);
+        W_Group::child_resized(this);
 
-        //fl_widget->size(fl_widget->w(), wh);
-        //W_Group::child_size_modified(this);
     } else if (method == "WIDTH") {
-        paramlist->get_int(1, ww); // width
-        W_Group::set_child_size(fl_widget, ww, fl_widget->h());
+        paramlist->get_int(1, minimum_width);
+        W_Group::child_resized(this);
 
-        //fl_widget->size(ww, fl_widget->h());
-        //W_Group::child_size_modified(this);
     } else if (method == "COLOUR") {
         string clr;
         if (paramlist->get_string(1, clr)) {
@@ -259,28 +277,25 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
         if (paramlist->get_string(1, btype)) {
             auto bxt = get_boxtype(btype);
             fl_widget->box(bxt);
+            //TODO?
+            W_Group::child_resized(this);
         } else
             throw "BOXTYPE value missing for widget " + w_name;
     } else if (method == "TEXT") {
-        //TODO: Do I really want this for all widgets?
         string lbl;
         if (paramlist->get_string(1, lbl)) {
             fl_widget->copy_label(lbl.c_str());
+            content_width = 0;
+            fl_widget->measure_label(content_width, content_height);
+            W_Group::child_resized(this);
         } else
             throw "TEXT value missing for widget " + w_name;
-    //} else if (method == "CALLBACK") {
-    //    auto cb = get<string>(paramlist.at(1));
-    //    fl_widget->callback(do_callback);
     } else if (method == "SHOW") {
         fl_widget->show();
     } else if (method == "clear_visible_focus") {
         fl_widget->clear_visible_focus();
-    } else if (method == "MeasureLabel") {
-        int wl, hl;
-        fl_widget->measure_label(wl, hl);
-        //TODO ...
-        cout << "Measure " << widget_name() << " label: " << wl << ", " << hl
-             << endl;
+    } else if (method == "print_info") {
+        print_dimensions();
     } else {
         throw string{"Unknown method on widget " + w_name + ": "}.append(method);
     }

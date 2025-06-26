@@ -245,7 +245,7 @@ int main()
             ++i;
 
             string fpm = string{"[[MINION_FILE,"}.append(fp).append(
-                "],[WIDGET,MainWindow,[SHOW]],[RUN]]");
+                "],[WIDGET,MainWindow,[SHOW]],[WIDGET, l_MainWindow, [print_info]],[RUN]]");
             Init(fpm.c_str());
         }
     }

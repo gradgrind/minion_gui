@@ -48,12 +48,9 @@ class Widget : public Fl_Callback_User_Data
     // Widget name, used for look-up, etc.
     std::string w_name;
 
-    // Widget type, which can be used to access a type's member
-    // functions, also the name of the type.
-    //??? int wtype;
-
+    // Widget "properties", from the MINION widget definition
     std::shared_ptr<minion::MMap> properties;
-    
+
     // Substitute for Fl_Widget's user_data
     void *user_data = nullptr;
     bool auto_delete_user_data = false;
@@ -61,14 +58,19 @@ class Widget : public Fl_Callback_User_Data
 protected:
     Fl_Widget* fl_widget;
 
-    // Minimum dimensions, used by the layout managers
-    int minimum_width;
-    int minimum_height;
-
     Widget() = default;
 
 public:
     ~Widget() override;
+
+    // Minimum dimensions, used by the layout managers
+    int content_width = 0;  // calculated from label, subwidgets, etc.
+    int content_height = 0; // calculated from label, subwidgets, etc.
+    int minimum_width = 0;  // set by SIZE or WIDTH
+    int minimum_height = 0; // set by SIZE or HEIGHT
+    int margin = 0;
+
+    void print_dimensions(std::string indent = "");
 
     static std::string clear();
     static void new_widget(minion::MList* m);
@@ -124,8 +126,6 @@ public:
     void remove_widget(std::string_view name);
 
     inline std::string* widget_name() { return &w_name; }
-    //int widget_type();
-    //std::string_view widget_type_name();
 
     // properties access
     bool property_int(std::string_view key, int& result)
