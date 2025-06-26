@@ -61,6 +61,10 @@ class Widget : public Fl_Callback_User_Data
 protected:
     Fl_Widget* fl_widget;
 
+    // Minimum dimensions, used by the layout managers
+    int minimum_width;
+    int minimum_height;
+
     Widget() = default;
 
 public:

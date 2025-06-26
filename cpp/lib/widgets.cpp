@@ -16,6 +16,38 @@ using namespace minion;
 
 // *** Non-layout widgets ***
 
+void W_Labelled_Widget::handle_method(
+    string_view method, MList* paramlist)
+{
+    string label;
+    if (method == "TEXT") {
+        if (paramlist->get_string(1, label)) {
+            fl_widget->copy_label(label.c_str());
+            label_width = 0;
+            fl_widget->measure_label(label_width, label_height);
+            W_Group::set_widget_label(this);
+        } else
+            throw "No TEXT value for " + *widget_name();
+    } else if (method == "LABEL_POS") {
+        // This overrides the LABEL_POS of the container
+        string align;
+        paramlist->get_string(1, align);
+        if (align == "LEFT")
+            label_pos = -1;
+        else if (align == "RIGHT")
+            label_pos = 1;
+        else if (align == "CENTRE")
+            label_pos = 0;
+        else if (align == "NONE")
+            label_pos = -2;
+        else
+            throw "No valid LABEL_POS value for " + *widget_name();
+        W_Group::set_widget_label(this);
+    } else {
+        Widget::handle_method(method, paramlist);
+    }
+}
+
 //static
 W_Box* W_Box::make(
     MMap* props)
@@ -70,8 +102,10 @@ void W_Label::handle_method(
             int lw{0}, lh;
             fl_widget->measure_label(lw, lh);
             //w->horizontal_label_margin(5);
-            fl_widget->size(lw + 20, Widget::line_height);
-            W_Group::child_size_modified(this);
+            W_Group::set_child_size(fl_widget, lw + 20, Widget::line_height);
+
+            //fl_widget->size(lw + 20, Widget::line_height);
+            //W_Group::child_size_modified(this);
         }
     } else if (method == "LABEL_ALIGN") {
         string align;
@@ -275,8 +309,11 @@ W_List* W_List::make(
     widget->fl_widget = w;
     //w->color(Widget::entry_bg);
     w->selection_color(Widget::selection_bg);
+
     w->callback([](Fl_Widget* w, void* ud) {
         (void) ud;
+        //printf("§CB: %b\n", Fl::callback_reason());
+        //fflush(stdout);
         string* dw{Widget::get_widget_name(w)};
         // or string dw{static_cast<Widget*>(ud)->widget_name()};
         auto ww = static_cast<Fl_Hold_Browser*>(w);

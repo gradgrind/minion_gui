@@ -3,30 +3,58 @@
 
 #include "minion.h"
 #include "widget.h"
+#include "widgets.h"
 #include <FL/Fl_Flex.H>
+#include <FL/Fl_Grid.H>
 #include <FL/Fl_Widget.H>
 #include <string_view>
 
 class W_Group : public Widget
 {
 protected:
-    virtual void handle_child_modified(Widget* wc) = 0;
+    //virtual void handle_child_modified(Widget* wc) = 0;
+    virtual void handle_widget_label(
+        W_Labelled_Widget* wp)
+    { //TODO ...
+        (void) wp;
+        return;
+    }
+    virtual void handle_child_size(
+        Fl_Widget* wc, int ww, int wh)
+    {
+        wc->size(ww, wh);
+    }
 
 public:
+    static void set_widget_label(W_Labelled_Widget* w)
+    {
+        if (auto wp = w->fltk_widget()->parent()) {
+            auto p = static_cast<W_Group*>(wp->user_data());
+            p->handle_widget_label(w);
+        }
+    }
+
+    static void set_child_size(
+        Fl_Widget* wc, int ww, int wh)
+    {
+        if (auto wp = wc->parent()) {
+            auto p = static_cast<W_Group*>(wp->user_data());
+            p->handle_child_size(wc, ww, wh);
+        } else {
+            wc->size(ww, wh);
+        }
+    }
+    /*
     static void child_size_modified(
         Widget* wc)
     {
-        /*printf("§ %s %d %d\n",
-               wc->widget_name()->c_str(),
-               wc->fltk_widget()->w(),
-               wc->fltk_widget()->h());
-        fflush(stdout);*/
         if (auto p = wc->fltk_widget()->parent()) {
             auto wp{static_cast<W_Group*>(p->user_data())};
             if (wp)
                 wp->handle_child_modified(wc);
         }
     }
+    */
 };
 
 class W_Window : public Widget
@@ -40,9 +68,12 @@ public:
     static W_Window* make(minion::MMap* props);
 };
 
+void get_grid_sizes(Fl_Grid* gw, int nrows, int ncols);
+
 class W_Grid : public W_Group
 {
-    void handle_child_modified(Widget* wc) override;
+    //void handle_child_modified(Widget* wc) override;
+    void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
 
 protected:
     int nrows = 0;
@@ -62,7 +93,9 @@ class W_Layout : public W_Group
     int padding = 0;
     void set_transverse_size();
 
-    void handle_child_modified(Widget* wc) override;
+    void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
+    //void handle_child_modified(Widget* wc) override;
+    void gridlayout(Fl_Grid* fw);
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
@@ -82,7 +115,8 @@ class W_Stack : public W_Group
 {
     Fl_Widget* current = nullptr;
 
-    void handle_child_modified(Widget* wc) override;
+    void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
+    //void handle_child_modified(Widget* wc) override;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
@@ -94,14 +128,20 @@ class W_EditForm : public W_Group
     struct form_element
     {
         Widget* element;
-        Fl_Widget* label;
         int span = 0; // 0: right column, otherwise both columns, 2: "grow"
     };
 
-    int v_label_gap = 5;
+    int margin0 = 0;
+    int rowgap0 = 0;
+    int colgap0 = 0;
+    int label_pos = -1;  // -1=>left, 0=>centre, 1=>right
+    int v_label_gap = 5; // vertical space between label and spanning widget
     std::vector<form_element> children;
 
-    void handle_child_modified(Widget* wc) override;
+    void dolayout();
+    void handle_widget_label(W_Labelled_Widget* wp) override;
+    void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
+    //void handle_child_modified(Widget* wc) override;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;

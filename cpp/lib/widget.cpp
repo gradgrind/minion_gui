@@ -231,16 +231,22 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
     if (method == "SIZE") {
         paramlist->get_int(1, ww); // width
         paramlist->get_int(2, wh); // height
-        fl_widget->size(ww, wh);
-        W_Group::child_size_modified(this);
+        W_Group::set_child_size(fl_widget, ww, wh);
+
+        //fl_widget->size(ww, wh);
+        //W_Group::child_size_modified(this);
     } else if (method == "HEIGHT") {
         paramlist->get_int(1, wh); // height
-        fl_widget->size(fl_widget->w(), wh);
-        W_Group::child_size_modified(this);
+        W_Group::set_child_size(fl_widget, fl_widget->w(), wh);
+
+        //fl_widget->size(fl_widget->w(), wh);
+        //W_Group::child_size_modified(this);
     } else if (method == "WIDTH") {
         paramlist->get_int(1, ww); // width
-        fl_widget->size(ww, fl_widget->h());
-        W_Group::child_size_modified(this);
+        W_Group::set_child_size(fl_widget, ww, fl_widget->h());
+
+        //fl_widget->size(ww, fl_widget->h());
+        //W_Group::child_size_modified(this);
     } else if (method == "COLOUR") {
         string clr;
         if (paramlist->get_string(1, clr)) {

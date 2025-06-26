@@ -7,6 +7,15 @@
 
 // *** non-layout widgets
 
+class W_Labelled_Widget : public Widget
+{
+public:
+    void handle_method(std::string_view method, minion::MList* paramlist) override;
+
+    int label_pos = -2; // -2=>undefined, -1=>left, 0=>centre, 1=>right
+    int label_width = 0, label_height = 0;
+};
+
 class W_Box : public Widget
 {
 public:
@@ -56,14 +65,14 @@ public:
     static W_Checkbox* make(minion::MMap* props);
 };
 
-class W_Choice : public Widget
+class W_Choice : public W_Labelled_Widget
 {
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Choice* make(minion::MMap* props);
 };
 
-class W_Output : public Widget
+class W_Output : public W_Labelled_Widget
 {
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
@@ -77,14 +86,14 @@ public:
     static W_PopupEditor* make(minion::MMap* props);
 };
 
-class W_List : public Widget
+class W_List : public W_Labelled_Widget
 {
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_List* make(minion::MMap* props);
 };
 
-class W_TextLine : public Widget
+class W_TextLine : public W_Labelled_Widget
 {
 public:
     //? void handle_method(std::string_view method, minion::MList* paramlist) override;
@@ -93,7 +102,7 @@ public:
     bool set(std::string_view newtext);
 };
 
-class W_RowTable : public Widget
+class W_RowTable : public W_Labelled_Widget
 {
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;

@@ -84,9 +84,14 @@ const char* callback0(
                 callback_data.append("]]]");
 
             } else if (wname.starts_with("(buttons)")) {
-                callback_data = string{"[[WIDGET, Output_1, [VALUE, "} //
-                                    .append(wname)
-                                    .append("]]]");
+                callback_data = "[";
+                if (wname.ends_with("PB1")) {
+                    callback_data.append("[WIDGET, PB1, [SIZE, 300, 80]],");
+                }
+                callback_data
+                    .append("[WIDGET, Output_1, [VALUE, ") //
+                    .append(wname)
+                    .append("]]]");
 
             } else if (wname.starts_with("(grid)")) {
                 callback_data = string{"[[WIDGET, "} //

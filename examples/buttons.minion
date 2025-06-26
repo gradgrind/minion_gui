@@ -3,14 +3,14 @@
   # button bar
   [NEW, PushButton, PB1, {
     },
-    [TEXT, "PB 1"]
+    [TEXT, "Press me!"]
   ],
   [NEW, PushButton, PB2, {
     },
     [TEXT, "PushButton 2"]
   ],
   [NEW, Hlayout, l_bbar, {
-      AUTOSIZE: true,
+      #AUTOSIZE: true,
       GRID_ALIGN: HORIZONTAL,
     },
     [GAP, 30],
@@ -30,7 +30,7 @@
     [clear_visible_focus]
   ],
   [NEW, Hlayout, l_output, {
-      AUTOSIZE: true,
+      #AUTOSIZE: true,
       GRID_ALIGN: HORIZONTAL,
     },
     [ADD, Label_1, Output_1]
@@ -46,7 +46,7 @@
     [ADD, l_bbar, l_output]
   ],
   
-  [WIDGET, PB1,
-    [SIZE, 300, 80]
-  ],
+  # [WIDGET, PB1,
+  #   [SIZE, 300, 80]
+  # ],
 ]

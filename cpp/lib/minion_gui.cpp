@@ -112,7 +112,7 @@ void Init(
     //std::cout << "C says: init '" << data0 << "'" << std::endl;
 
     //TODO? Where? If?
-    Fl::option(Fl::OPTION_VISIBLE_FOCUS, false);
+    //Fl::option(Fl::OPTION_VISIBLE_FOCUS, false);
     Fl::box_border_radius_max(6);
 
     Widget::set_prefix(""); // start without widget namespace

@@ -26,25 +26,37 @@
     [WIDTH, 100],
   ],
   
-  [NEW, PushButton, up1, {},
+  [NEW, PushButton, up1, {
+      GRID_ALIGN: FILL,
+  },
     [TEXT, "▲"]
   ],
-  [NEW, PushButton, dn1, {},
+  [NEW, PushButton, dn1, {
+      GRID_ALIGN: FILL,
+  },
     [TEXT, "▼"]
   ],
-  [NEW, PushButton, add1, {},
+  [NEW, PushButton, add1, {
+      GRID_ALIGN: FILL,
+  },
     [TEXT, "✚"]
   ],
-  [NEW, PushButton, del1, {},
+  [NEW, PushButton, del1, {
+      GRID_ALIGN: FILL,
+  },
     [TEXT, "━"]
   ],
   [NEW, Vlayout, _buttons1, {
-      AUTOSIZE: true,
+      # AUTOSIZE: true,
       GRID_ALIGN: VERTICAL,
     },
     [GAP, 20],
-    [ADD, up1, dn1, add1, del1]
+    # [ADD, up1, dn1, add1, del1]
   ],
+  [WIDGET, _buttons1, [ADD, up1]],
+  [WIDGET, _buttons1, [ADD, dn1]],
+  [WIDGET, _buttons1, [ADD, add1]],
+  [WIDGET, _buttons1, [ADD, del1]],
   
   # Divisions list
   [NEW, Label, _l2, {
@@ -71,17 +83,25 @@
     [WIDTH, 150],
   ],
   
-  [NEW, PushButton, up2, {},
-    [TEXT, "@8->"]
+  [NEW, PushButton, up2, {
+      GRID_ALIGN: FILL,
+  },
+    [TEXT, "▲"]
   ],
-  [NEW, PushButton, dn2, {},
-    [TEXT, "@2->"]
+  [NEW, PushButton, dn2, {
+      GRID_ALIGN: FILL,
+  },
+    [TEXT, "▼"]
   ],
-  [NEW, PushButton, add2, {},
-    [TEXT, "@+"]
+  [NEW, PushButton, add2, {
+      GRID_ALIGN: FILL,
+  },
+    [TEXT, "✚"]
   ],
-  [NEW, PushButton, del2, {},
-    [TEXT, "@line"]
+  [NEW, PushButton, del2, {
+      GRID_ALIGN: FILL,
+  },
+    [TEXT, "━"]
   ],
   [NEW, Vlayout, _buttons2, {
       AUTOSIZE: true,
@@ -116,20 +136,28 @@
     [WIDTH, 100],
   ],
   
-  [NEW, PushButton, up3, {},
-    [TEXT, "@8->"]
+  [NEW, PushButton, up3, {
+      GRID_ALIGN: FILL,
+  },
+    [TEXT, "▲"]
   ],
-  [NEW, PushButton, dn3, {},
-    [TEXT, "@2->"]
+  [NEW, PushButton, dn3, {
+      GRID_ALIGN: FILL,
+  },
+    [TEXT, "▼"]
   ],
-  [NEW, PushButton, add3, {},
-    [TEXT, "@+"]
+  [NEW, PushButton, add3, {
+      GRID_ALIGN: FILL,
+  },
+    [TEXT, "✚"]
   ],
-  [NEW, PushButton, del3, {},
-    [TEXT, "@line"]
+  [NEW, PushButton, del3, {
+      GRID_ALIGN: FILL,
+  },
+    [TEXT, "━"]
   ],
   [NEW, Vlayout, _buttons3, {
-      AUTOSIZE: true,
+      # AUTOSIZE: true,
       GRID_ALIGN: VERTICAL,
     },
     [GAP, 20],
@@ -161,20 +189,28 @@
     [WIDTH, 100],
   ],
   
-  [NEW, PushButton, up4, {},
+  [NEW, PushButton, up4, {
+      GRID_ALIGN: FILL,
+  },
     [TEXT, "@8->"]
   ],
-  [NEW, PushButton, dn4, {},
+  [NEW, PushButton, dn4, {
+      GRID_ALIGN: FILL,
+  },
     [TEXT, "@2->"]
   ],
-  [NEW, PushButton, add4, {},
+  [NEW, PushButton, add4, {
+      GRID_ALIGN: FILL,
+  },
     [TEXT, "@+"]
   ],
-  [NEW, PushButton, del4, {},
+  [NEW, PushButton, del4, {
+      GRID_ALIGN: FILL,
+  },
     [TEXT, "@line"]
   ],
   [NEW, Vlayout, _buttons4, {
-      AUTOSIZE: true,
+      # AUTOSIZE: true,
       GRID_ALIGN: VERTICAL,
     },
     [GAP, 20],
