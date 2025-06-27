@@ -107,7 +107,7 @@ W_Choice* W_Choice::make(
     MMap* props)
 {
     (void) props;
-    auto w = new Fl_Choice(0, 0, 0, Widget::line_height);
+    auto w = new Fl_Choice(0, 0, 0, 0);
     w->callback([](Fl_Widget* w, void* ud) {
         (void) ud;
         string* dw{Widget::get_widget_name(w)};
@@ -115,6 +115,7 @@ W_Choice* W_Choice::make(
         Callback2(*dw, to_string(ww->value()), ww->text());
     });
     auto widget = new W_Choice();
+    widget->content_height = Widget::line_height;
     widget->fl_widget = w;
     return widget;
 }
@@ -130,7 +131,7 @@ void W_Choice::handle_method(
             static_cast<Fl_Choice*>(fl_widget)->add(item.c_str());
         }
     } else {
-        Widget::handle_method(method, paramlist);
+        W_Labelled_Widget::handle_method(method, paramlist);
     }
 }
 
@@ -139,8 +140,9 @@ W_Output* W_Output::make(
     MMap* props)
 {
     (void) props;
-    auto w = new Fl_Output(0, 0, 0, Widget::line_height);
+    auto w = new Fl_Output(0, 0, 0, 0);
     auto widget = new W_Output();
+    widget->content_height = Widget::line_height;
     widget->fl_widget = w;
     w->selection_color(Widget::selection_bg);
     return widget;
@@ -157,7 +159,7 @@ void W_Output::handle_method(
         } else
             throw "Output widget VALUE method: value missing";
     } else {
-        Widget::handle_method(method, paramlist);
+        W_Labelled_Widget::handle_method(method, paramlist);
     }
 }
 
@@ -322,6 +324,6 @@ void W_List::handle_method(
             e1->add(item.c_str());
         }
     } else {
-        Widget::handle_method(method, paramlist);
+        W_Labelled_Widget::handle_method(method, paramlist);
     }
 }

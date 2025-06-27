@@ -27,7 +27,9 @@ class TextLine : public Fl_Input
     }
 
 public:
-    TextLine() : Fl_Input(0, 0, 0, Widget::line_height) {}
+    TextLine()
+        : Fl_Input(0, 0, 0, 0)
+    {}
 
     std::string text;
     bool modified;
@@ -39,6 +41,7 @@ W_TextLine* W_TextLine::make(minion::MMap* parammap)
     (void) parammap;
     auto w = new TextLine();
     auto widget = new W_TextLine();
+    widget->content_height = Widget::line_height;
     widget->fl_widget = w;
     w->selection_color(Widget::selection_bg);
 

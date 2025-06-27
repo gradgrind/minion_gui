@@ -230,6 +230,7 @@ void Widget::print_dimensions(
             cw->print_dimensions(indent + "  ");
         }
     printf("%s----------------------------------\n", indent.c_str());
+    fflush(stdout);
 }
 
 void Widget::handle_methods(

@@ -126,6 +126,8 @@ W_Grid* W_Grid::make(
 // these gaps, this will only work if all gaps are equal.
 void W_Grid::handle_child_resized()
 {
+    if (nrows == 0 || ncols == 0)
+        return;
     auto fgw = static_cast<Fl_Grid*>(fl_widget);
     vector<int> rsize(nrows, 0);
     vector<int> csize(ncols, 0);
@@ -154,22 +156,20 @@ void W_Grid::handle_child_resized()
             }
         }
     }
-    if (nrows != 0 && ncols != 0) {
-        int rg, cg;
-        fgw->gap(&rg, &cg);
-        auto ww = cg * (ncols - 1);
-        for (const auto wi : csize)
-            ww += wi;
-        content_width = ww;
-        auto wh = rg * (nrows - 1);
-        for (const auto hi : rsize)
-            wh += hi;
-        content_height = wh;
-        printf("GRID SIZE (%s): %d %d => %d %d\n", widget_name()->c_str(), nrows, ncols, ww, wh);
-        fflush(stdout);
-        static_cast<Fl_Grid*>(fl_widget)->layout();
-        W_Group::child_resized(this);
-    }
+    int rg, cg;
+    fgw->gap(&rg, &cg);
+    auto ww = cg * (ncols - 1);
+    for (const auto wi : csize)
+        ww += wi;
+    content_width = ww;
+    auto wh = rg * (nrows - 1);
+    for (const auto hi : rsize)
+        wh += hi;
+    content_height = wh;
+    printf("GRID SIZE (%s): %d %d => %d %d\n", widget_name()->c_str(), nrows, ncols, ww, wh);
+    fflush(stdout);
+    static_cast<Fl_Grid*>(fl_widget)->layout();
+    W_Group::child_resized(this);
 }
 
 /*
@@ -187,23 +187,6 @@ void W_Grid::handle_child_modified(Widget* wc)
 void W_Grid::handle_method(
     string_view method, MList* paramlist)
 {
-    if (method == "RC") { //TODO: May be unnecessary?
-        // ADD automatically expands the layout if necessary.
-        //TODO: Shrinking is not currently supported.
-        auto fw = static_cast<Fl_Grid*>(fl_widget);
-        if (fw->children() != 0) {
-            fw->clear_layout();
-        }
-        int r, c;
-        if (paramlist->get_int(1, r) && paramlist->get_int(2, c)) {
-            fw->layout(r, c);
-            nrows = r;
-            ncols = c;
-            return;
-        }
-        throw "RC command needs two values (rows and columns), grid: " + *widget_name();
-    }
-
     if (method == "ADD") {
         // Add new children to grid
         auto flgrid = static_cast<Fl_Grid*>(fl_widget);
@@ -251,8 +234,8 @@ void W_Grid::handle_method(
                         } else {
                             throw "Widget " + *wchild->widget_name()
                                 + ", Grid placement invalid: \n " + to_string(row) + "+"
-                                + to_string(rspan) + " / " + to_string(col) + "+" + to_string(cspan)
-                                + "\n Layout: " + to_string(nrows) + " / " + to_string(ncols);
+                                + to_string(rspan) + " / " + to_string(col) + "+"
+                                + to_string(cspan);
                         }
                         continue;
                     }
@@ -262,7 +245,7 @@ void W_Grid::handle_method(
             }
             throw "Invalid grid ADD command on '" + *widget_name() + "':\n  " + dump_value(w_i);
         }
-        //fw->layout();
+        handle_child_resized();
         return;
     }
 

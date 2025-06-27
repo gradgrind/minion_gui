@@ -324,6 +324,6 @@ void W_RowTable::handle_method(std::string_view method, minion::MList* paramlist
         t->data.emplace_back(r);
         t->rows(t->rows() + 1);
     } else {
-        Widget::handle_method(method, paramlist);
+        W_Labelled_Widget::handle_method(method, paramlist);
     }
 }
