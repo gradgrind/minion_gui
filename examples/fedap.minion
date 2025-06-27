@@ -62,7 +62,7 @@
       GRID_ALIGN: VERTICAL,
     },
     [GAP, 5],
-    [WIDTH, 200],
+    # [WIDTH, 200],
     [ADD, _chooser, buttons, grid, complex, studentgroups]
   ],
   

@@ -122,8 +122,6 @@ W_Grid* W_Grid::make(
     return widget;
 }
 
-//TODO: As Fl_Grid allows gaps to be set individually, but not to read
-// these gaps, this will only work if all gaps are equal.
 void W_Grid::handle_child_resized()
 {
     if (nrows == 0 || ncols == 0)
@@ -156,15 +154,13 @@ void W_Grid::handle_child_resized()
             }
         }
     }
-    int rg, cg;
-    fgw->gap(&rg, &cg);
-    auto ww = cg * (ncols - 1);
-    for (const auto wi : csize)
-        ww += wi;
+    int wh = rsize.at(nrows - 1);
+    for (int r = 0; r < nrows - 1; ++r)
+        wh += fgw->row_gap(r) + rsize.at(r);
+    int ww = csize.at(ncols - 1);
+    for (int c = 0; c < ncols - 1; ++c)
+        ww += fgw->col_gap(c) + csize.at(c);
     content_width = ww;
-    auto wh = rg * (nrows - 1);
-    for (const auto hi : rsize)
-        wh += hi;
     content_height = wh;
     printf("GRID SIZE (%s): %d %d => %d %d\n", widget_name()->c_str(), nrows, ncols, ww, wh);
     fflush(stdout);
@@ -184,6 +180,7 @@ void W_Grid::handle_child_modified(Widget* wc)
 */
 
 //TODO: What about changing min col size when a text changes?
+//TODO: Move at least MARGIN and GAP to property status!
 void W_Grid::handle_method(
     string_view method, MList* paramlist)
 {
@@ -477,7 +474,7 @@ void W_Layout::handle_method(
         throw "MARGIN command with no margin on layout '" + *widget_name();
     }
 
-    Widget::handle_method(method, paramlist);
+    W_Grid::handle_method(method, paramlist);
 }
 
 /*    

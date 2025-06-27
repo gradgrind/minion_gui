@@ -17,217 +17,93 @@ using namespace minion;
 //  Entry_name + new_value (ENTRY)
 //  Entry_name + [new_value ...] (LIST)
 
-class EditForm : public Fl_Grid
-{
-public:
-    int v_title_gap{5};
-
-    EditForm()
-        : Fl_Grid(0, 0, 0, 0)
-    {
-        Fl_Group::current(0); // disable "auto-grouping"
-        box(FL_BORDER_FRAME);
-        //col_width(0, 0);
-        //col_weight(0, 0);
-        gap(10, 0);
-        margin(5, 5, 5, 5);
-    }
-};
-
 // static
 W_EditForm* W_EditForm::make(
     minion::MMap* props)
 {
-    // Now create the EditForm widget
     (void) props;
-    auto efw = new EditForm();
+    auto flgrid = new Fl_Grid(0, 0, 0, 0);
+    Fl_Group::current(0); // disable "auto-grouping"
+    flgrid->box(FL_BORDER_FRAME);
+    //col_width(0, 0);
+    //col_weight(0, 0);
+    //gap(10, 0);
+    //margin(5, 5, 5, 5);
     auto widget = new W_EditForm();
-    widget->fl_widget = efw;
-    //efw->color(Widget::entry_bg);
+    widget->fl_widget = flgrid;
+    //flgrid->color(Widget::entry_bg);
+    { // Label alignment
+        string align_;
+        widget->property_string("LABEL_POS", align_);
+        if (align_ == "CENTRE") {
+            widget->label_pos = 0;
+        } else if (align_ == "RIGHT") {
+            widget->label_pos = 1;
+        }
+    }
+    // Row/column gaps
+    widget->property_int("ROW_GAP", widget->vgap);
+    widget->property_int("LABEL_GAP", widget->h_labelgap);
+    widget->property_int("V_LABEL_GAP", widget->v_labelgap);
+    // Margins
+    widget->property_int("MARGIN", widget->margin);
     return widget;
 }
 
-/*
-void W_EditForm::handle_child_size(Fl_Widget* wc, int ww, int wh)
+void W_EditForm::handle_child_resized()
 {
-    auto gw = static_cast<Fl_Grid*>(fl_widget);
-    gw->cell(wc)->minimum_size(ww, wh);
-    gw->layout();
-    get_grid_sizes(gw, children.size(), 2);
-}
-*/
-
-/*    
-void W_EditForm::handle_child_modified(
-    Widget* wc)
-{
-    throw "TODO: W_EditForm::handle_child_modified";
-}
-*/
-
-//TODO
-void W_EditForm::dolayout()
-{
-    auto efw = static_cast<Fl_Grid*>(fl_widget);
-    // Label alignment
-    //Fl_Align align{FL_ALIGN_LEFT};
-    int align = -1; // left
-    {
-        string align_;
-        property_string("LABEL_ALIGN", align_);
-        if (align_ == "CENTRE") {
-            align = 0;
-        } else if (align_ == "RIGHT") {
-            align = 1;
+    auto flgrid = static_cast<Fl_Grid*>(fl_widget);
+    // Reset margin
+    flgrid->margin(margin, margin, margin, margin);
+    int lwidth = 0;
+    for (const auto& lfe : labelled_elements) {
+        if (!lfe.span) {
+            auto lw = lfe.element->label_width;
+            if (lw > lwidth)
+                lwidth = lw;
         }
     }
-
-    int label_width = 0;
-    int widget_height = margin0 * 2;
-    int i = 0;
-    int gap;
-    efw->gap(rowgap0);                               // set default row-gap
-    efw->margin(margin0, margin0, margin0, margin0); // set default margin
-    for (const auto& elem : children) {
-        auto fwc = elem.element->fltk_widget();
-        auto fwl = dynamic_cast<W_Labelled_Widget*>(fwc);
-        if (elem.span == 0) {
-            // If there is an external label, use it for calculating
-            // left gap size.
-            if (fwl && fwl->label_width > label_width)
-                label_width = fwl->label_width;
-            if (i != 0) {
-                widget_height += rowgap0;
-            }
-
-        } else {
-            //TODO: if there is an external label, use it for calculating
-            // top gap size.
-            if (fwl && fwl->label_height != 0) {
-                if (i == 0) {
-                    // Modify top margin
-                    gap = fwl->label_height + v_label_gap;
-                    efw->margin(-1, margin0 + gap);
+    flgrid->gap(vgap, lwidth + h_labelgap);
+    for (const auto& lfe : labelled_elements) {
+        if (lfe.span) {
+            if (auto lh = lfe.element->label_height) {
+                lfe.element->fltk_widget()->vertical_label_margin(v_labelgap);
+                auto dh = v_labelgap + lh;
+                if (lfe.child_index == 0) {
+                    // stretched top margin
+                    flgrid->margin(-1, dh + margin);
                 } else {
-                    // Modify gap
-                    gap = rowgap0 + fwl->label_height + v_label_gap;
-                    efw->row_gap(i - 1, gap);
-                }
-                fwc->vertical_label_margin(v_label_gap);
-                widget_height += gap;
-            } else {
-                if (i != 0) {
-                    widget_height += rowgap0;
+                    // stretched gap
+                    flgrid->row_gap(lfe.child_index - 1, dh + vgap);
                 }
             }
-        }
-
-        //TODO: Need to consider the widget's own height ...
-
-        ++i;
-    }
-
-    /*
-    {
-        {
-            int span = 0;
-            wc->property_int("SPAN", span);
-
-            if (span == 0) {
-                fw->add(fwc);
-
-            } else {
-                //TODO
-                // If there is a label, it will be placed above the widget,
-                // the space above the widget (gap or margin) will need
-                // to be expanded to make room for it.
-                if (wc->label_width == 0) {
-                    fw->add(fwc);
-                } else {
-                    auto gbox = new Fl_Flex(0, 0, 0, 0);
-                    auto wl = new Fl_Box(0, 0, 0, 0);
-                    Fl_Group::current(0); // disable "auto-grouping"
-                    gbox->add(fwc);
-                    wlabel = gbox;
-                    // Note that if this element is removed from the form,
-                    // the element's main widget (here fwc) must be removed
-                    // from the Flex layout before deleting the latter,
-                    // assuming that fwc is managed by its Widget object.
-
-                    fw->add(gbox);
-                    wl->copy_label(label.c_str());
-                    wl->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
-                    //TODO: If removal is to be a possibility, this `wlabel`
-                    // contains the actual widget (`fwc`). So if the label is
-                    // deleted, `fwc` must be removed from it first, as this
-                    // is managed by its associated `Widget` object.
-                }
+        } else if (auto lw = lfe.element->label_width) {
+            auto pos = lfe.element->label_pos;
+            if (pos == -2)
+                pos = label_pos;
+            auto dw = h_labelgap;
+            if (pos == 0) {
+                dw += lwidth - lw;
+            } else if (pos == 1) {
+                dw += (lwidth - lw) / 2;
             }
-
-            children.emplace_back(form_element{wc, wlabel, span});
+            lfe.element->fltk_widget()->horizontal_label_margin(dw);
         }
     }
-    */
-
-    /*
-    // Lay out the grid
-    fw->layout(n, 2);
-    fw->col_weight(0, 0);
-    int label_width = 0;
-
-    for (int i = n0; i < nc; ++i) {
-        auto el = children.at(i);
-        if (el.span == 0) {
-            if (el.label) {
-                fw->widget(el.label, i, 0);
-                /* Measure width, compare with running maximum
-                    int wlw = 0, wlh;
-                    el.label->measure_label(wlw, wlh);
-                    if (wlw > label_width) {
-                        label_width = wlw;
-                    }* /
-            }
-            fw->widget(el.element->fltk_widget(), i, 1);
-            fw->row_weight(i, 0);
-
-        } else {
-            if (el.label) { // Label above element
-                // Measure label dimensions
-                int wlw{0}, wlh;
-                auto wlbl = static_cast<Fl_Flex*>(el.label)->child(0);
-                wlbl->measure_label(wlw, wlh);
-                el.label->size(wlw, wlh + v_label_gap + el.element->fltk_widget()->h());
-                static_cast<Fl_Flex*>(el.label)->fixed(wlbl, wlh);
-                static_cast<Fl_Flex*>(el.label)->gap(v_label_gap);
-                fw->widget(el.label, i, 0, 1, 2);
-            } else { // No label
-                fw->widget(el.element->fltk_widget(), i, 0, 1, 2);
-            }
-            if (el.span != 1)
-                fw->row_weight(i, 1);
-            else
-                fw->row_weight(i, 0);
-        }
-    }
-
-    get_grid_sizes(fw, nc, 2);
-    //fw->col_width(0, label_width);
-    */
+    W_Grid::handle_child_resized();
 }
-
 
 void W_EditForm::handle_method(
     std::string_view method, minion::MList* paramlist)
 {
     if (method == "ADD") {
-        auto fw = static_cast<Fl_Grid*>(fl_widget);
+        auto flgrid = static_cast<Fl_Grid*>(fl_widget);
 
         // Add new children to list
         auto n = paramlist->size();
         if (n < 2)
             throw "No widget(s) to ADD to " + *widget_name();
-        auto n0 = fw->children();
+        auto n0 = flgrid->children();
         auto nc = n0;
         for (size_t i = 1; i < n; ++i) {
             string wname;
@@ -236,73 +112,39 @@ void W_EditForm::handle_method(
                 auto fwc = wc->fltk_widget();
                 // Check that it is new to the layout
                 for (int i = 0; i < nc; ++i) {
-                    if (fwc == fw->child(i))
+                    if (fwc == flgrid->child(i))
                         throw "Widget " + wname + " already in layout " + *widget_name();
                 }
-                fw->add(fwc);
+                flgrid->add(fwc);
+                flgrid->layout(nc + 1, 2);
                 int span = 0;
                 wc->property_int("SPAN", span);
-                children.emplace_back(form_element{wc, span});
+                auto flwc = wc->fltk_widget();
+                if (span == 0) {
+                    flgrid->widget(flwc, nc, 1);
+                    flgrid->row_weight(nc, 0);
+                    if (auto lwc = dynamic_cast<W_Labelled_Widget*>(wc)) {
+                        flwc->align(FL_ALIGN_LEFT);
+                        labelled_elements.emplace_back(labelled_form_element{lwc, nc, false});
+                    }
+                } else {
+                    flgrid->widget(flwc, nc, 0, 1, 2);
+                    if (span == 1)
+                        flgrid->row_weight(nc, 0);
+                    else
+                        flgrid->row_weight(nc, 1);
+                    if (auto lwc = dynamic_cast<W_Labelled_Widget*>(wc)) {
+                        flwc->align(FL_ALIGN_TOP_LEFT);
+                        labelled_elements.emplace_back(labelled_form_element{lwc, nc, true});
+                    }
+                }
                 ++nc;
             }
         }
-        fw->layout(nc, 2);
-        fw->col_weight(0, 0);
-        for (int i = n0; i < nc; ++i) {
-            auto fe = children.at(i);
-            auto wc = fe.element;
-            if (fe.span == 0) {
-                fw->widget(wc->fltk_widget(), i, 1);
-                fw->row_weight(i, 0);
-            } else {
-                fw->widget(wc->fltk_widget(), i, 0, 1, 2);
-                if (fe.span == 1)
-                    fw->row_weight(i, 0);
-                else
-                    fw->row_weight(i, 1);
-            }
-        }
-        dolayout();
+        flgrid->col_weight(0, 0);
+        handle_child_resized();
         return;
     }
 
-    if (method == "LABEL_POS") {
-        // This can be overridden by the LABEL_POS of the widgets
-        string align;
-        paramlist->get_string(1, align);
-        if (align == "LEFT")
-            label_pos = -1;
-        else if (align == "RIGHT")
-            label_pos = 1;
-        else if (align == "CENTRE")
-            label_pos = 0;
-        else
-            throw "No valid LABEL_POS value for " + *widget_name();
-        dolayout();
-        return;
-    }
-
-    if (method == "GAP") {
-        if (paramlist->get_int(1, rowgap0)) {
-            colgap0 = rowgap0;
-            paramlist->get_int(2, colgap0);
-            //static_cast<Fl_Grid*>(fl_widget)->gap(rowgap, colgap);
-            dolayout();
-            return;
-        }
-        throw "GAP command with no value(s) on layout '" + *widget_name();
-    }
-
-    if (method == "MARGIN") {
-        int s;
-        if (paramlist->get_int(1, s)) {
-            margin0 = s;
-            //static_cast<Fl_Grid*>(fl_widget)->margin(s, s, s, s);
-            dolayout();
-            return;
-        }
-        throw "MARGIN command with no value on layout '" + *widget_name();
-    }
-
-    Widget::handle_method(method, paramlist);
+    W_Grid::handle_method(method, paramlist);
 }

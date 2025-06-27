@@ -25,15 +25,25 @@ void W_Labelled_Widget::handle_method(
         string align;
         paramlist->get_string(1, align);
         if (align == "LEFT")
-            label_pos = -1;
-        else if (align == "RIGHT")
-            label_pos = 1;
-        else if (align == "CENTRE")
             label_pos = 0;
+        else if (align == "CENTRE")
+            label_pos = 1;
+        else if (align == "RIGHT")
+            label_pos = 2;
         else if (align == "NONE")
-            label_pos = -2;
+            label_pos = -1;
         else
             throw "No valid LABEL_POS value for " + *widget_name();
+        W_Group::child_resized(this);
+    } else if (method == "TEXT") {
+        string lbl;
+        if (paramlist->get_string(1, lbl)) {
+            fl_widget->copy_label(lbl.c_str());
+            label_width = 0;
+            fl_widget->measure_label(label_width, label_height);
+            W_Group::child_resized(this);
+        } else
+            throw "TEXT value missing for widget " + *widget_name();
         W_Group::child_resized(this);
     } else {
         Widget::handle_method(method, paramlist);

@@ -32,8 +32,8 @@ public:
     static void child_resized(Widget* w)
     {
         if (auto fpw = w->fltk_widget()->parent()) {
-            auto pw = static_cast<W_Group*>(fpw->user_data());
-            pw->handle_child_resized();
+            if (auto pw = static_cast<W_Group*>(fpw->user_data()))
+                pw->handle_child_resized();
         }
     }
 
@@ -139,25 +139,31 @@ public:
     static W_Stack* make(minion::MMap* props);
 };
 
-class W_EditForm : public W_Group
+class W_EditForm : public W_Grid
 {
-    struct form_element
+    struct labelled_form_element
     {
-        Widget* element;
-        int span = 0; // 0: right column, otherwise both columns, 2: "grow"
+        W_Labelled_Widget* element;
+        int child_index;
+        bool span;
     };
 
-    int margin0 = 0;
-    int rowgap0 = 0;
-    int colgap0 = 0;
-    int label_pos = -1;  // -1=>left, 0=>centre, 1=>right
-    int v_label_gap = 5; // vertical space between label and spanning widget
-    std::vector<form_element> children;
+    //TODO??
+    std::vector<labelled_form_element> labelled_elements;
+    int vgap = 10;
+    int h_labelgap = 5;
+    int label_pos = 0;  // 0=>left, 1=>centre, 2=>right
+    int v_labelgap = 5; // vertical space between label and spanning widget
 
-    void dolayout();
+    //?
+    //std::vector<form_element> children;
+
+    //TODO--?
+    //void dolayout();
     //void handle_widget_label(W_Labelled_Widget* wp) override;
     //void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
     //void handle_child_modified(Widget* wc) override;
+    void handle_child_resized() override;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;

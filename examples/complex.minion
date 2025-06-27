@@ -112,16 +112,17 @@
   [NEW, List, EF6,
     {
       SPAN: 2 # variable height
-    }
+    },
     [TEXT, "List entry"],
   ],
   [NEW, EditForm, EditorForm,
     {
+      ROW_GAP: 12,
+      LABEL_POS: LEFT,
+      LABEL_GAP: 8,
       GRID_ALIGN: VERTICAL
     },
-    # [WIDTH, 300],
-    [LABEL_POS, LEFT],
-    [GAP, 12, 8],
+    [WIDTH, 300],
     [ADD, EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6]
   ],
   [NEW, Hlayout, Content,
