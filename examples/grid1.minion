@@ -45,13 +45,13 @@
     },
     [TEXT, "Quit"]
   ],
-  [NEW, Grid, l_MainWindow, {},
+  [NEW, Grid, l_MainWindow, {
+      #MARGIN: 3,
+      GAP: 10,
+      BOXTYPE: FLAT_BOX
+    },
     [COLOUR, &BACKGROUND],
-    [MARGIN, 3],
-    [GAP, 10],
     [SHOW_GRID, 1],
-    [BOXTYPE, FLAT_BOX],
-    [RC, 3, 3],
     [ADD,
       [b0, 0, 0],
       [b1, 0, 2],

@@ -1,4 +1,4 @@
-# Various widgets
+# Complex layout
 &APP_WIDTH: 1000,
 &APP_HEIGHT: 700,
 &BACKGROUND: fffff0,
@@ -14,7 +14,7 @@
     # [SELECTION_BACKGROUND, a0a0f0],
   ],
   
-  [ NEW, Window, MainWindow,
+  [NEW, Window, MainWindow,
     {
       WIDTH: &APP_WIDTH,
       HEIGHT: &APP_HEIGHT,
@@ -23,20 +23,13 @@
     [ TEXT, "Complex Window Test" ],
   ],
 
-  [NEW, Box, P1,
-    {
-      GRID_ALIGN: HORIZONTAL
-    },
-    [TEXT, "Panel 1"],
-    [BOXTYPE, BORDER_FRAME],
-    [HEIGHT, 100]
-  ],
   [NEW, Box, todo,
     {
+      BOXTYPE: FLAT_BOX,
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Another Panel"],
-    [BOXTYPE, FLAT_BOX],
+    [COLOUR, 40e0e0],
     [HEIGHT, 50]
   ],
   
@@ -76,18 +69,18 @@
   ],
   [NEW, Hlayout, ViewSelect,
     {
-      AUTOSIZE: true,
+      MARGIN: 8,
+      GAP: 5,
       GRID_ALIGN: HORIZONTAL
     },
-    [MARGIN, 10],
-    [GAP, 5],
     [ADD,
       TableType,
       TableRowLabel,
       TableRow,
       TableTotalsLabel,
       TableTotals
-    ]
+    ],
+    [SHOW_GRID, 1],
   ],
 
   [NEW, RowTable, T1,
@@ -104,36 +97,26 @@
     [add_row, "Long Row 2", a, b, c, d],
     [add_row, "Row 3", "", "", "A very long table entry", last]
   ],
-  [NEW, PopupEditor, EF1,
-    {
-      LABEL: "EDITOR 1"
-    },
+  [NEW, PopupEditor, EF1, {},
+    [TEXT, "EDITOR 1"],
     [clear_visible_focus]
   ],
-  [NEW, TextLine, EF2,
-    {
-      LABEL: "TEXT 1"
-    }
+  [NEW, TextLine, EF2, {},
+    [TEXT, "TEXT 1"],
   ],
-  [NEW, TextLine, EF2X,
-    {
-      LABEL: "TEXT 2"
-    }
+  [NEW, TextLine, EF2X, {},
+    [TEXT, "TEXT 2"],
   ],
-  [NEW, Choice, EF3,
-    {
-      LABEL: "CHOICE 1"
-    }
+  [NEW, Choice, EF3, {},
+    [TEXT, "CHOICE 1"],
   ],
   [NEW, Hline, Sep1,
     {
       SPAN: 1
     }
   ],
-  [NEW, PopupEditor, EF4,
-    {
-      LABEL: "ANOTHER EDITOR"
-    },
+  [NEW, PopupEditor, EF4, {},
+    [TEXT, "ANOTHER EDITOR"],
     [clear_visible_focus]
   ],
   [NEW, Checkbox, EF5,
@@ -144,39 +127,33 @@
   ],
   [NEW, List, EF6,
     {
-      LABEL: "List entry",
       SPAN: 2 # variable height
-    }
+    },
+    [TEXT, "List entry"],
   ],
   [NEW, EditForm, EditorForm,
     {
+      MARGIN: 5,
+      ROW_GAP: 12,
+      BOXTYPE: ENGRAVED_BOX,
+      LABEL_POS: LEFT,
+      LABEL_GAP: 8,
       GRID_ALIGN: VERTICAL
     },
     [WIDTH, 300],
-    [GAP, 12, 8],
     [ADD, EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6]
   ],
   [NEW, Hlayout, Content,
     {
+      GAP: 3,
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
-    [GAP, 3],
     [ADD, T1, EditorForm]
   ],
   
-  [NEW, Vlayout, CoursePanel,
-    {
-      GRID_ALIGN: FILL,
-      GRID_GROW: 1
-    },
-    [ADD, todo, ViewSelect, Content]
-  ],
-
-  # The area consists of the top panel, P1, and the page panel, CoursePanel
   [NEW, Vlayout, l_MainWindow, {},
-    [COLOUR, &BACKGROUND],
-    [ADD, P1, CoursePanel]
+    [ADD, todo, ViewSelect, Content]
   ],
   
   [WIDGET, EF1,

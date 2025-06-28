@@ -133,9 +133,14 @@ const char* callback1(
     if (auto mm = m.m_list()) {
         string wname;
         if ((*mm)->get_string(0, wname)) {
-            callback_data = string{"[[WIDGET, Output_1, [VALUE, "} //
-                                .append(wname)
-                                .append("]]]");
+            callback_data = "[";
+            if (wname.ends_with("PB1")) {
+                callback_data.append("[WIDGET, PB1, [SIZE, 300, 80]],");
+            }
+            callback_data
+                .append("[WIDGET, Output_1, [VALUE, ") //
+                .append(wname)
+                .append("]]]");
             printf("??? %s\n", callback_data.c_str());
             fflush(stdout);
             return callback_data.c_str();
@@ -217,10 +222,10 @@ int main()
         // These paths are realtive to the directory
         // in which the binary is built.
         "../../examples/fedap.minion",
-        //"../../examples/buttons1.minion",
-        //"../../examples/grid1.minion",
-        //"../../examples/grid2.minion",
-        //"../../examples/complex1.minion"
+        "../../examples/buttons1.minion",
+        "../../examples/grid1.minion",
+        "../../examples/grid2.minion",
+        "../../examples/complex1.minion"
         //
     };
 
