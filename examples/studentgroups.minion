@@ -2,12 +2,12 @@
 [
   # Class / student-group list
   [NEW, Label, _l1, {
+      LABEL_ALIGN: LEFT,
       GRID_ALIGN: FILL,
     },
     [BOXTYPE, BORDER_BOX],
     [COLOUR, a00000],
-    [TEXT, Klassen],
-    [LABEL_ALIGN, LEFT]
+    [TEXT, Klassen]
   ],
   [NEW, List, classlist, {
       GRID_ALIGN: FILL,
@@ -18,7 +18,6 @@
     [HEIGHT, 400]
   ],
   [NEW, Vlayout, _v1, {
-      # AUTOSIZE: true,
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
@@ -59,12 +58,12 @@
   
   # Divisions list
   [NEW, Label, _l2, {
+      LABEL_ALIGN: LEFT,
       GRID_ALIGN: FILL,
     },
     [BOXTYPE, BORDER_BOX],
     [COLOUR, a00000],
     [TEXT, Teilungen],
-    [LABEL_ALIGN, LEFT]
   ],
   [NEW, List, divisions, {
       GRID_ALIGN: FILL,
@@ -110,12 +109,12 @@
   
   # Groups list
   [NEW, Label, _l3, {
+      LABEL_ALIGN: LEFT,
       GRID_ALIGN: FILL,
     },
     [BOXTYPE, BORDER_BOX],
     [COLOUR, a00000],
-    [TEXT, Gruppen],
-    [LABEL_ALIGN, LEFT]
+    [TEXT, Gruppen]
   ],
   [NEW, List, groups, {
       GRID_ALIGN: FILL,
@@ -161,12 +160,12 @@
    
   # Special (combining) groups
   [NEW, Label, _l4, {
+      LABEL_ALIGN: LEFT,
       GRID_ALIGN: FILL,
     },
     [BOXTYPE, BORDER_BOX],
     [COLOUR, a00000],
-    [TEXT, Sondergruppen],
-    [LABEL_ALIGN, LEFT]
+    [TEXT, Sondergruppen]
   ],
   [NEW, List, xgroups, {
       GRID_ALIGN: FILL,

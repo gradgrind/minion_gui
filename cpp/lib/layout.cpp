@@ -136,22 +136,37 @@ void W_Grid::handle_child_resized()
 {
     if (nrows == 0 || ncols == 0)
         return;
-    auto fgw = static_cast<Fl_Grid*>(fl_widget);
+    auto flgrid = static_cast<Fl_Grid*>(fl_widget);
+    // Reset margin and gaps
+    flgrid->margin(margin, margin, margin, margin);
+    flgrid->gap(vgap, hgap);
+    grid_layout();
+}
+
+void W_Grid::grid_layout()
+{
+    auto flgrid = static_cast<Fl_Grid*>(fl_widget);
     vector<int> rsize(nrows, 0);
     vector<int> csize(ncols, 0);
     for (int r = 0; r < nrows; ++r) {
         for (int c = 0; c < ncols; ++c) {
-            auto cel = fgw->cell(r, c);
+            auto cel = flgrid->cell(r, c);
             if (cel) {
                 // Use the larger of the content size + margins + border size
                 // and the explicit minimum size
                 auto fcw = cel->widget();
                 auto cw = static_cast<Widget*>(fcw->user_data());
                 auto box = fcw->box();
-                int w = Fl::box_dx(box) * 2 + cw->margin + cw->content_width;
+                int w = Fl::box_dx(box) * 2 //
+                        + cw->margin * 2    //
+                        + cw->content_width //
+                        + cw->h_content_padding * 2;
                 if (w < cw->minimum_width)
                     w = cw->minimum_width;
-                int h = Fl::box_dy(box) * 2 + cw->margin + cw->content_height;
+                int h = Fl::box_dy(box) * 2  //
+                        + cw->margin * 2     //
+                        + cw->content_height //
+                        + cw->v_content_padding * 2;
                 if (h < cw->minimum_height)
                     h = cw->minimum_height;
                 cel->minimum_size(w, h);
@@ -169,14 +184,15 @@ void W_Grid::handle_child_resized()
     }
     int wh = rsize.at(nrows - 1);
     for (int r = 0; r < nrows - 1; ++r)
-        wh += fgw->row_gap(r) + rsize.at(r);
+        wh += flgrid->row_gap(r) + rsize.at(r);
     int ww = csize.at(ncols - 1);
     for (int c = 0; c < ncols - 1; ++c)
-        ww += fgw->col_gap(c) + csize.at(c);
+        ww += flgrid->col_gap(c) + csize.at(c);
     content_width = ww;
     content_height = wh;
     printf("GRID SIZE (%s): %d %d => %d %d\n", widget_name()->c_str(), nrows, ncols, ww, wh);
     fflush(stdout);
+
     static_cast<Fl_Grid*>(fl_widget)->layout();
     W_Group::child_resized(this);
 }

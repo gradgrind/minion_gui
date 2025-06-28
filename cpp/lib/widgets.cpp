@@ -72,29 +72,22 @@ W_Vline* W_Vline::make(
 W_Label* W_Label::make(
     MMap* props)
 {
-    (void) props;
     auto w = new Fl_Box(0, 0, 0, 0);
     auto widget = new W_Label();
+    widget->minimum_height = Widget::line_height;
+    widget->h_content_padding = H_LABEL_PADDING;
+    widget->v_content_padding = V_LABEL_PADDING;
     widget->fl_widget = w;
-    return widget;
-}
 
-void W_Label::handle_method(
-    string_view method, MList* paramlist)
-{
-    string label;
-    if (method == "LABEL_ALIGN") {
-        string align;
-        paramlist->get_string(1, align);
+    string align;
+    if (props->get_string("LABEL_ALIGN", align)) {
         if (align == "LEFT")
-            fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+            w->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
         else if (align == "RIGHT")
-            fl_widget->align(FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
-        else
-            fl_widget->align(FL_ALIGN_CENTER);
-    } else {
-        Widget::handle_method(method, paramlist);
+            w->align(FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
     }
+
+    return widget;
 }
 
 //static
@@ -192,6 +185,9 @@ W_PushButton* W_PushButton::make(
     (void) props;
     auto w = new Fl_Button(0, 0, 0, 0);
     auto widget = new W_PushButton();
+    widget->minimum_height = Widget::line_height;
+    widget->h_content_padding = H_LABEL_PADDING;
+    widget->v_content_padding = V_LABEL_PADDING;
     widget->fl_widget = w;
     // "selection" (pressed) colour
     widget->contrast = Widget::button_on_contrast;
@@ -243,6 +239,9 @@ W_RadioButton* W_RadioButton::make(
     (void) props;
     auto w = new Fl_Radio_Button(0, 0, 0, 0);
     auto widget = new W_RadioButton();
+    widget->minimum_height = Widget::line_height;
+    widget->h_content_padding = H_LABEL_PADDING;
+    widget->v_content_padding = V_LABEL_PADDING;
     widget->fl_widget = w;
     // "selection" (pressed) colour
     widget->contrast = Widget::button_on_contrast;

@@ -29,7 +29,7 @@ W_EditForm* W_EditForm::make(
     //flgrid->color(Widget::entry_bg);
     { // Label alignment
         string align_;
-        widget->property_string("LABEL_POS", align_);
+        props->get_string("LABEL_POS", align_);
         if (align_ == "CENTRE") {
             widget->label_pos = 1;
         } else if (align_ == "RIGHT") {
@@ -37,11 +37,11 @@ W_EditForm* W_EditForm::make(
         }
     }
     // Row/column gaps
-    widget->property_int("ROW_GAP", widget->vgap);
-    widget->property_int("LABEL_GAP", widget->hgap);
-    widget->property_int("V_LABEL_GAP", widget->v_labelgap);
+    props->get_int("ROW_GAP", widget->vgap);
+    props->get_int("LABEL_GAP", widget->hgap);
+    props->get_int("V_LABEL_GAP", widget->v_labelgap);
     // Margins
-    widget->property_int("MARGIN", widget->margin);
+    props->get_int("MARGIN", widget->margin);
     widget->ncols = 2;
     return widget;
 }
@@ -83,7 +83,7 @@ void W_EditForm::handle_child_resized()
             lfe.element->fltk_widget()->horizontal_label_margin(dw);
         }
     }
-    W_Grid::handle_child_resized();
+    grid_layout();
 }
 
 void W_EditForm::handle_method(

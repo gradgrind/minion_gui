@@ -1,19 +1,12 @@
 # Complex layout
 [
-  [NEW, Box, P1,
-    {
-      GRID_ALIGN: HORIZONTAL
-    },
-    [TEXT, "Panel 1"],
-    [BOXTYPE, BORDER_FRAME],
-    [HEIGHT, 100]
-  ],
   [NEW, Box, todo,
     {
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Another Panel"],
     [BOXTYPE, FLAT_BOX],
+    [COLOUR, 40e0e0],
     [HEIGHT, 50]
   ],
   
@@ -53,7 +46,7 @@
   ],
   [NEW, Hlayout, ViewSelect,
     {
-      MARGIN: 10,
+      MARGIN: 8,
       GAP: 5,
       GRID_ALIGN: HORIZONTAL
     },
@@ -63,7 +56,8 @@
       TableRow,
       TableTotalsLabel,
       TableTotals
-    ]
+    ],
+    [SHOW_GRID, 1],
   ],
 
   [NEW, RowTable, T1,
@@ -116,11 +110,13 @@
   ],
   [NEW, EditForm, EditorForm,
     {
+      MARGIN: 5,
       ROW_GAP: 12,
       LABEL_POS: LEFT,
       LABEL_GAP: 8,
       GRID_ALIGN: VERTICAL
     },
+    [BOXTYPE, ENGRAVED_BOX],
     [WIDTH, 300],
     [ADD, EF1, EF2, EF2X, EF3, Sep1, EF4, EF5, EF6]
   ],
@@ -133,17 +129,8 @@
     [ADD, T1, EditorForm]
   ],
   
-  [NEW, Vlayout, CoursePanel,
-    {
-      GRID_ALIGN: FILL,
-      GRID_GROW: 1
-    },
-    [ADD, todo, ViewSelect, Content]
-  ],
-  
-  # The area consists of the top panel, P1, and the page panel, CoursePanel
   [NEW, Vlayout, l_MainWindow, {},
-    [ADD, P1, CoursePanel]
+    [ADD, todo, ViewSelect, Content]
   ],
   
   [WIDGET, EF1,

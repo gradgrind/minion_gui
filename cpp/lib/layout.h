@@ -71,6 +71,7 @@ class W_Grid : public W_Group
 protected:
     static void newgrid(W_Grid* widget, minion::MMap* props);
     void handle_child_resized() override;
+    void grid_layout();
     int nrows = 0;
     int ncols = 0;
     int vgap = 0;

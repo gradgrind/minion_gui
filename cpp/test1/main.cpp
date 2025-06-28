@@ -177,7 +177,7 @@ const char* callback2a(
                                 .append(wname)
                                 .append(", [TEXT, \"")
                                 .append(wname)
-                                .append("\"],[LABEL_ALIGN, LEFT]]]");
+                                .append("\"]]]");
             printf("??? %s\n", callback_data.c_str());
             fflush(stdout);
             return callback_data.c_str();

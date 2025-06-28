@@ -36,7 +36,7 @@ public:
 class W_Label : public Widget
 {
 public:
-    void handle_method(std::string_view method, minion::MList* paramlist) override;
+    //void handle_method(std::string_view method, minion::MList* paramlist) override;
     static W_Label* make(minion::MMap* props);
 };
 

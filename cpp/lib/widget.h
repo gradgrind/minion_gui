@@ -23,6 +23,9 @@ const Fl_Color SELECTION_BG = 0x4c64ff00;
 const int BUTTON_ON_CONTRAST = 20;
 const int TABLE_HEADER_CONTRAST = 20;
 
+const int V_LABEL_PADDING = 3; //TODO: make configurable?
+const int H_LABEL_PADDING = 8; //TODO: make configurable?
+
 // Each widget needs additional data, including its name. To make the
 // widget accessible to the text-based (MINION) interface, a map is
 // built from the widget-names to their management data, which would
@@ -66,6 +69,8 @@ public:
     // Minimum dimensions, used by the layout managers
     int content_width = 0;  // calculated from label, subwidgets, etc.
     int content_height = 0; // calculated from label, subwidgets, etc.
+    int h_content_padding = 0;
+    int v_content_padding = 0;
     int minimum_width = 0;  // set by SIZE or WIDTH
     int minimum_height = 0; // set by SIZE or HEIGHT
     int margin = 0;
@@ -84,8 +89,7 @@ public:
 
     //TODO? static minion::MList list_widgets();
 
-    static std::string* get_widget_name(
-        Fl_Widget* w)
+    static std::string* get_widget_name(Fl_Widget* w)
     {
         auto wd{static_cast<Widget*>(w->user_data())};
         return &wd->w_name;

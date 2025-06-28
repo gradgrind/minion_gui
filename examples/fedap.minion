@@ -24,10 +24,10 @@
   
   # Top-level contents
   [NEW, Label, _chooser, {
+      LABEL_ALIGN: LEFT,
       GRID_ALIGN: HORIZONTAL,
     },
-    [TEXT, "Choose module"],
-    [LABEL_ALIGN, LEFT]
+    [TEXT, "Choose module"]
   ],
   [NEW, RadioButton, buttons, {
       GRID_ALIGN: HORIZONTAL
