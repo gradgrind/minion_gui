@@ -37,9 +37,9 @@
   [NEW, Vlayout, l_MainWindow, {
       GAP: 10,
       MARGIN: 5,
+      BOXTYPE: FLAT_BOX,
       FLOATING: 1      
     },
-    [BOXTYPE, FLAT_BOX],
     # [COLOUR, ffff00], # No effect if (FL_NO_BOX)
     [ADD, l_bbar, l_output]
   ],

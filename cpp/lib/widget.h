@@ -60,6 +60,7 @@ class Widget : public Fl_Callback_User_Data
 
 protected:
     Fl_Widget* fl_widget;
+    void set_box(minion::MMap* props);
 
     Widget() = default;
 
@@ -89,7 +90,8 @@ public:
 
     //TODO? static minion::MList list_widgets();
 
-    static std::string* get_widget_name(Fl_Widget* w)
+    static std::string* get_widget_name(
+        Fl_Widget* w)
     {
         auto wd{static_cast<Widget*>(w->user_data())};
         return &wd->w_name;

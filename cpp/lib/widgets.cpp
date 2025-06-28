@@ -43,6 +43,7 @@ W_Box* W_Box::make(
     auto w = new Fl_Box(0, 0, 0, 0);
     auto widget = new W_Box();
     widget->fl_widget = w;
+    widget->set_box(props);
     return widget;
 }
 
@@ -78,6 +79,7 @@ W_Label* W_Label::make(
     widget->h_content_padding = H_LABEL_PADDING;
     widget->v_content_padding = V_LABEL_PADDING;
     widget->fl_widget = w;
+    widget->set_box(props);
 
     string align;
     if (props->get_string("LABEL_ALIGN", align)) {
@@ -182,13 +184,18 @@ void W_PushButton::set_colour(
 W_PushButton* W_PushButton::make(
     MMap* props)
 {
-    (void) props;
     auto w = new Fl_Button(0, 0, 0, 0);
     auto widget = new W_PushButton();
     widget->minimum_height = Widget::line_height;
     widget->h_content_padding = H_LABEL_PADDING;
     widget->v_content_padding = V_LABEL_PADDING;
     widget->fl_widget = w;
+    widget->set_box(props);
+    string btype;
+    if (props->get_string("DOWNBOXTYPE", btype)) {
+        auto bxt = get_boxtype(btype);
+        w->down_box(bxt);
+    }
     // "selection" (pressed) colour
     widget->contrast = Widget::button_on_contrast;
     widget->set_colour(Widget::entry_bg);
@@ -220,13 +227,6 @@ void W_PushButton::handle_method(
             contrast = float(c) / 100;
             set_colour(fl_widget->color());
         }
-    } else if (method == "DOWNBOXTYPE") {
-        string btype;
-        if (paramlist->get_string(1, btype)) {
-            auto bxt = get_boxtype(btype);
-            static_cast<Fl_Button*>(fl_widget)->down_box(bxt);
-        } else
-            throw "DOWNBOXTYPE value missing for widget " + *widget_name();
     } else {
         W_Label::handle_method(method, paramlist);
     }
@@ -243,6 +243,12 @@ W_RadioButton* W_RadioButton::make(
     widget->h_content_padding = H_LABEL_PADDING;
     widget->v_content_padding = V_LABEL_PADDING;
     widget->fl_widget = w;
+    widget->set_box(props);
+    string btype;
+    if (props->get_string("DOWNBOXTYPE", btype)) {
+        auto bxt = get_boxtype(btype);
+        w->down_box(bxt);
+    }
     // "selection" (pressed) colour
     widget->contrast = Widget::button_on_contrast;
     widget->set_colour(Widget::entry_bg);
@@ -264,6 +270,7 @@ W_Checkbox* W_Checkbox::make(
     auto w = new Fl_Round_Button(0, 0, 0, Widget::line_height);
     auto widget = new W_Checkbox();
     widget->fl_widget = w;
+    widget->set_box(props);
     w->callback([](Fl_Widget* w, void* ud) {
         (void) ud;
         string* dw{Widget::get_widget_name(w)};

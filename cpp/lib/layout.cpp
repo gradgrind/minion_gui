@@ -116,6 +116,7 @@ void W_Grid::newgrid(W_Grid* widget, MMap* props)
     w->box(FL_NO_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
     widget->fl_widget = w;
+    widget->set_box(props);
     // Row/column gaps
     props->get_int("ROW_GAP", widget->vgap);
     props->get_int("COL_GAP", widget->hgap);
@@ -417,6 +418,7 @@ W_Stack* W_Stack::make(
     Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Stack();
     widget->fl_widget = w;
+    widget->set_box(props);
 
     return widget;
 }

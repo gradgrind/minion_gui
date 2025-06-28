@@ -2,10 +2,10 @@
 [
   # Class / student-group list
   [NEW, Label, _l1, {
+      BOXTYPE: BORDER_BOX,
       LABEL_ALIGN: LEFT,
       GRID_ALIGN: FILL,
     },
-    [BOXTYPE, BORDER_BOX],
     [COLOUR, a00000],
     [TEXT, Klassen]
   ],
@@ -58,10 +58,10 @@
   
   # Divisions list
   [NEW, Label, _l2, {
+      BOXTYPE: BORDER_BOX,
       LABEL_ALIGN: LEFT,
       GRID_ALIGN: FILL,
     },
-    [BOXTYPE, BORDER_BOX],
     [COLOUR, a00000],
     [TEXT, Teilungen],
   ],
@@ -109,10 +109,10 @@
   
   # Groups list
   [NEW, Label, _l3, {
+      BOXTYPE: BORDER_BOX,
       LABEL_ALIGN: LEFT,
       GRID_ALIGN: FILL,
     },
-    [BOXTYPE, BORDER_BOX],
     [COLOUR, a00000],
     [TEXT, Gruppen]
   ],
@@ -160,10 +160,10 @@
    
   # Special (combining) groups
   [NEW, Label, _l4, {
+      BOXTYPE: BORDER_BOX,
       LABEL_ALIGN: LEFT,
       GRID_ALIGN: FILL,
     },
-    [BOXTYPE, BORDER_BOX],
     [COLOUR, a00000],
     [TEXT, Sondergruppen]
   ],
@@ -212,9 +212,9 @@
   [NEW, Hlayout, l_MainWindow, {
       MARGIN: 5,
       GAP: 10,
+      BOXTYPE: BORDER_BOX,
       FLOATING: 1      
     },
-    [BOXTYPE, BORDER_BOX],
     # [COLOUR, ffff00], # No effect if (FL_NO_BOX)
     [ADD, _v1, _buttons1, _v2, _buttons2, _v3, _buttons3, _v4, _buttons4]
   ],

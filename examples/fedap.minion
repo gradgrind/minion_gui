@@ -30,32 +30,32 @@
     [TEXT, "Choose module"]
   ],
   [NEW, RadioButton, buttons, {
+      BOXTYPE: ROUNDED_BOX,
+      DOWNBOXTYPE: ROUNDED_BOX,
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Buttons"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
   ],
   [NEW, RadioButton, grid, {
+      BOXTYPE: ROUNDED_BOX,
+      DOWNBOXTYPE: ROUNDED_BOX,
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Grid layout"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
   ],
   [NEW, RadioButton, complex, {
+      BOXTYPE: ROUNDED_BOX,
+      DOWNBOXTYPE: ROUNDED_BOX,
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Complex layout"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
   ],
   [NEW, RadioButton, studentgroups, {
+      BOXTYPE: ROUNDED_BOX,
+      DOWNBOXTYPE: ROUNDED_BOX,
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Klassen"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
   ],
   [NEW, Vlayout, chooser, {
       GAP: 5,
@@ -66,19 +66,19 @@
   ],
   
   [NEW, Box, panel1, { # temporary panel 
+      BOXTYPE: ENGRAVED_BOX,
       GRID_ALIGN: HORIZONTAL
     },
-    [BOXTYPE, ENGRAVED_BOX],
     [COLOUR, 804020],
     [TEXT, "Panel: TODO"],
     [HEIGHT, 100]
   ],
   [NEW, Stack, viewer, {
+      BOXTYPE: ENGRAVED_BOX,
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
     # [COLOUR, ffe0e0],
-    [BOXTYPE, ENGRAVED_BOX]
   ],
   [NEW, Vlayout, l_main, {
       GRID_ALIGN: FILL,

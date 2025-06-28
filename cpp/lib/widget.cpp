@@ -251,6 +251,16 @@ void Widget::handle_methods(
     }
 }
 
+void Widget::set_box(
+    MMap* props)
+{
+    string btype;
+    if (props->get_string("BOXTYPE", btype)) {
+        auto bxt = get_boxtype(btype);
+        fl_widget->box(bxt);
+    }
+}
+
 void Widget::handle_method(std::string_view method, minion::MList* paramlist)
 {
     if (method == "SIZE") {
@@ -273,15 +283,6 @@ void Widget::handle_method(std::string_view method, minion::MList* paramlist)
             fl_widget->color(c);
             fl_widget->labelcolor(fl_contrast(c, c));
         }
-    } else if (method == "BOXTYPE") {
-        string btype;
-        if (paramlist->get_string(1, btype)) {
-            auto bxt = get_boxtype(btype);
-            fl_widget->box(bxt);
-            //TODO?
-            W_Group::child_resized(this);
-        } else
-            throw "BOXTYPE value missing for widget " + w_name;
     } else if (method == "TEXT") {
         string lbl;
         if (paramlist->get_string(1, lbl)) {
