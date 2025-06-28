@@ -31,9 +31,9 @@ W_EditForm* W_EditForm::make(
         string align_;
         widget->property_string("LABEL_POS", align_);
         if (align_ == "CENTRE") {
-            widget->label_pos = 0;
-        } else if (align_ == "RIGHT") {
             widget->label_pos = 1;
+        } else if (align_ == "RIGHT") {
+            widget->label_pos = 2;
         }
     }
     // Row/column gaps
@@ -74,13 +74,10 @@ void W_EditForm::handle_child_resized()
                 }
             }
         } else if (auto lw = lfe.element->label_width) {
-            auto pos = lfe.element->label_pos;
-            if (pos == -2)
-                pos = label_pos;
             auto dw = hgap;
-            if (pos == 0) {
+            if (label_pos == 0) {
                 dw += lwidth - lw;
-            } else if (pos == 1) {
+            } else if (label_pos == 1) {
                 dw += (lwidth - lw) / 2;
             }
             lfe.element->fltk_widget()->horizontal_label_margin(dw);

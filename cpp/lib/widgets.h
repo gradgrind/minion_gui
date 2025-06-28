@@ -12,7 +12,6 @@ class W_Labelled_Widget : public Widget
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
 
-    int label_pos = -1; // -1=>undefined, 0=>left, 1=>centre, 2=>right
     int label_width = 0, label_height = 0;
 };
 
