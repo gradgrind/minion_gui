@@ -110,15 +110,25 @@ void W_Window::handle_method(
     }
 }
 
-W_Grid* W_Grid::make(
-    MMap* props)
+void W_Grid::newgrid(W_Grid* widget, MMap* props)
 {
-    (void) props;
     auto w = new Fl_Grid(0, 0, 0, 0);
     w->box(FL_NO_BOX);
     Fl_Group::current(0); // disable "auto-grouping"
-    auto widget = new W_Grid();
     widget->fl_widget = w;
+    // Row/column gaps
+    props->get_int("ROW_GAP", widget->vgap);
+    props->get_int("COL_GAP", widget->hgap);
+    if (props->get_int("GAP", widget->vgap))
+        widget->hgap = widget->vgap;
+    // Margins
+    props->get_int("MARGIN", widget->margin);
+}
+
+W_Grid* W_Grid::make(MMap* props)
+{
+    auto widget = new W_Grid();
+    newgrid(widget, props);
     return widget;
 }
 
@@ -145,6 +155,9 @@ void W_Grid::handle_child_resized()
                 if (h < cw->minimum_height)
                     h = cw->minimum_height;
                 cel->minimum_size(w, h);
+
+                printf("MIN SIZE: %s %d %d\n", cw->widget_name()->c_str(), w, h);
+
                 // Take spans into consideration when determining running
                 // col/row sizes (span != 1 not counted)
                 if (cel->colspan() == 1 && w > csize.at(c))
@@ -168,19 +181,6 @@ void W_Grid::handle_child_resized()
     W_Group::child_resized(this);
 }
 
-/*
-void W_Grid::handle_child_modified(Widget* wc)
-{
-    auto fc = wc->fltk_widget();
-    auto c = static_cast<Fl_Grid*>(fl_widget)->cell(fc);
-    c->minimum_size(fc->w(), fc->h());
-    static_cast<Fl_Grid*>(fl_widget)->layout();
-    get_grid_sizes(static_cast<Fl_Grid*>(fl_widget), nrows, ncols);
-}
-*/
-
-//TODO: What about changing min col size when a text changes?
-//TODO: Move at least MARGIN and GAP to property status!
 void W_Grid::handle_method(
     string_view method, MList* paramlist)
 {
@@ -288,30 +288,6 @@ void W_Grid::handle_method(
         return;
     }
 
-    if (method == "GAP") {
-        int rowgap;
-        if (paramlist->get_int(1, rowgap)) {
-            auto fw = static_cast<Fl_Grid*>(fl_widget);
-            int colgap = rowgap;
-            paramlist->get_int(2, colgap);
-            fw->gap(rowgap, colgap);
-            //fw->layout();
-            return;
-        }
-        throw "GAP command with no gap on layout '" + *widget_name();
-    }
-
-    if (method == "MARGIN") {
-        int s;
-        if (paramlist->get_int(1, s)) {
-            auto fw = static_cast<Fl_Grid*>(fl_widget);
-            fw->margin(s, s, s, s);
-            //fw->layout();
-            return;
-        }
-        throw "MARGIN command with no margin on layout '" + *widget_name();
-    }
-
     if (method == "SHOW_GRID") {
         int show_grid = 0;
         paramlist->get_int(1, show_grid);
@@ -327,12 +303,8 @@ void W_Grid::handle_method(
 W_Layout* W_Layout::new_hvgrid(
     MMap* props, bool horizontal)
 {
-    (void) props;
-    auto w = new Fl_Grid(0, 0, 0, 0);
-    w->box(FL_NO_BOX);
-    Fl_Group::current(0); // disable "auto-grouping"
     auto widget = new W_Layout();
-    widget->fl_widget = w;
+    newgrid(widget, props);
     widget->horizontal = horizontal;
     if (horizontal)
         widget->nrows = 1;
@@ -340,68 +312,6 @@ W_Layout* W_Layout::new_hvgrid(
         widget->ncols = 1;
     return widget;
 }
-
-/*
-void W_Layout::set_transverse_size()
-{
-    // Take the padding and box type into account
-    int boxsize = padding * 2;
-    if (horizontal) {
-        boxsize += Fl::box_dh(fl_widget->box());
-    } else {
-        boxsize += Fl::box_dw(fl_widget->box());
-    }
-    int xsize = 0;
-    for (const auto wc : children) {
-        auto wfltk = wc->fltk_widget();
-        auto xs = horizontal ? wfltk->h() : wfltk->w();
-        if (xs > xsize)
-            xsize = xs;
-    }
-    if (horizontal)
-        static_cast<Fl_Grid*>(fl_widget)->size(0, xsize + boxsize);
-    else
-        static_cast<Fl_Grid*>(fl_widget)->size(xsize + boxsize, 0);
-}
-*/
-
-/*
-void W_Layout::handle_child_modified(
-    Widget* wc)
-{
-    //TODO: I think this needs handling specially for the 1-d grid ...
-    auto fc = wc->fltk_widget();
-    int ww = fl_widget->w(), hh = fl_widget->h();
-    printf("PARENT-SIZE %d %d\n", ww, hh);
-    auto c = static_cast<Fl_Grid*>(fl_widget)->cell(fc);
-    ww = fc->w(), hh = fc->h();
-    c->minimum_size(ww, hh);
-    printf("CHILD-SIZE %d %d\n", ww, hh);
-
-    auto gw = static_cast<Fl_Grid*>(fl_widget);
-    gw->layout();
-    printf("PARENT-RESIZE %d %d\n", fl_widget->w(), fl_widget->h());
-    fflush(stdout);
-    //child_size_modified(this);
-    if (horizontal)
-        get_grid_sizes(gw, 1, gw->children());
-    else
-        get_grid_sizes(gw, gw->children(), 1);
-}
-*/
-
-/*
-void W_Layout::handle_child_size(Fl_Widget* wc, int ww, int wh)
-{
-    auto gw = static_cast<Fl_Grid*>(fl_widget);
-    gw->cell(wc)->minimum_size(ww, wh);
-    gw->layout();
-    if (horizontal)
-        get_grid_sizes(gw, 1, gw->children());
-    else
-        get_grid_sizes(gw, gw->children(), 1);
-}
-*/
 
 void W_Layout::handle_method(
     std::string_view method, minion::MList* paramlist)
@@ -452,39 +362,8 @@ void W_Layout::handle_method(
         return;
     }
 
-    if (method == "GAP") {
-        int gap;
-        if (paramlist->get_int(1, gap)) {
-            if (horizontal)
-                static_cast<Fl_Grid*>(fl_widget)->gap(0, gap);
-            else
-                static_cast<Fl_Grid*>(fl_widget)->gap(gap, 0);
-            handle_child_resized();
-            return;
-        }
-        throw "GAP command with no gap on layout '" + *widget_name();
-    }
-
-    if (method == "MARGIN") {
-        if (paramlist->get_int(1, margin)) {
-            static_cast<Fl_Grid*>(fl_widget)->margin(margin, margin, margin, margin);
-            handle_child_resized();
-            return;
-        }
-        throw "MARGIN command with no margin on layout '" + *widget_name();
-    }
-
     W_Grid::handle_method(method, paramlist);
 }
-
-/*    
-void W_Stack::handle_child_modified(
-    Widget* wc)
-{
-    return;
-    throw "TODO: W_Stack::handle_child_modified";
-}
-*/
 
 void W_Stack::handle_method(
     std::string_view method, minion::MList* paramlist)

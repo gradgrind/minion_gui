@@ -83,9 +83,10 @@ public:
     }
 
     //TODO? static minion::MList list_widgets();
+
     static std::string* get_widget_name(
         Fl_Widget* w)
-    { //TODO: is this needed?
+    {
         auto wd{static_cast<Widget*>(w->user_data())};
         return &wd->w_name;
     }

@@ -12,11 +12,6 @@
 using namespace std;
 using namespace minion;
 
-//TODO: How to do the callbacks? Entry name + current value?
-//TODO: How to write to the entries?
-//  Entry_name + new_value (ENTRY)
-//  Entry_name + [new_value ...] (LIST)
-
 // static
 W_EditForm* W_EditForm::make(
     minion::MMap* props)
@@ -43,10 +38,11 @@ W_EditForm* W_EditForm::make(
     }
     // Row/column gaps
     widget->property_int("ROW_GAP", widget->vgap);
-    widget->property_int("LABEL_GAP", widget->h_labelgap);
+    widget->property_int("LABEL_GAP", widget->hgap);
     widget->property_int("V_LABEL_GAP", widget->v_labelgap);
     // Margins
     widget->property_int("MARGIN", widget->margin);
+    widget->ncols = 2;
     return widget;
 }
 
@@ -63,7 +59,7 @@ void W_EditForm::handle_child_resized()
                 lwidth = lw;
         }
     }
-    flgrid->gap(vgap, lwidth + h_labelgap);
+    flgrid->gap(vgap, lwidth + hgap);
     for (const auto& lfe : labelled_elements) {
         if (lfe.span) {
             if (auto lh = lfe.element->label_height) {
@@ -81,7 +77,7 @@ void W_EditForm::handle_child_resized()
             auto pos = lfe.element->label_pos;
             if (pos == -2)
                 pos = label_pos;
-            auto dw = h_labelgap;
+            auto dw = hgap;
             if (pos == 0) {
                 dw += lwidth - lw;
             } else if (pos == 1) {
@@ -103,42 +99,40 @@ void W_EditForm::handle_method(
         auto n = paramlist->size();
         if (n < 2)
             throw "No widget(s) to ADD to " + *widget_name();
-        auto n0 = flgrid->children();
-        auto nc = n0;
         for (size_t i = 1; i < n; ++i) {
             string wname;
             if (paramlist->get_string(i, wname)) {
                 auto wc = get_widget(wname);
                 auto fwc = wc->fltk_widget();
                 // Check that it is new to the layout
-                for (int i = 0; i < nc; ++i) {
+                for (int i = 0; i < nrows; ++i) {
                     if (fwc == flgrid->child(i))
                         throw "Widget " + wname + " already in layout " + *widget_name();
                 }
                 flgrid->add(fwc);
-                flgrid->layout(nc + 1, 2);
+                flgrid->layout(nrows + 1, 2);
                 int span = 0;
                 wc->property_int("SPAN", span);
                 auto flwc = wc->fltk_widget();
                 if (span == 0) {
-                    flgrid->widget(flwc, nc, 1);
-                    flgrid->row_weight(nc, 0);
+                    flgrid->widget(flwc, nrows, 1);
+                    flgrid->row_weight(nrows, 0);
                     if (auto lwc = dynamic_cast<W_Labelled_Widget*>(wc)) {
                         flwc->align(FL_ALIGN_LEFT);
-                        labelled_elements.emplace_back(labelled_form_element{lwc, nc, false});
+                        labelled_elements.emplace_back(labelled_form_element{lwc, nrows, false});
                     }
                 } else {
-                    flgrid->widget(flwc, nc, 0, 1, 2);
+                    flgrid->widget(flwc, nrows, 0, 1, 2);
                     if (span == 1)
-                        flgrid->row_weight(nc, 0);
+                        flgrid->row_weight(nrows, 0);
                     else
-                        flgrid->row_weight(nc, 1);
+                        flgrid->row_weight(nrows, 1);
                     if (auto lwc = dynamic_cast<W_Labelled_Widget*>(wc)) {
                         flwc->align(FL_ALIGN_TOP_LEFT);
-                        labelled_elements.emplace_back(labelled_form_element{lwc, nc, true});
+                        labelled_elements.emplace_back(labelled_form_element{lwc, nrows, true});
                     }
                 }
-                ++nc;
+                ++nrows;
             }
         }
         flgrid->col_weight(0, 0);

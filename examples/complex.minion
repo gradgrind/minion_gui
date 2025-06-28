@@ -53,11 +53,10 @@
   ],
   [NEW, Hlayout, ViewSelect,
     {
-      AUTOSIZE: true,
+      MARGIN: 10,
+      GAP: 5,
       GRID_ALIGN: HORIZONTAL
     },
-    [MARGIN, 10],
-    [GAP, 5],
     [ADD,
       TableType,
       TableRowLabel,
@@ -127,10 +126,10 @@
   ],
   [NEW, Hlayout, Content,
     {
+      GAP: 3,
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
-    [GAP, 3],
     [ADD, T1, EditorForm]
   ],
   

@@ -13,20 +13,6 @@ class W_Group : public Widget
 {
 protected:
     virtual void handle_child_resized() {};
-    //virtual void handle_child_modified(Widget* wc) = 0;
-    /*
-    virtual void handle_widget_label(
-        W_Labelled_Widget* wp)
-    { //TODO ...
-        (void) wp;
-        return;
-    }
-    virtual void handle_child_size(
-        Fl_Widget* wc, int ww, int wh)
-    {
-        wc->size(ww, wh);
-    }
-    */
 
 public:
     static void child_resized(Widget* w)
@@ -82,13 +68,13 @@ public:
 
 class W_Grid : public W_Group
 {
-    //void handle_child_modified(Widget* wc) override;
-    //void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
-
 protected:
+    static void newgrid(W_Grid* widget, minion::MMap* props);
     void handle_child_resized() override;
     int nrows = 0;
     int ncols = 0;
+    int vgap = 0;
+    int hgap = 0;
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
@@ -102,16 +88,6 @@ class W_Layout : public W_Grid
     static W_Layout* new_hvgrid(minion::MMap* parammap, bool horizontal);
 
     bool horizontal = false;
-
-    //TODO?
-    //std::vector<Widget*> children;
-    //int padding = 0;
-    //void set_transverse_size();
-
-    //void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
-    //void handle_child_modified(Widget* wc) override;
-    //TODO?
-    //void gridlayout(Fl_Grid* fw);
 
 public:
     void handle_method(std::string_view method, minion::MList* paramlist) override;
@@ -148,21 +124,10 @@ class W_EditForm : public W_Grid
         bool span;
     };
 
-    //TODO??
     std::vector<labelled_form_element> labelled_elements;
-    int vgap = 10;
-    int h_labelgap = 5;
     int label_pos = 0;  // 0=>left, 1=>centre, 2=>right
     int v_labelgap = 5; // vertical space between label and spanning widget
 
-    //?
-    //std::vector<form_element> children;
-
-    //TODO--?
-    //void dolayout();
-    //void handle_widget_label(W_Labelled_Widget* wp) override;
-    //void handle_child_size(Fl_Widget* wc, int ww, int wh) override;
-    //void handle_child_modified(Widget* wc) override;
     void handle_child_resized() override;
 
 public:

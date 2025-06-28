@@ -10,11 +10,10 @@
     [TEXT, "PushButton 2"]
   ],
   [NEW, Hlayout, l_bbar, {
-      #AUTOSIZE: true,
+      GAP: 30,
+      MARGIN: 20,
       GRID_ALIGN: HORIZONTAL,
     },
-    [GAP, 30],
-    [MARGIN, 20],
     [ADD, PB1, PB2]
   ],
   
@@ -30,17 +29,16 @@
     [clear_visible_focus]
   ],
   [NEW, Hlayout, l_output, {
-      #AUTOSIZE: true,
       GRID_ALIGN: HORIZONTAL,
     },
     [ADD, Label_1, Output_1]
   ],
   
   [NEW, Vlayout, l_MainWindow, {
+      GAP: 10,
+      MARGIN: 5,
       FLOATING: 1      
     },
-    [MARGIN, 5],
-    [GAP, 10],
     [BOXTYPE, FLAT_BOX],
     # [COLOUR, ffff00], # No effect if (FL_NO_BOX)
     [ADD, l_bbar, l_output]

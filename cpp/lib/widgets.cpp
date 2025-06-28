@@ -66,7 +66,7 @@ W_Hline* W_Hline::make(
     MMap* props)
 {
     (void) props;
-    auto w = new Fl_Box(FL_BORDER_FRAME, 0, 0, 0, 1, "");
+    auto w = new Fl_Box(FL_BORDER_BOX, 0, 0, 0, 0, "");
     auto widget = new W_Hline();
     widget->fl_widget = w;
     return widget;
@@ -77,7 +77,7 @@ W_Vline* W_Vline::make(
     MMap* props)
 {
     (void) props;
-    auto w = new Fl_Box(FL_BORDER_FRAME, 0, 0, 1, 0, "");
+    auto w = new Fl_Box(FL_BORDER_BOX, 0, 0, 0, 0, "");
     auto widget = new W_Vline();
     widget->fl_widget = w;
     return widget;
@@ -178,8 +178,9 @@ W_PopupEditor* W_PopupEditor::make(
     MMap* props)
 {
     (void) props;
-    auto w = new Fl_Output(0, 0, 0, Widget::line_height);
+    auto w = new Fl_Output(0, 0, 0, 0);
     auto widget = new W_PopupEditor();
+    widget->content_height = Widget::line_height;
     widget->fl_widget = w;
     w->color(Widget::entry_bg);
     w->callback([](Fl_Widget* w, void* ud) {

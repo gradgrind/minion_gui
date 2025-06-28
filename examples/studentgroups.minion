@@ -47,10 +47,9 @@
     [TEXT, "━"]
   ],
   [NEW, Vlayout, _buttons1, {
-      # AUTOSIZE: true,
+      GAP: 20,
       GRID_ALIGN: VERTICAL,
     },
-    [GAP, 20],
     # [ADD, up1, dn1, add1, del1]
   ],
   [WIDGET, _buttons1, [ADD, up1]],
@@ -75,7 +74,6 @@
     [WIDTH, 100],
   ],
   [NEW, Vlayout, _v2, {
-      # AUTOSIZE: true,
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
@@ -104,10 +102,9 @@
     [TEXT, "━"]
   ],
   [NEW, Vlayout, _buttons2, {
-      AUTOSIZE: true,
+      GAP: 20,
       GRID_ALIGN: VERTICAL,
     },
-    [GAP, 20],
     [ADD, up2, dn2, add2, del2]
   ],
   
@@ -128,7 +125,6 @@
     [WIDTH, 100],
   ],
   [NEW, Vlayout, _v3, {
-      # AUTOSIZE: true,
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
@@ -157,10 +153,9 @@
     [TEXT, "━"]
   ],
   [NEW, Vlayout, _buttons3, {
-      # AUTOSIZE: true,
+      GAP: 20,
       GRID_ALIGN: VERTICAL,
     },
-    [GAP, 20],
     [ADD, up3, dn3, add3, del3]
   ],
    
@@ -181,7 +176,6 @@
     [WIDTH, 100],
   ],
   [NEW, Vlayout, _v4, {
-      # AUTOSIZE: true,
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
@@ -210,18 +204,17 @@
     [TEXT, "@line"]
   ],
   [NEW, Vlayout, _buttons4, {
-      # AUTOSIZE: true,
+      GAP: 20,
       GRID_ALIGN: VERTICAL,
     },
-    [GAP, 20],
     [ADD, up4, dn4, add4, del4]
   ],
   
   [NEW, Hlayout, l_MainWindow, {
+      MARGIN: 5,
+      GAP: 10,
       FLOATING: 1      
     },
-    [MARGIN, 5],
-    [GAP, 10],
     [BOXTYPE, BORDER_BOX],
     # [COLOUR, ffff00], # No effect if (FL_NO_BOX)
     [ADD, _v1, _buttons1, _v2, _buttons2, _v3, _buttons3, _v4, _buttons4]

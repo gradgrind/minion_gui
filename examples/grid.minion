@@ -30,9 +30,10 @@
     },
     [TEXT, "Quit"]
   ],
-  [NEW, Grid, l_MainWindow, {},
-    # [MARGIN, 3],
-    [GAP, 10],
+  [NEW, Grid, l_MainWindow, {
+      #MARGIN: 3,
+      GAP: 10,
+    },
     [SHOW_GRID, 1],
     [BOXTYPE, FLAT_BOX],
     [COLOUR, ff00ff], # No effect if (FL_NO_BOX)
