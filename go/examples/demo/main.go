@@ -23,7 +23,6 @@ func main() {
 
 var tabs = map[string]bool{}
 
-// TODO
 func callback(data string) string {
 	fmt.Printf("Go callback got '%s'\n", data)
 	v := gominion.ReadMinion(data)
@@ -100,10 +99,11 @@ func callback(data string) string {
 		cbr += "]]]"
 
 	} else if strings.HasPrefix(wname, "(buttons)") {
-
-		cbr = "[[WIDGET, Output_1, [VALUE, "
-		cbr += wname
-		cbr += "]]]"
+		var cbrx string
+		if strings.HasSuffix(wname, "PB1") {
+			cbrx = "[WIDGET, PB1, [SIZE, 300, 80]],"
+		}
+		cbr = fmt.Sprintf(`[%s[WIDGET,"Output_1",[VALUE,"%s"]]]`, cbrx, wname)
 
 	} else if strings.HasPrefix(wname, "(grid)") {
 
