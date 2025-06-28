@@ -221,7 +221,7 @@ int main()
     auto fplist = {
         // These paths are realtive to the directory
         // in which the binary is built.
-        "../../examples/fedap.minion",
+        "../../examples/demo.minion",
         "../../examples/buttons1.minion",
         "../../examples/grid1.minion",
         "../../examples/grid2.minion",

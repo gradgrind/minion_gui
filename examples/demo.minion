@@ -1,4 +1,4 @@
-# demo
+# FEDAp sketch
 &APP_WIDTH: 1000,
 &APP_HEIGHT: 700,
 [
@@ -6,10 +6,10 @@
     # [BACKGROUND, ffffff],
     # [BACKGROUND2, c8ffff],
     # [FOREGROUND, 804040]
-     [BACKGROUND, 202020],
-     [BACKGROUND2, 404040],
-     [FOREGROUND, f0f0f0],
-     [SELECTION_BACKGROUND, b0b0f0],
+    # [BACKGROUND, 202020],
+    # [BACKGROUND2, 404040],
+    # [FOREGROUND, f0f0f0],
+    # [SELECTION_BACKGROUND, b0b0f0],
     [BUTTON_ON_CONTRAST, 80],
   ],
 
@@ -24,53 +24,74 @@
   
   # Top-level contents
   [NEW, Label, _chooser, {
+      LABEL_ALIGN: LEFT,
       GRID_ALIGN: HORIZONTAL,
-      LABEL_ALIGN: LEFT
     },
-    [TEXT, "Choose demo"]
+    [TEXT, "Choose module"]
   ],
   [NEW, RadioButton, buttons, {
+      BOXTYPE: ROUNDED_BOX,
+      DOWNBOXTYPE: ROUNDED_BOX,
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Buttons"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
   ],
   [NEW, RadioButton, grid, {
+      BOXTYPE: ROUNDED_BOX,
+      DOWNBOXTYPE: ROUNDED_BOX,
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Grid layout"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
   ],
   [NEW, RadioButton, complex, {
+      BOXTYPE: ROUNDED_BOX,
+      DOWNBOXTYPE: ROUNDED_BOX,
       GRID_ALIGN: HORIZONTAL
     },
     [TEXT, "Complex layout"],
-    [BOXTYPE, ROUNDED_BOX],
-    [DOWNBOXTYPE, ROUNDED_BOX]
+  ],
+  [NEW, RadioButton, studentgroups, {
+      BOXTYPE: ROUNDED_BOX,
+      DOWNBOXTYPE: ROUNDED_BOX,
+      GRID_ALIGN: HORIZONTAL
+    },
+    [TEXT, "Klassen"],
   ],
   [NEW, Vlayout, chooser, {
-      AUTOSIZE: true,
+      GAP: 5,
       GRID_ALIGN: VERTICAL,
     },
-    [GAP, 5],
-    [WIDTH, 200],
-    [ADD, _chooser, buttons, grid, complex]
+    # [WIDTH, 200],
+    [ADD, _chooser, buttons, grid, complex, studentgroups]
   ],
   
+  [NEW, Box, panel1, { # temporary panel 
+      BOXTYPE: ENGRAVED_BOX,
+      GRID_ALIGN: HORIZONTAL
+    },
+    [COLOUR, 804020],
+    [TEXT, "Panel: TODO"],
+    [HEIGHT, 100]
+  ],
   [NEW, Stack, viewer, {
+      BOXTYPE: ENGRAVED_BOX,
       GRID_ALIGN: FILL,
       GRID_GROW: 1
     },
     # [COLOUR, ffe0e0],
-    [BOXTYPE, ENGRAVED_BOX]
+  ],
+  [NEW, Vlayout, l_main, {
+      GRID_ALIGN: FILL,
+      GRID_GROW: 1
+    },
+    [ADD, panel1, viewer]
   ],
   
-  [NEW, Hlayout, l_MainWindow, {},
-    [MARGIN, 5],
-    [GAP, 5],
-    [ADD, chooser, viewer]
+  [NEW, Hlayout, l_MainWindow, {
+      MARGIN: 5,
+      GAP: 5,
+    },
+    [ADD, chooser, l_main]
   ],
   
   [WIDGET, MainWindow, [SET_LAYOUT, l_MainWindow]]
