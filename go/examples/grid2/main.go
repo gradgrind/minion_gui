@@ -35,7 +35,7 @@ func callback(data string) string {
 	var wname string
 	mm.GetString(0, &wname)
 
-	cbr := fmt.Sprintf(`[[WIDGET,"%s",[TEXT,"%s"],[LABEL_ALIGN, LEFT]]]`, wname, wname)
+	cbr := fmt.Sprintf(`[[WIDGET,"%s",[TEXT,"%s"]]]`, wname, wname)
 	fmt.Println("CB: " + cbr)
 	return cbr
 }

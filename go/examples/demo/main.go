@@ -84,6 +84,21 @@ func callback(data string) string {
 		cbr += wtab
 		cbr += "]]]"
 
+	} else if wname == "()studentgroups" {
+
+		cbr = "[[WIDGET_PREFIX, studentgroups]"
+		wtab := "(studentgroups)l_MainWindow"
+		if !tabs[wtab] {
+			cbr += ",[MINION_FILE, ../../../examples/studentgroups.minion]"
+			cbr += ",[WIDGET, ()viewer, [ADD, "
+			cbr += wtab
+			cbr += "]]"
+			tabs[wtab] = true
+		}
+		cbr += ",[WIDGET, ()viewer, [SELECT, "
+		cbr += wtab
+		cbr += "]]]"
+
 	} else if strings.HasPrefix(wname, "(buttons)") {
 
 		cbr = "[[WIDGET, Output_1, [VALUE, "
@@ -110,6 +125,9 @@ func callback(data string) string {
 			cbr += "]]"
 		}
 		cbr += "]"
+
+	} else if strings.HasPrefix(wname, "(studentgroups)") {
+		cbr = "[]"
 
 	} else {
 		panic("Unknown Callback" + gominion.DumpString(data))

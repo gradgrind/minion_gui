@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/gradgrind/minion/gominion"
 	"github.com/gradgrind/minion_gui/go/mugui"
@@ -34,7 +35,11 @@ func callback(data string) string {
 	var wname string
 	mm.GetString(0, &wname)
 
-	cbr := fmt.Sprintf(`[[WIDGET,"Output_1",[VALUE,"%s"]]]`, wname)
+	var cbrx string
+	if strings.HasSuffix(wname, "PB1") {
+		cbrx = "[WIDGET, PB1, [SIZE, 300, 80]],"
+	}
+	cbr := fmt.Sprintf(`[%s[WIDGET,"Output_1",[VALUE,"%s"]]]`, cbrx, wname)
 	fmt.Println("CB: " + cbr)
 	return cbr
 }
