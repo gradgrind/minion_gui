@@ -1,5 +1,9 @@
 # minion_gui
 
+WARNING: This repository is not maintained. It has been superseded by [mugui](https://github.com/gradgrind/mugui). It remains here mainly because the build scripts might be of some interest.
+
+...
+
 This is basically a wrapper around the FLTK library allowing communication using text messages in MINION, which is somewhat like a simplified JSON. minion_gui compiles to a dynamic library with a very simple C API. All commands to the GUI and callbacks from it are via MINION strings.
 
 Currently the build scripts (using cmake) are only designed for Linux, but it should be possible to adapt them for other operating systems that are supported by FLTK.
